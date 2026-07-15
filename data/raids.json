@@ -1,17 +1,17 @@
 {
   "legendary": {
-    "name": "Coming Soon",
-    "weaknesses": [],
-    "bestCounters": []
+    "name": "Kyogre",
+    "weaknesses": [Lightning, Grass],
+    "bestCounters": [Shadow Raikou, Mega Mewtwo]
   },
   "mega": {
-    "name": "Coming Soon",
-    "weaknesses": [],
-    "bestCounters": []
+    "name": "Sceptile",
+    "weaknesses": [Ice 2X],
+    "bestCounters": [Kyurem]
   },
   "shadow": {
-    "name": "Coming Soon",
-    "weaknesses": [],
-    "bestCounters": []
+    "name": "Palkia",
+    "weaknesses": [Dragon],
+    "bestCounters": [Mega Rayquaza]
   }
 }
