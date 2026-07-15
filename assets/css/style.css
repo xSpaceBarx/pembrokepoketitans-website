@@ -226,3 +226,23 @@ footer img {
     }
 
 }
+/* ---------- EVENT CARD ---------- */
+
+.event-card {
+    max-width: 700px;
+    margin: auto;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.08);
+}
+
+.event-card h3 {
+    color: #153A5B;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+}
+
+.event-card p {
+    margin: 10px 0;
+}
