@@ -1,32 +1,41 @@
-console.log("Script loaded");document.addEventListener("DOMContentLoaded", () => {
+console.log("Script loaded");
 
-    fetch("data/events.json")
-        .then(response => response.json())
-        .then(data => {
+document.addEventListener("DOMContentLoaded", async () => {
 
-            const event = data.nextEvent;
+    const eventCard = document.getElementById("event-card");
 
-            document.getElementById("event-card").innerHTML = `
-                <div class="event-card">
-                    <h3>${event.title}</h3>
+    eventCard.innerHTML = "<p>Trying to load event...</p>";
 
-                    <p><strong>📅</strong> ${event.date}</p>
+    try {
 
-                    <p><strong>🕕</strong> ${event.time}</p>
+        const response = await fetch("./data/events.json");
 
-                    <p><strong>📍</strong> ${event.location}</p>
+        console.log("Response:", response);
 
-                    <p><strong>👥</strong> ${event.attendance}</p>
+        const data = await response.json();
 
-                    <p>${event.description}</p>
-                </div>
-            `;
-        })
-        .catch(error => {
-            document.getElementById("event-card").innerHTML =
-                "<p>Unable to load event information.</p>";
+        console.log("Data:", data);
 
-            console.error(error);
-        });
+        eventCard.innerHTML = `
+            <div class="event-card">
+                <h3>${data.nextEvent.title}</h3>
+                <p>📅 ${data.nextEvent.date}</p>
+                <p>🕕 ${data.nextEvent.time}</p>
+                <p>📍 ${data.nextEvent.location}</p>
+                <p>👥 ${data.nextEvent.attendance}</p>
+                <p>${data.nextEvent.description}</p>
+            </div>
+        `;
+
+    } catch (err) {
+
+        console.error(err);
+
+        eventCard.innerHTML = `
+            <h3 style="color:red;">ERROR</h3>
+            <p>${err}</p>
+        `;
+
+    }
 
 });
