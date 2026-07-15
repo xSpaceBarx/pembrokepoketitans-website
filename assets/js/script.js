@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+console.log("Script loaded");document.addEventListener("DOMContentLoaded", () => {
 
     fetch("data/events.json")
         .then(response => response.json())
