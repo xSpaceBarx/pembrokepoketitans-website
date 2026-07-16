@@ -34,7 +34,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         // ---------- UPCOMING EVENTS ----------
 
         const upcomingContainer = document.getElementById("upcoming-events-list");
-
+console.log("Upcoming container:", upcomingContainer);
+console.log("Events array:", events);
         upcomingContainer.innerHTML = "";
 
         events.slice(1).forEach(event => {
