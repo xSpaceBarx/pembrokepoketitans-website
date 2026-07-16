@@ -26,13 +26,27 @@ export async function loadTrainers() {
 
             const trainer = doc.data();
 
-            trainerList.innerHTML += `
-                <div class="event-card">
-                    <h3>${trainer.trainerName}</h3>
-                    <p>📍 ${trainer.location}</p>
-                    <p>${trainer.friendCode}</p>
-                </div>
-            `;
+trainerList.innerHTML += `
+
+    <div class="event-card">
+
+        <h3>${trainer.trainerName}</h3>
+
+        <p>📍 ${trainer.location}</p>
+
+        <p class="friend-code">
+            ${trainer.friendCode}
+        </p>
+
+        <button
+            class="hero-button copy-button"
+            data-code="${trainer.friendCode.replace(/\s/g, "")}">
+            Copy Friend Code
+        </button>
+
+    </div>
+
+`;
 
         });
 
