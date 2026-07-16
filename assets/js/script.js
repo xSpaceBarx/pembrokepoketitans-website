@@ -13,21 +13,23 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.log("Response:", response);
 
         const data = await response.json();
+        const events = data.events;
+const nextEvent = events[0];
 
         console.log("Data:", data);
 
         eventCard.innerHTML = `
             <div class="event-card">
                 <h3>
-    <a href="${data.nextEvent.link}" target="_blank" class="event-link">
-        ${data.nextEvent.title}
+    <a href="${nextEvent.link}" target="_blank" class="event-link">
+        ${nextEvent.title}
     </a>
 </h3>
-                <p>📅 ${data.nextEvent.date}</p>
-                <p>🕕 ${data.nextEvent.time}</p>
-                <p>📍 ${data.nextEvent.location}</p>
-                <p>👥 ${data.nextEvent.attendance}</p>
-                <p>${data.nextEvent.description}</p>
+                <p>📅 ${nextEvent.date}</p>
+                <p>🕕 ${nextEvent.time}</p>
+                <p>📍 ${nextEvent.location}</p>
+                <p>👥 ${nextEvent.attendance}</p>
+                <p>${nextEvent.description}</p>
             </div>
         `;
 
@@ -41,5 +43,27 @@ document.addEventListener("DOMContentLoaded", async () => {
         `;
 
     }
+
+});
+const upcomingContainer = document.getElementById("upcoming-events-list");
+
+upcomingContainer.innerHTML = "";
+
+events.slice(1, 3).forEach(event => {
+
+    upcomingContainer.innerHTML += `
+        <div class="event-card">
+            <h3>
+                <a href="${event.link}" target="_blank" class="event-link">
+                    ${event.title}
+                </a>
+            </h3>
+
+            <p>📅 ${event.date}</p>
+            <p>🕕 ${event.time}</p>
+            <p>📍 ${event.location}</p>
+            <p>${event.description}</p>
+        </div>
+    `;
 
 });
