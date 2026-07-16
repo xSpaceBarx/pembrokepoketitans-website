@@ -18,7 +18,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         eventCard.innerHTML = `
             <div class="event-card">
-                <h3>${data.nextEvent.title}</h3>
+                <h3>
+    <a href="${data.nextEvent.link}" target="_blank" class="event-link">
+        ${data.nextEvent.title}
+    </a>
+</h3>
                 <p>📅 ${data.nextEvent.date}</p>
                 <p>🕕 ${data.nextEvent.time}</p>
                 <p>📍 ${data.nextEvent.location}</p>
