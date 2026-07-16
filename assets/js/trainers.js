@@ -23,14 +23,16 @@ export async function loadTrainers() {
         );
 
         const snapshot = await getDocs(q);
-const trainerCount = document.getElementById("trainer-count");
 
-if (trainerCount) {
+        const trainerCount = document.getElementById("trainer-count");
 
-    trainerCount.innerHTML =
-        `👥 ${snapshot.size} Registered Trainer${snapshot.size === 1 ? "" : "s"}`;
+        if (trainerCount) {
 
-}
+            trainerCount.innerHTML =
+                `👥 ${snapshot.size} Registered Trainer${snapshot.size === 1 ? "" : "s"}`;
+
+        }
+
         trainerList.innerHTML = "";
 
         if (snapshot.empty) {
@@ -46,6 +48,20 @@ if (trainerCount) {
 
             const trainer = doc.data();
 
+            // Format friend code for display
+            let displayCode = trainer.friendCode || "";
+
+            const digits = displayCode.replace(/\D/g, "");
+
+            if (digits.length === 12) {
+
+                displayCode =
+                    digits.substring(0,4) + " " +
+                    digits.substring(4,8) + " " +
+                    digits.substring(8,12);
+
+            }
+
             trainerList.innerHTML += `
 
                 <div class="event-card">
@@ -55,12 +71,12 @@ if (trainerCount) {
                     <p>📍 ${trainer.location}</p>
 
                     <p class="friend-code">
-                        ${trainer.friendCode}
+                        ${displayCode}
                     </p>
 
                     <button
                         class="hero-button copy-button"
-                        data-code="${trainer.friendCode.replace(/\s/g, "")}">
+                        data-code="${digits}">
                         Copy Friend Code
                     </button>
 
@@ -70,7 +86,6 @@ if (trainerCount) {
 
         });
 
-        // Add copy functionality
         document.querySelectorAll(".copy-button").forEach(button => {
 
             button.addEventListener("click", async () => {
@@ -84,12 +99,17 @@ if (trainerCount) {
                     button.innerHTML = "✅ Copied!";
 
                     setTimeout(() => {
+
                         button.innerHTML = originalText;
+
                     }, 1500);
 
-                } catch (err) {
+                }
+
+                catch (err) {
 
                     console.error(err);
+
                     alert("Unable to copy friend code.");
 
                 }
