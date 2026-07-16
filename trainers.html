@@ -113,21 +113,58 @@
 
 </section>
 
-<section class="section light">
+<section class="join-section">
 
     <div class="container">
 
-        <h2 class="section-title">
+        <h2>Add Your Trainer Code</h2>
 
-            Trainer Directory
+        <form id="trainer-form">
 
-        </h2>
+            <input
+                type="text"
+                id="trainerName"
+                placeholder="Trainer Name"
+                required>
 
-        <div id="trainer-list">
+            <br><br>
 
-            <p>Trainer directory coming soon...</p>
+            <input
+                type="text"
+                id="friendCode"
+                placeholder="Friend Code (2428 9779 6456)"
+                maxlength="14"
+                required>
 
-        </div>
+            <br><br>
+
+            <select id="location" required>
+
+                <option value="">Select Location</option>
+
+                <option>Pembroke</option>
+                <option>Hanover</option>
+                <option>Hanson</option>
+                <option>Halifax</option>
+                <option>Kingston</option>
+                <option>Marshfield</option>
+                <option>Rockland</option>
+                <option>Scituate</option>
+                <option>Other</option>
+
+            </select>
+
+            <br><br>
+
+            <button class="hero-button" type="submit">
+
+                Submit Trainer
+
+            </button>
+
+        </form>
+
+        <p id="submit-message"></p>
 
     </div>
 
