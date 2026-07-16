@@ -1,38 +1,19 @@
 {
   "raids": [
     {
-      "type": "Legendary",
-      "boss": "Lugia",
-      "image": "assets/images/lugia.png",
-      "weaknesses": [
-        "Electric",
-        "Ice",
-        "Rock",
-        "Ghost",
-        "Dark"
-      ],
-      "recommended": [
-        "Dawn Wings Necrozma",
-        "Mega Tyranitar",
-        "Mega Gengar",
-        "Zekrom",
-        "Xurkitree"
-      ]
+      "type": "Legendary Raids",
+      "date": "July 15 – July 22",
+      "image": "assets/images/legendary.png"
     },
     {
-      "type": "Mega",
-      "boss": "Mega Aggron",
-      "image": "assets/images/aggron.png",
-      "weaknesses": [
-        "Ground",
-        "Fighting",
-        "Fire"
-      ],
-      "recommended": [
-        "Primal Groudon",
-        "Mega Blaziken",
-        "Mega Lucario"
-      ]
+      "type": "Mega Raids",
+      "date": "July 15 – July 21",
+      "image": "assets/images/mega.png"
+    },
+    {
+      "type": "Shadow Raids",
+      "date": "July",
+      "image": "assets/images/shadow.png"
     }
   ]
 }
