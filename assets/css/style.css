@@ -361,3 +361,11 @@ footer img {
     font-size: 20px;
     margin-top: 10px;
 }
+.secondary-button {
+
+    display: inline-block;
+
+    margin-top: 12px;
+    margin-bottom: 12px;
+
+}
