@@ -45,25 +45,28 @@ if (form) {
 
         try {
 
-            await addDoc(collection(db, "trainers"), {
+    console.log("Submitting...");
 
-                trainerName,
-                friendCode,
-                location,
-                dateAdded: new Date()
+    const docRef = await addDoc(collection(db, "trainers"), {
+        trainerName: trainerName,
+        friendCode: friendCode,
+        location: location
+    });
 
-            });
+    console.log("SUCCESS!", docRef.id);
 
-            document.getElementById("submit-message").innerHTML =
-                "✅ Trainer added successfully!";
+    document.getElementById("submit-message").innerHTML =
+        "Added!";
 
-            form.reset();
+    await loadTrainers();
 
-            loadTrainers();
+}
+catch(error){
 
-        }
+    console.log(error);
+    alert(error.message);
 
-        catch (error) {
+}        catch (error) {
 
             console.error(error);
 
