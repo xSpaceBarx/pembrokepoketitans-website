@@ -17,11 +17,29 @@ document.addEventListener("DOMContentLoaded", async () => {
         const eventData = await eventResponse.json();
         const events = eventData.events;
 
-        // Next Meet Up
+        // ==========================
+        // NEXT MEET UP
+        // ==========================
 
         const nextEvent = events[0];
 
+        let nextMapLink;
+
+        if (nextEvent.location === "Pembroke Historical Society Museum") {
+
+            nextMapLink =
+                "https://www.google.com/maps/search/?api=1&query=Pembroke+Historical+Society+Museum+147+Center+Street+Pembroke+MA";
+
+        } else {
+
+            nextMapLink =
+                "https://www.google.com/maps/search/?api=1&query=" +
+                encodeURIComponent(nextEvent.location);
+
+        }
+
         document.getElementById("event-card").innerHTML = `
+
             <div class="event-card">
 
                 <h3>${nextEvent.title}</h3>
@@ -30,37 +48,17 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 <p>🕕 ${nextEvent.time}</p>
 
-              ${(() => {
+                <p>
+                    📍
+                    <a
+                        href="${nextMapLink}"
+                        target="_blank"
+                        class="event-link">
 
-    let mapLink;
+                        ${nextEvent.location}
 
-    if (nextEvent.location === "Pembroke Historical Society Museum") {
-
-        mapLink =
-            "https://www.google.com/maps/search/?api=1&query=Pembroke+Historical+Society+Museum+147+Center+Street+Pembroke+MA";
-
-    } else {
-
-        mapLink =
-            "https://www.google.com/maps/search/?api=1&query=" +
-            encodeURIComponent(nextEvent.location);
-
-    }
-
-    return `
-        <p>📍 ${nextEvent.location}</p>
-
-        <a
-            href="${mapLink}"
-            target="_blank"
-            class="hero-button secondary-button">
-
-            View Meetup Location
-
-        </a>
-    `;
-
-})()}
+                    </a>
+                </p>
 
                 <p>👥 ${nextEvent.attendance}</p>
 
@@ -78,17 +76,36 @@ document.addEventListener("DOMContentLoaded", async () => {
                 </a>
 
             </div>
+
         `;
 
-        // Upcoming Meet Ups
+        // ==========================
+        // UPCOMING MEET UPS
+        // ==========================
 
-        const upcomingContainer = document.getElementById("upcoming-events-list");
+        const upcomingContainer =
+            document.getElementById("upcoming-events-list");
 
         if (upcomingContainer) {
 
             upcomingContainer.innerHTML = "";
 
             events.slice(1).forEach(event => {
+
+                let mapLink;
+
+                if (event.location === "Pembroke Historical Society Museum") {
+
+                    mapLink =
+                        "https://www.google.com/maps/search/?api=1&query=Pembroke+Historical+Society+Museum+147+Center+Street+Pembroke+MA";
+
+                } else {
+
+                    mapLink =
+                        "https://www.google.com/maps/search/?api=1&query=" +
+                        encodeURIComponent(event.location);
+
+                }
 
                 upcomingContainer.innerHTML += `
 
@@ -100,37 +117,17 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                         <p>🕕 ${event.time}</p>
 
-                        ${(() => {
+                        <p>
+                            📍
+                            <a
+                                href="${mapLink}"
+                                target="_blank"
+                                class="event-link">
 
-    let mapLink;
+                                ${event.location}
 
-    if (event.location === "Pembroke Historical Society Museum") {
-
-        mapLink =
-            "https://www.google.com/maps/search/?api=1&query=Pembroke+Historical+Society+Museum+147+Center+Street+Pembroke+MA";
-
-    } else {
-
-        mapLink =
-            "https://www.google.com/maps/search/?api=1&query=" +
-            encodeURIComponent(event.location);
-
-    }
-
-    return `
-        <p>📍 ${event.location}</p>
-
-        <a
-            href="${mapLink}"
-            target="_blank"
-            class="hero-button secondary-button">
-
-            View Meetup Location
-
-        </a>
-    `;
-
-})()}
+                            </a>
+                        </p>
 
                         <p>👥 ${event.attendance}</p>
 
@@ -167,7 +164,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const raidData = await raidResponse.json();
 
-        const raidContainer = document.getElementById("raid-container");
+        const raidContainer =
+            document.getElementById("raid-container");
 
         if (raidContainer) {
 
@@ -176,6 +174,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             raidData.raids.forEach(raid => {
 
                 raidContainer.innerHTML += `
+
                     <div class="raid-card">
 
                         <h3>${raid.type}</h3>
@@ -188,6 +187,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                             class="raid-image">
 
                     </div>
+
                 `;
 
             });
@@ -201,7 +201,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.getElementById("event-card").innerHTML =
             "<p>Unable to load meet ups.</p>";
 
-        const raidContainer = document.getElementById("raid-container");
+        const raidContainer =
+            document.getElementById("raid-container");
 
         if (raidContainer) {
 
