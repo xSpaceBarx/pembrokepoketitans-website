@@ -30,7 +30,37 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 <p>🕕 ${nextEvent.time}</p>
 
-                <p>📍 ${nextEvent.location}</p>
+              ${(() => {
+
+    let mapLink;
+
+    if (nextEvent.location === "Pembroke Historical Society Museum") {
+
+        mapLink =
+            "https://www.google.com/maps/search/?api=1&query=Pembroke+Historical+Society+Museum+147+Center+Street+Pembroke+MA";
+
+    } else {
+
+        mapLink =
+            "https://www.google.com/maps/search/?api=1&query=" +
+            encodeURIComponent(nextEvent.location);
+
+    }
+
+    return `
+        <p>📍 ${nextEvent.location}</p>
+
+        <a
+            href="${mapLink}"
+            target="_blank"
+            class="hero-button secondary-button">
+
+            View Meetup Location
+
+        </a>
+    `;
+
+})()}
 
                 <p>👥 ${nextEvent.attendance}</p>
 
@@ -70,7 +100,37 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                         <p>🕕 ${event.time}</p>
 
-                        <p>📍 ${event.location}</p>
+                        ${(() => {
+
+    let mapLink;
+
+    if (event.location === "Pembroke Historical Society Museum") {
+
+        mapLink =
+            "https://www.google.com/maps/search/?api=1&query=Pembroke+Historical+Society+Museum+147+Center+Street+Pembroke+MA";
+
+    } else {
+
+        mapLink =
+            "https://www.google.com/maps/search/?api=1&query=" +
+            encodeURIComponent(event.location);
+
+    }
+
+    return `
+        <p>📍 ${event.location}</p>
+
+        <a
+            href="${mapLink}"
+            target="_blank"
+            class="hero-button secondary-button">
+
+            View Meetup Location
+
+        </a>
+    `;
+
+})()}
 
                         <p>👥 ${event.attendance}</p>
 
