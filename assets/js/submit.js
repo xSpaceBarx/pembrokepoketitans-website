@@ -1,134 +1,166 @@
 import { db } from "./firebase.js";
+import { loadTrainers } from "./trainers.js";
 
 import {
     collection,
-    getDocs,
-    query,
-    orderBy
+    addDoc
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
-export async function loadTrainers() {
+const form = document.getElementById("trainer-form");
 
-    const trainerList = document.getElementById("trainer-list");
+// Friend Code input
+const friendCodeInput = document.getElementById("friendCode");
 
-    if (!trainerList) return;
+// Location fields
+const locationSelect = document.getElementById("location");
+const otherLocation = document.getElementById("otherLocation");
 
-    trainerList.innerHTML = "<p>Loading Trainers...</p>";
+// -----------------------------
+// Show/Hide Other Location Box
+// -----------------------------
 
-    try {
+if (locationSelect && otherLocation) {
 
-        const q = query(
-            collection(db, "trainers"),
-            orderBy("trainerName")
-        );
+    locationSelect.addEventListener("change", () => {
 
-        const snapshot = await getDocs(q);
+        if (locationSelect.value === "Other") {
 
-        const trainerCount = document.getElementById("trainer-count");
+            otherLocation.style.display = "block";
+            otherLocation.required = true;
 
-        if (trainerCount) {
+        } else {
 
-            trainerCount.innerHTML =
-                `👥 ${snapshot.size} Registered Trainer${snapshot.size === 1 ? "" : "s"}`;
+            otherLocation.style.display = "none";
+            otherLocation.required = false;
+            otherLocation.value = "";
 
         }
 
-        trainerList.innerHTML = "";
+    });
 
-        if (snapshot.empty) {
+}
 
-            trainerList.innerHTML =
-                "<p>No trainers have been added yet.</p>";
+// -----------------------------
+// Auto-format Friend Code
+// -----------------------------
 
+if (friendCodeInput) {
+
+    friendCodeInput.addEventListener("input", (e) => {
+
+        let value = e.target.value.replace(/\D/g, "");
+
+        value = value.substring(0, 12);
+
+        if (value.length > 8) {
+
+            value =
+                value.substring(0,4) + " " +
+                value.substring(4,8) + " " +
+                value.substring(8);
+
+        }
+        else if (value.length > 4) {
+
+            value =
+                value.substring(0,4) + " " +
+                value.substring(4);
+
+        }
+
+        e.target.value = value;
+
+    });
+
+}
+
+console.log("submit.js loaded");
+
+if (form) {
+
+    console.log("Found trainer form");
+
+    form.addEventListener("submit", async (e) => {
+
+        e.preventDefault();
+
+        console.log("Submit button clicked");
+
+        const trainerName =
+            document.getElementById("trainerName").value.trim();
+
+        let friendCode =
+            document.getElementById("friendCode").value.replace(/\D/g, "");
+
+        let location = locationSelect.value;
+
+        if (location === "Other") {
+
+            location = otherLocation.value.trim();
+
+        }
+
+        // Validation
+
+        if (trainerName.length < 3) {
+
+            alert("Please enter a valid Trainer Name.");
             return;
 
         }
 
-        snapshot.forEach(doc => {
+        if (friendCode.length !== 12) {
 
-            const trainer = doc.data();
+            alert("Friend Code must contain exactly 12 digits.");
+            return;
 
-            // Format every friend code for display
-            let displayCode = trainer.friendCode.replace(/\D/g, "");
+        }
 
-            if (displayCode.length === 12) {
+        if (location === "") {
 
-                displayCode =
-                    displayCode.substring(0,4) + " " +
-                    displayCode.substring(4,8) + " " +
-                    displayCode.substring(8,12);
+            alert("Please enter your main play location.");
+            return;
 
-            } else {
+        }
 
-                displayCode = trainer.friendCode;
+        // Format Friend Code
 
-            }
+        const formattedFriendCode =
+            friendCode.substring(0,4) + " " +
+            friendCode.substring(4,8) + " " +
+            friendCode.substring(8,12);
 
-            trainerList.innerHTML += `
+        try {
 
-                <div class="event-card">
+            const docRef = await addDoc(collection(db, "trainers"), {
 
-                    <h3>${trainer.trainerName}</h3>
-
-                    <p>📍 ${trainer.location}</p>
-
-                    <p class="friend-code">
-                        ${displayCode}
-                    </p>
-
-                    <button
-                        class="hero-button copy-button"
-                        data-code="${displayCode.replace(/\s/g, "")}">
-                        Copy Friend Code
-                    </button>
-
-                </div>
-
-            `;
-
-        });
-
-        document.querySelectorAll(".copy-button").forEach(button => {
-
-            button.addEventListener("click", async () => {
-
-                try {
-
-                    await navigator.clipboard.writeText(button.dataset.code);
-
-                    const originalText = button.innerHTML;
-
-                    button.innerHTML = "✅ Copied!";
-
-                    setTimeout(() => {
-
-                        button.innerHTML = originalText;
-
-                    }, 1500);
-
-                } catch (err) {
-
-                    console.error(err);
-
-                    alert("Unable to copy friend code.");
-
-                }
+                trainerName,
+                friendCode: formattedFriendCode,
+                location
 
             });
 
-        });
+            console.log("SUCCESS!", docRef.id);
 
-    }
+            document.getElementById("submit-message").innerHTML =
+                "✅ Trainer added successfully!";
 
-    catch (error) {
+            form.reset();
 
-        console.error(error);
+            otherLocation.style.display = "none";
 
-        trainerList.innerHTML =
-            "<p>Unable to load trainers.</p>";
+            await loadTrainers();
 
-    }
+        }
+
+        catch (error) {
+
+            console.error("FIREBASE ERROR:", error);
+
+            alert(error.message);
+
+        }
+
+    });
 
 }
-
-loadTrainers();
