@@ -1,17 +1,17 @@
 {
   "raids": [
     {
-      "type": "Legendary Raids",
+      "type": "Current Legendary Raids",
       "date": "July 15 – July 22",
       "image": "assets/images/legendary.png"
     },
     {
-      "type": "Mega Raids",
+      "type": "Current Mega Raids",
       "date": "July 15 – July 21",
       "image": "assets/images/mega.png"
     },
     {
-      "type": "Shadow Raids",
+      "type": "Current Shadow Raids",
       "date": "July",
       "image": "assets/images/shadow.png"
     }
