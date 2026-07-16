@@ -4,18 +4,24 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
 
-        const response = await fetch("./data/events.json");
-        const data = await response.json();
+        // ==========================
+        // EVENTS
+        // ==========================
 
-        const events = data.events;
+        const eventResponse = await fetch("./data/events.json");
 
-        // ---------- NEXT EVENT ----------
+        if (!eventResponse.ok) {
+            throw new Error("Unable to load events.json");
+        }
 
+        const eventData = await eventResponse.json();
+        const events = eventData.events;
+
+        // Next Event
         const nextEvent = events[0];
 
         document.getElementById("event-card").innerHTML = `
             <div class="event-card">
-
                 <h3>
                     <a href="${nextEvent.link}" target="_blank" class="event-link">
                         ${nextEvent.title}
@@ -27,37 +33,76 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <p>📍 ${nextEvent.location}</p>
                 <p>👥 ${nextEvent.attendance}</p>
                 <p>${nextEvent.description}</p>
-
             </div>
         `;
 
-        // ---------- UPCOMING EVENTS ----------
-
+        // Upcoming Events
         const upcomingContainer = document.getElementById("upcoming-events-list");
-console.log("Upcoming container:", upcomingContainer);
-console.log("Events array:", events);
-        upcomingContainer.innerHTML = "";
 
-        events.slice(1).forEach(event => {
+        if (upcomingContainer) {
 
-            upcomingContainer.innerHTML += `
-                <div class="event-card">
+            upcomingContainer.innerHTML = "";
 
-                    <h3>
-                        <a href="${event.link}" target="_blank" class="event-link">
-                            ${event.title}
-                        </a>
-                    </h3>
+            events.slice(1).forEach(event => {
 
-                    <p>📅 ${event.date}</p>
-                    <p>🕕 ${event.time}</p>
-                    <p>📍 ${event.location}</p>
-                    <p>👥 ${event.attendance}</p>
-                    <p>${event.description}</p>
+                upcomingContainer.innerHTML += `
+                    <div class="event-card">
+                        <h3>
+                            <a href="${event.link}" target="_blank" class="event-link">
+                                ${event.title}
+                            </a>
+                        </h3>
 
-                </div>
-            `;
-        });
+                        <p>📅 ${event.date}</p>
+                        <p>🕕 ${event.time}</p>
+                        <p>📍 ${event.location}</p>
+                        <p>👥 ${event.attendance}</p>
+                        <p>${event.description}</p>
+                    </div>
+                `;
+
+            });
+
+        }
+
+        // ==========================
+        // RAIDS
+        // ==========================
+
+        const raidResponse = await fetch("./data/raids.json");
+
+        if (!raidResponse.ok) {
+            throw new Error("Unable to load raids.json");
+        }
+
+        const raidData = await raidResponse.json();
+
+        const raidContainer = document.getElementById("raid-container");
+
+        if (raidContainer) {
+
+            raidContainer.innerHTML = "";
+
+            raidData.raids.forEach(raid => {
+
+                raidContainer.innerHTML += `
+                    <div class="raid-card">
+
+                        <h3>${raid.type}</h3>
+
+                        <p class="raid-date">${raid.date}</p>
+
+                        <img
+                            src="${raid.image}"
+                            alt="${raid.type}"
+                            class="raid-image">
+
+                    </div>
+                `;
+
+            });
+
+        }
 
     } catch (err) {
 
@@ -66,32 +111,13 @@ console.log("Events array:", events);
         document.getElementById("event-card").innerHTML =
             "<p>Unable to load events.</p>";
 
+        const raidContainer = document.getElementById("raid-container");
+
+        if (raidContainer) {
+            raidContainer.innerHTML =
+                "<p>Unable to load raid information.</p>";
+        }
+
     }
-
-});
-// ---------- RAIDS ----------
-
-const raidResponse = await fetch("./data/raids.json");
-const raidData = await raidResponse.json();
-
-const raidContainer = document.getElementById("raid-container");
-
-raidContainer.innerHTML = "";
-
-raidData.raids.forEach(raid => {
-
-    raidContainer.innerHTML += `
-        <div class="raid-card">
-
-            <h3>${raid.type}</h3>
-
-            <p class="raid-date">${raid.date}</p>
-
-            <img src="${raid.image}"
-                 alt="${raid.type}"
-                 class="raid-image">
-
-        </div>
-    `;
 
 });
