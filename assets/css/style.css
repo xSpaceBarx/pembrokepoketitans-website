@@ -274,3 +274,13 @@ footer img {
     transform: translateY(-4px);
     transition: .25s ease;
 }
+.event-link {
+    color: #1d3557;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.event-link:hover {
+    color: #ff8c00;
+    text-decoration: underline;
+}
