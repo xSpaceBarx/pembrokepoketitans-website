@@ -369,3 +369,20 @@ footer img {
     margin-bottom: 12px;
 
 }
+.current-event-image {
+
+    width: 100%;
+
+    height: auto;
+
+    display: block;
+
+    border-radius: 12px;
+
+}
+
+.event-card img {
+
+    display: block;
+
+}
