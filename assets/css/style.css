@@ -284,3 +284,36 @@ footer img {
     color: #ff8c00;
     text-decoration: underline;
 }
+.raid-card{
+
+    background:white;
+    border-radius:12px;
+    padding:20px;
+    margin-bottom:30px;
+    text-align:center;
+    box-shadow:0 4px 10px rgba(0,0,0,.08);
+
+}
+
+.raid-card h3{
+
+    color:#1d3557;
+    margin-bottom:8px;
+
+}
+
+.raid-date{
+
+    font-weight:600;
+    color:#666;
+    margin-bottom:18px;
+
+}
+
+.raid-image{
+
+    width:100%;
+    max-width:700px;
+    border-radius:10px;
+
+}
