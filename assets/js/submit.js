@@ -1,86 +1,134 @@
 import { db } from "./firebase.js";
-import { loadTrainers } from "./trainers.js";
 
 import {
     collection,
-    addDoc
+    getDocs,
+    query,
+    orderBy
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
-const form = document.getElementById("trainer-form");
-// Auto-format Friend Code while typing
+export async function loadTrainers() {
 
-const friendCodeInput = document.getElementById("friendCode");
+    const trainerList = document.getElementById("trainer-list");
 
-if (friendCodeInput) {
+    if (!trainerList) return;
 
-    friendCodeInput.addEventListener("input", (e) => {
+    trainerList.innerHTML = "<p>Loading Trainers...</p>";
 
-        let value = e.target.value.replace(/\D/g, "");
+    try {
 
-        value = value.substring(0, 12);
+        const q = query(
+            collection(db, "trainers"),
+            orderBy("trainerName")
+        );
 
-        if (value.length > 8) {
-            value =
-                value.substring(0,4) + " " +
-                value.substring(4,8) + " " +
-                value.substring(8);
+        const snapshot = await getDocs(q);
+
+        const trainerCount = document.getElementById("trainer-count");
+
+        if (trainerCount) {
+
+            trainerCount.innerHTML =
+                `👥 ${snapshot.size} Registered Trainer${snapshot.size === 1 ? "" : "s"}`;
+
         }
-        else if (value.length > 4) {
-            value =
-                value.substring(0,4) + " " +
-                value.substring(4);
+
+        trainerList.innerHTML = "";
+
+        if (snapshot.empty) {
+
+            trainerList.innerHTML =
+                "<p>No trainers have been added yet.</p>";
+
+            return;
+
         }
 
-        e.target.value = value;
+        snapshot.forEach(doc => {
 
-    });
+            const trainer = doc.data();
 
-}
-console.log("submit.js loaded");
+            // Format every friend code for display
+            let displayCode = trainer.friendCode.replace(/\D/g, "");
 
-if (form) {
+            if (displayCode.length === 12) {
 
-    console.log("Found trainer form");
+                displayCode =
+                    displayCode.substring(0,4) + " " +
+                    displayCode.substring(4,8) + " " +
+                    displayCode.substring(8,12);
 
-    form.addEventListener("submit", async (e) => {
+            } else {
 
-        e.preventDefault();
+                displayCode = trainer.friendCode;
 
-        console.log("Submit button clicked");
+            }
 
-        const trainerName = document.getElementById("trainerName").value.trim();
-        let friendCode = document.getElementById("friendCode").value.replace(/\D/g, "");
-        const location = document.getElementById("location").value;
+            trainerList.innerHTML += `
 
-        console.log(trainerName, friendCode, location);
+                <div class="event-card">
 
-        try {
+                    <h3>${trainer.trainerName}</h3>
 
-            console.log("About to call addDoc...");
+                    <p>📍 ${trainer.location}</p>
 
-            const docRef = await addDoc(collection(db, "trainers"), {
-                trainerName,
-                friendCode,
-                location
+                    <p class="friend-code">
+                        ${displayCode}
+                    </p>
+
+                    <button
+                        class="hero-button copy-button"
+                        data-code="${displayCode.replace(/\s/g, "")}">
+                        Copy Friend Code
+                    </button>
+
+                </div>
+
+            `;
+
+        });
+
+        document.querySelectorAll(".copy-button").forEach(button => {
+
+            button.addEventListener("click", async () => {
+
+                try {
+
+                    await navigator.clipboard.writeText(button.dataset.code);
+
+                    const originalText = button.innerHTML;
+
+                    button.innerHTML = "✅ Copied!";
+
+                    setTimeout(() => {
+
+                        button.innerHTML = originalText;
+
+                    }, 1500);
+
+                } catch (err) {
+
+                    console.error(err);
+
+                    alert("Unable to copy friend code.");
+
+                }
+
             });
 
-            console.log("SUCCESS!", docRef.id);
+        });
 
-            document.getElementById("submit-message").innerHTML =
-                "✅ Trainer added successfully!";
+    }
 
-            form.reset();
+    catch (error) {
 
-            await loadTrainers();
+        console.error(error);
 
-        } catch (error) {
+        trainerList.innerHTML =
+            "<p>Unable to load trainers.</p>";
 
-            console.error("FIREBASE ERROR:", error);
-
-            alert(error.message);
-
-        }
-
-    });
+    }
 
 }
+
+loadTrainers();
