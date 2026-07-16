@@ -321,3 +321,43 @@ footer img {
     margin-top: 12px;
     width: 100%;
 }
+/* ===========================
+   Trainer Submission Card
+=========================== */
+
+.trainer-submit .container {
+    max-width: 700px;
+}
+
+.trainer-submit form {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 8px 20px rgba(0,0,0,.08);
+}
+
+.trainer-submit h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.trainer-submit p {
+    margin-bottom: 25px;
+}
+
+.trainer-submit input,
+.trainer-submit select {
+    width: 100%;
+    padding: 16px;
+    font-size: 18px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+.trainer-submit button {
+    width: 100%;
+    padding: 16px;
+    font-size: 20px;
+    margin-top: 10px;
+}
