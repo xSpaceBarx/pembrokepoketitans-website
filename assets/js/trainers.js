@@ -2,9 +2,7 @@ import { db } from "./firebase.js";
 
 import {
     collection,
-    getDocs,
-    query,
-    orderBy
+    getDocs
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 export async function loadTrainers() {
@@ -15,22 +13,13 @@ export async function loadTrainers() {
 
     try {
 
-        const q = query(
-            collection(db, "trainers"),
-            orderBy("trainerName")
-        );
-
-        const snapshot = await getDocs(q);
+        const snapshot = await getDocs(collection(db, "trainers"));
 
         trainerList.innerHTML = "";
 
         if (snapshot.empty) {
-
-            trainerList.innerHTML =
-                "<p>No trainers have been added yet.</p>";
-
+            trainerList.innerHTML = "<p>No trainers found.</p>";
             return;
-
         }
 
         snapshot.forEach(doc => {
@@ -38,28 +27,18 @@ export async function loadTrainers() {
             const trainer = doc.data();
 
             trainerList.innerHTML += `
-
                 <div class="event-card">
-
                     <h3>${trainer.trainerName}</h3>
-
                     <p>📍 ${trainer.location}</p>
-
-                    <p class="friend-code">
-                        ${trainer.friendCode}
-                    </p>
-
+                    <p>${trainer.friendCode}</p>
                 </div>
-
             `;
 
         });
 
-    }
+    } catch (error) {
 
-    catch (error) {
-
-        console.error(error);
+        console.error("Firestore Error:", error);
 
         trainerList.innerHTML =
             "<p>Unable to load trainers.</p>";
