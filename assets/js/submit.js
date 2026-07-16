@@ -7,7 +7,35 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 const form = document.getElementById("trainer-form");
+// Auto-format Friend Code while typing
 
+const friendCodeInput = document.getElementById("friendCode");
+
+if (friendCodeInput) {
+
+    friendCodeInput.addEventListener("input", (e) => {
+
+        let value = e.target.value.replace(/\D/g, "");
+
+        value = value.substring(0, 12);
+
+        if (value.length > 8) {
+            value =
+                value.substring(0,4) + " " +
+                value.substring(4,8) + " " +
+                value.substring(8);
+        }
+        else if (value.length > 4) {
+            value =
+                value.substring(0,4) + " " +
+                value.substring(4);
+        }
+
+        e.target.value = value;
+
+    });
+
+}
 console.log("submit.js loaded");
 
 if (form) {
