@@ -23,11 +23,8 @@
     <div class="container nav">
 
         <a href="index.html" class="logo">
-
             <img src="assets/images/logo.png" alt="Pembroke PokéTitans Logo">
-
             <span>Pembroke PokéTitans</span>
-
         </a>
 
         <nav>
@@ -72,6 +69,77 @@
 
 </section>
 
+<!-- ADD TRAINER -->
+
+<section class="join-section trainer-submit">
+
+    <div class="container">
+
+        <h2>Add Your Trainer Code</h2>
+
+        <p>
+            Become part of the Pembroke PokéTitans Trainer Directory and make it easier for local Trainers to add you as a friend.
+        </p>
+
+        <form id="trainer-form">
+
+            <input
+                type="text"
+                id="trainerName"
+                placeholder="Trainer Name"
+                required>
+
+            <br><br>
+
+            <input
+                type="text"
+                id="friendCode"
+                placeholder="Friend Code (2428 9779 6456)"
+                maxlength="14"
+                inputmode="numeric"
+                autocomplete="off"
+                required>
+
+            <br><br>
+
+            <select id="location" required>
+
+                <option value="">Select Location</option>
+
+                <option>Pembroke</option>
+                <option>Hanover</option>
+                <option>Hanson</option>
+                <option>Halifax</option>
+                <option>Kingston</option>
+                <option>Marshfield</option>
+                <option>Rockland</option>
+                <option>Scituate</option>
+                <option>Quincy</option>
+                <option>Plymouth</option>
+                <option>Abington</option>
+                <option>Whitman</option>
+                <option>Plympton</option>
+                <option>Carver</option>
+                <option>Other</option>
+
+            </select>
+
+            <br><br>
+
+            <button class="hero-button" type="submit">
+                Submit Trainer
+            </button>
+
+        </form>
+
+        <p id="submit-message"></p>
+
+    </div>
+
+</section>
+
+<!-- SEARCH -->
+
 <section class="section">
 
     <div class="container">
@@ -112,6 +180,9 @@
     </div>
 
 </section>
+
+<!-- TRAINERS -->
+
 <section class="section">
 
     <div class="container">
@@ -127,68 +198,6 @@
     </div>
 
 </section>
-<section class="join-section">
-
-    <div class="container">
-
-        <h2>Add Your Trainer Code</h2>
-
-        <form id="trainer-form">
-
-            <input
-                type="text"
-                id="trainerName"
-                placeholder="Trainer Name"
-                required>
-
-            <br><br>
-
-            <input
-                type="text"
-                id="friendCode"
-                placeholder="Friend Code (2428 9779 6456)"
-                maxlength="14"
-                required>
-
-            <br><br>
-
-            <select id="location" required>
-
-                <option value="">Select Location</option>
-
-                <option>Pembroke</option>
-                <option>Hanover</option>
-                <option>Hanson</option>
-                <option>Halifax</option>
-                <option>Kingston</option>
-                <option>Marshfield</option>
-                <option>Rockland</option>
-                <option>Scituate</option>
-                <option>Quincy</option>
-            <option>Plymouth</option>
-            <option>Abington</option>
-            <option>Whitman</option>
-            <option>Plympton</option>
-            <option>Carver</option>
-            <option>Other</option>
-
-            </select>
-
-            <br><br>
-
-            <button class="hero-button" type="submit">
-
-                Submit Trainer
-
-            </button>
-
-        </form>
-
-        <p id="submit-message"></p>
-
-    </div>
-
-</section>
 
 <footer>
 
@@ -199,15 +208,11 @@
 <h3>Pembroke PokéTitans</h3>
 
 <p>
-
 Serving the Pokémon GO community of Pembroke, Massachusetts and local towns including Hanson, Halifax, Hanover, Kingston, Marshfield, Scituate and Rockland.
-
 </p>
 
 <p>
-
 © 2026 Pembroke PokéTitans
-
 </p>
 
 </div>
@@ -217,6 +222,6 @@ Serving the Pokémon GO community of Pembroke, Massachusetts and local towns inc
 <script type="module" src="assets/js/firebase.js"></script>
 <script type="module" src="assets/js/trainers.js"></script>
 <script type="module" src="assets/js/submit.js"></script>
-    
+
 </body>
 </html>
