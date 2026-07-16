@@ -1,12 +1,31 @@
 {
-  "nextEvent": {
-    "title": "Mega Raichu X/Y",
-    "date": "Saturday 7/18",
-    "time": "2-4 PM",
-    "location": "Pembroke Historical Society Museum",
-    "address": "Pembroke Historical Society Museum, Pembroke, MA",
-    "attendance": "12-18 Trainers",
-    "description": "New and returning Trainers are always welcome.  Super Mega Raids required shields to be broken by Mega evolved pokemon, please come prepared.  Primal Evolutions DO NOT COUNT towards sheild breaking.",
-    "link": "https://cmpf.re/stiizq"
-  }
+  "events": [
+    {
+      "title": "Mega Raichu X/Y Raid Day",
+      "date": "Saturdau July 18th",
+      "time": "2-4 PM",
+      "location": "Pembroke Historical Society Museum",
+      "attendance": "12–18 Trainers",
+      "description": "New and returning Trainers are always welcome.  Super Mega Raids required shields to be broken by Mega evolved pokemon, please come prepared.  Primal Evolutions DO NOT COUNT towards sheild breaking.",
+      "link": "https://cmpf.re/stiizq"
+    },
+    {
+      "title": "Solgaleo Raid Hour",
+      "date": "Wednesday July 22nd",
+      "time": "6-7 PM",
+      "location": "Pembroke Historical Society Museum",
+      "attendance": "8-12 Trainers",
+      "description": "SHINY Solgaleo Debut!",
+      "link": "https://cmpf.re/ViJX82"
+    },
+    {
+      "title": "Gigantamax Rillaboom Max Battle Day",
+      "date": "Saturday August 1st",
+      "time": "2-3 PM",
+      "location": "Pembroke Historical Society Museum",
+      "attendance": "8-15 Trainers",
+      "description": "DMAX Blissey/GMAX Charizard for tanks.  GMAX Charizard/Cinderace for attackers.",
+      "link": "https://campfire-link-3"
+    }
+  ]
 }
