@@ -61,19 +61,13 @@ if (form) {
     await loadTrainers();
 
 }
-catch(error){
+catch (error) {
 
-    console.log(error);
-    alert(error.message);
+    console.error("Firebase write failed:", error);
 
-}        catch (error) {
-
-            console.error(error);
-
-            alert("Unable to save Trainer.");
-
-        }
-
-    });
+    alert(
+        "Code: " + error.code +
+        "\n\nMessage: " + error.message
+    );
 
 }
