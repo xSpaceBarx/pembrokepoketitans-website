@@ -1,24 +1,13 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { db } from "./firebase.js";
 
 import {
-    getFirestore,
     collection,
-    getDocs
+    getDocs,
+    query,
+    orderBy
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
-const firebaseConfig = {
-    apiKey: "AIzaSyA1b9avIssQS8eRCDddguEaUwXPPf7t994",
-    authDomain: "pembroke-poketitans.firebaseapp.com",
-    projectId: "pembroke-poketitans",
-    storageBucket: "pembroke-poketitans.firebasestorage.app",
-    messagingSenderId: "921044433143",
-    appId: "1:921044433143:web:8081207a672b37dac5fbf2"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-async function loadTrainers() {
+export async function loadTrainers() {
 
     const trainerList = document.getElementById("trainer-list");
 
@@ -26,29 +15,49 @@ async function loadTrainers() {
 
     try {
 
-        const snapshot = await getDocs(collection(db, "trainers"));
+        const q = query(
+            collection(db, "trainers"),
+            orderBy("trainerName")
+        );
+
+        const snapshot = await getDocs(q);
 
         trainerList.innerHTML = "";
+
+        if (snapshot.empty) {
+
+            trainerList.innerHTML =
+                "<p>No trainers have been added yet.</p>";
+
+            return;
+
+        }
 
         snapshot.forEach(doc => {
 
             const trainer = doc.data();
 
             trainerList.innerHTML += `
+
                 <div class="event-card">
 
                     <h3>${trainer.trainerName}</h3>
 
-                    <p><strong>Friend Code:</strong> ${trainer.friendCode}</p>
+                    <p>📍 ${trainer.location}</p>
 
-                    <p><strong>Location:</strong> ${trainer.location}</p>
+                    <p class="friend-code">
+                        ${trainer.friendCode}
+                    </p>
 
                 </div>
+
             `;
 
         });
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
         console.error(error);
 
