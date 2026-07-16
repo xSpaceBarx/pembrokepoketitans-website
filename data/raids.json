@@ -1,17 +1,38 @@
 {
-  "legendary": {
-    "name": "Kyogre",
-    "weaknesses": [Lightning, Grass],
-    "bestCounters": [Shadow Raikou, Mega Mewtwo]
-  },
-  "mega": {
-    "name": "Sceptile",
-    "weaknesses": [Ice 2X],
-    "bestCounters": [Kyurem]
-  },
-  "shadow": {
-    "name": "Palkia",
-    "weaknesses": [Dragon],
-    "bestCounters": [Mega Rayquaza]
-  }
+  "raids": [
+    {
+      "type": "Legendary",
+      "boss": "Lugia",
+      "image": "assets/images/lugia.png",
+      "weaknesses": [
+        "Electric",
+        "Ice",
+        "Rock",
+        "Ghost",
+        "Dark"
+      ],
+      "recommended": [
+        "Dawn Wings Necrozma",
+        "Mega Tyranitar",
+        "Mega Gengar",
+        "Zekrom",
+        "Xurkitree"
+      ]
+    },
+    {
+      "type": "Mega",
+      "boss": "Mega Aggron",
+      "image": "assets/images/aggron.png",
+      "weaknesses": [
+        "Ground",
+        "Fighting",
+        "Fire"
+      ],
+      "recommended": [
+        "Primal Groudon",
+        "Mega Blaziken",
+        "Mega Lucario"
+      ]
+    }
+  ]
 }
