@@ -23,7 +23,14 @@ export async function loadTrainers() {
         );
 
         const snapshot = await getDocs(q);
+const trainerCount = document.getElementById("trainer-count");
 
+if (trainerCount) {
+
+    trainerCount.innerHTML =
+        `👥 ${snapshot.size} Registered Trainer${snapshot.size === 1 ? "" : "s"}`;
+
+}
         trainerList.innerHTML = "";
 
         if (snapshot.empty) {
