@@ -69,3 +69,29 @@ console.log("Events array:", events);
     }
 
 });
+// ---------- RAIDS ----------
+
+const raidResponse = await fetch("./data/raids.json");
+const raidData = await raidResponse.json();
+
+const raidContainer = document.getElementById("raid-container");
+
+raidContainer.innerHTML = "";
+
+raidData.raids.forEach(raid => {
+
+    raidContainer.innerHTML += `
+        <div class="raid-card">
+
+            <h3>${raid.type}</h3>
+
+            <p class="raid-date">${raid.date}</p>
+
+            <img src="${raid.image}"
+                 alt="${raid.type}"
+                 class="raid-image">
+
+        </div>
+    `;
+
+});
