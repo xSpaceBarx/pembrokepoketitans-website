@@ -1,1 +1,137 @@
+{
+  "quickGuides": [
+    {
+      "title": "Eeveelutions",
+      "image": "assets/images/resources/eevee.png"
+    },
+    {
+      "title": "Meltan Mystery Box",
+      "image": "assets/images/resources/meltan.png"
+    },
+    {
+      "title": "Gimmighoul Coin Bag",
+      "image": "assets/images/resources/coinbag.png"
+    },
+    {
+      "title": "Adventure Effects",
+      "image": "assets/images/resources/adventure.png"
+    },
+    {
+      "title": "Zygarde & Routes",
+      "image": "assets/images/resources/zygarde.png"
+    },
+    {
+      "title": "Vivillon Map",
+      "image": "assets/images/resources/vivillon.png",
+      "link": "https://pokemongohub.net/post/guide/guide-collecting-all-vivillon-patterns/"
+    },
+    {
+      "title": "Buddy Hearts",
+      "image": "assets/images/resources/buddyhearts.png"
+    },
+    {
+      "title": "Type Effectiveness",
+      "image": "assets/images/resources/effective.png",
+      "link": "https://pokemongohub.net/post/wiki/type-effectiveness/"
+    }
+  ],
 
+  "websites": [
+    {
+      "title": "DittoBase – Best Mega Attackers",
+      "url": "https://www.dittobase.com/pokemon-go/best-attackers/mega",
+      "description": "One of the best community-maintained resources for identifying the strongest Mega Pokémon attackers for raids."
+    },
+    {
+      "title": "Pokémon GO Hub – Top Max Battle Attackers",
+      "url": "https://db.pokemongohub.net/best/dynamax-attackers-per-type",
+      "description": "Ranks the strongest Dynamax and Gigantamax attackers by type."
+    },
+    {
+      "title": "DialgaDex – Strongest Overall Attackers",
+      "url": "https://www.dialgadex.com/?strongest=&t=Any",
+      "description": "Comprehensive rankings of the strongest Pokémon for raids."
+    },
+    {
+      "title": "DialgaDex – Best Attacker of Each Type",
+      "url": "https://www.dialgadex.com/?strongest=&t=Each",
+      "description": "Find the strongest attacker for every Pokémon type."
+    },
+    {
+      "title": "Hidden Search Bar Filters",
+      "url": "https://leekduck.com/FindPkmn/",
+      "description": "Advanced Pokémon GO search strings for organizing your Pokémon storage."
+    },
+    {
+      "title": "Stardust & Candy Resource Chart",
+      "url": "https://pokemongohub.net/post/guide/power-up-costs/",
+      "description": "Reference chart showing Stardust and Candy costs for powering up Pokémon."
+    },
+    {
+      "title": "How to Submit a Waypoint",
+      "url": "https://pokemongohub.net/post/guide/pokestop-submission-guide/",
+      "description": "Guide to submitting quality PokéStop nominations."
+    },
+    {
+      "title": "How to Review Wayfarer Nominations",
+      "url": "https://wayfarer.nianticlabs.com/",
+      "description": "Official Niantic Wayfarer reviewer resources."
+    },
+    {
+      "title": "How to Create a Route",
+      "url": "https://pokemongohub.net/post/guide/pokemon-go-routes-everything-you-need-to-know/",
+      "description": "Everything you need to know about creating Routes."
+    },
+    {
+      "title": "LeekDuck Events",
+      "url": "https://leekduck.com/events/",
+      "description": "Current and upcoming Pokémon GO events from around the world."
+    }
+  ],
+
+  "podcasts": [
+    {
+      "title": "Lured Up",
+      "url": "https://pokemonprofessor.com/lured-up-1",
+      "description": "Long-running Pokémon GO podcast covering news, updates and community discussion."
+    },
+    {
+      "title": "Wayspotters",
+      "url": "https://pokemonprofessor.com/wayspotters",
+      "description": "Podcast dedicated to Niantic Wayfarer and PokéStop nominations."
+    }
+  ],
+
+  "socials": [
+    {
+      "title": "G47IX",
+      "url": "https://x.com/g47ix",
+      "description": "Creator of outstanding Pokémon GO event graphics."
+    },
+    {
+      "title": "Lured Up",
+      "url": "https://x.com/PokeProfNet/status/2064517626303262729",
+      "description": "Official social account for the Lured Up Podcast."
+    },
+    {
+      "title": "Wayspotters",
+      "url": "https://x.com/wayspotters",
+      "description": "Wayfarer news, tips and reviewer education."
+    },
+    {
+      "title": "DittoBase",
+      "url": "https://x.com/dittobase",
+      "description": "Raid counters, attacker rankings and Pokémon GO resources."
+    },
+    {
+      "title": "Pokémon GO Hub",
+      "url": "https://x.com/PokemonGOHubNet",
+      "description": "One of the largest Pokémon GO news and strategy communities."
+    },
+    {
+      "title": "LeekDuck",
+      "url": "https://x.com/LeekDuck",
+      "description": "Trusted source for Pokémon GO event information and graphics."
+    }
+  ]
+}
