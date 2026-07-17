@@ -5,52 +5,62 @@
 
     {
       "title": "Monthly Calendar",
-      "image": "assets/images/monthlycalendar.png"
+      "image": "assets/images/monthlycalendar.png",
+      "alt": "Pokémon GO Monthly Event Calendar"
     },
 
     {
       "title": "Current Event",
-      "image": "assets/images/currentevent.png"
+      "image": "assets/images/currentevent.png",
+      "alt": "Current Pokémon GO Event"
     },
 
     {
       "title": "Upcoming Event",
-      "image": "assets/images/upcomingevent.png"
+      "image": "assets/images/upcomingevent.png",
+      "alt": "Upcoming Pokémon GO Event"
     },
 
     {
       "title": "Future Event",
-      "image": "assets/images/futureevent.png"
+      "image": "assets/images/futureevent.png",
+      "alt": "Future Pokémon GO Event"
     },
 
     {
       "title": "Community Day",
-      "image": "assets/images/communityday.png"
+      "image": "assets/images/communityday.png",
+      "alt": "Pokémon GO Community Day"
     },
 
     {
       "title": "Community Day Classic",
-      "image": "assets/images/communitydayclassic.png"
+      "image": "assets/images/communitydayclassic.png",
+      "alt": "Pokémon GO Community Day Classic"
     },
 
     {
       "title": "Raid Day",
-      "image": "assets/images/raidday.png"
+      "image": "assets/images/raidday.png",
+      "alt": "Pokémon GO Raid Day"
     },
 
     {
       "title": "Max Battle Day",
-      "image": "assets/images/maxbattleday.png"
+      "image": "assets/images/maxbattleday.png",
+      "alt": "Pokémon GO Max Battle Day"
     },
 
     {
       "title": "Hatch Day",
-      "image": "assets/images/hatchday.png"
+      "image": "assets/images/hatchday.png",
+      "alt": "Pokémon GO Hatch Day"
     },
 
     {
       "title": "In-Person Event",
-      "image": "assets/images/inpersonevent.png"
+      "image": "assets/images/inpersonevent.png",
+      "alt": "Pokémon GO In-Person Event"
     }
 
   ]
