@@ -1,0 +1,57 @@
+{
+  "lastUpdated": "August 7, 2026",
+
+  "events": [
+
+    {
+      "title": "Monthly Calendar",
+      "image": "assets/images/monthlycalendar.png"
+    },
+
+    {
+      "title": "Current Event",
+      "image": "assets/images/currentevent.png"
+    },
+
+    {
+      "title": "Upcoming Event",
+      "image": "assets/images/upcomingevent.png"
+    },
+
+    {
+      "title": "Future Event",
+      "image": "assets/images/futureevent.png"
+    },
+
+    {
+      "title": "Community Day",
+      "image": "assets/images/communityday.png"
+    },
+
+    {
+      "title": "Community Day Classic",
+      "image": "assets/images/communitydayclassic.png"
+    },
+
+    {
+      "title": "Raid Day",
+      "image": "assets/images/raidday.png"
+    },
+
+    {
+      "title": "Max Battle Day",
+      "image": "assets/images/maxbattleday.png"
+    },
+
+    {
+      "title": "Hatch Day",
+      "image": "assets/images/hatchday.png"
+    },
+
+    {
+      "title": "In-Person Event",
+      "image": "assets/images/inpersonevent.png"
+    }
+
+  ]
+}
