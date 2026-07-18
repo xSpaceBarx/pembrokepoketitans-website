@@ -542,12 +542,11 @@ footer img {
 }
 .gym-layout-image {
 
-    width: 100%;
-    max-width: 900px;
+    width: min(100%, 650px);
 
     display: block;
 
-    margin: 30px auto 0;
+    margin: 30px auto;
 
     border-radius: 16px;
 
