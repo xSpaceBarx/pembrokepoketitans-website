@@ -59,21 +59,30 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                     </a>
                 </p>
+<p>👥 ${nextEvent.attendance}</p>
 
-                <p>👥 ${nextEvent.attendance}</p>
+<p>${nextEvent.description}</p>
 
-                <p>${nextEvent.description}</p>
+<div id="today-feature">
 
-                <br>
+    <img
+        src="assets/images/today.png"
+        class="today-counters"
+        alt="Today's Featured Graphic"
+        onerror="this.parentElement.style.display='none';">
 
-                <a
-                    href="${nextEvent.link}"
-                    target="_blank"
-                    class="hero-button">
+</div>
 
-                    Join Campfire Meet Up
+<br>
 
-                </a>
+<a
+    href="${nextEvent.link}"
+    target="_blank"
+    class="hero-button">
+
+    Join Campfire Meet Up
+
+</a>
 
             </div>
 
