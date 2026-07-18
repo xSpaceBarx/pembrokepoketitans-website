@@ -26,7 +26,13 @@
       "image": "assets/images/futureevent.png",
       "alt": "Future Pokémon GO Event"
     },
-
+   
+    {
+      "title": "Future Event",
+      "image": "assets/images/futureevent2.png",
+      "alt": "Future Pokémon GO Event"
+    },
+    
     {
       "title": "Community Day",
       "image": "assets/images/communityday.png",
@@ -58,6 +64,12 @@
     },
 
     {
+      "title": "Ticketed Event",
+      "image": "assets/images/ticketevent.png",
+      "alt": "Pokémon GO In-Person Event"
+    },
+
+        {
       "title": "In-Person Event",
       "image": "assets/images/inpersonevent.png",
       "alt": "Pokémon GO In-Person Event"
