@@ -73,7 +73,7 @@ nav a {
 /* ---------- HERO ---------- */
 
 .hero {
-    height: 35vh;
+    height: 40vh;
     background: linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,.55)),
                 url("../images/hero.jpg");
     background-size: cover;
@@ -605,4 +605,20 @@ footer img {
 
     box-shadow: 0 8px 20px rgba(0,0,0,.15);
 
+}
+.page-hero {
+    height: 24vh;
+    min-height: 220px;
+
+    background: linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,.55)),
+                url("../images/hero.jpg");
+
+    background-size: cover;
+    background-position: center;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
 }
