@@ -608,7 +608,7 @@ footer img {
 }
 .page-hero {
     height: 18vh;
-    min-height: 2140px;
+    min-height: 140px;
 
     background: linear-gradient(rgba(0,0,0,.55), rgba(0,0,0,.55)),
                 url("../images/hero.jpg");
