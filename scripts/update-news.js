@@ -5,29 +5,27 @@ const parser = new Parser();
 
 (async () => {
 
-const feed = await parser.parseURL(
-"RSS_FEED_GOES_HERE"
-);
+    const feed = await parser.parseURL(
+        "https://pokemongohub.net/feed"
+    );
 
-const news = feed.items.slice(0,5).map(item => ({
+    const news = feed.items.slice(0,5).map(item => ({
 
-title: item.title,
+        title: item.title,
 
-link: item.link,
+        link: item.link,
 
-date: item.pubDate,
+        date: item.pubDate,
 
-image:
-item.enclosure?.url || "",
+        description: item.contentSnippet || "",
 
-description:
-item.contentSnippet || ""
+        image: ""
 
-}));
+    }));
 
-fs.writeFileSync(
-"data/news.json",
-JSON.stringify({news},null,2)
-);
+    fs.writeFileSync(
+        "data/news.json",
+        JSON.stringify({news}, null, 2)
+    );
 
 })();
