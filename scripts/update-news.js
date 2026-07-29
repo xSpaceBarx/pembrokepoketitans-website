@@ -9,23 +9,27 @@ const parser = new Parser();
         "https://pokemongohub.net/feed"
     );
 
-    const news = feed.items.slice(0,5).map(item => ({
+    const news = feed.items
+        .slice(0,5)
+        .map(item => ({
 
-        title: item.title,
+            title: item.title,
 
-        link: item.link,
+            link: item.link,
 
-        date: item.pubDate,
+            date: item.pubDate,
 
-        description: item.contentSnippet || "",
+            description: item.contentSnippet,
 
-        image: ""
+            image:
+                item.enclosure?.url ||
+                ""
 
-    }));
+        }));
 
     fs.writeFileSync(
         "data/news.json",
-        JSON.stringify({news}, null, 2)
+        JSON.stringify({ news }, null, 2)
     );
 
 })();
