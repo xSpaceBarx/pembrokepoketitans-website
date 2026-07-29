@@ -1,14 +1,14 @@
-name: Update Pokemon GO Hub News
+name: Update Pokemon GO News
 
 on:
   schedule:
-    - cron: '0 * * * *'
+    - cron: "0 * * * *"
 
   workflow_dispatch:
 
 jobs:
 
-  update-news:
+  update:
 
     runs-on: ubuntu-latest
 
@@ -19,22 +19,18 @@ jobs:
       - uses: actions/setup-node@v4
 
         with:
-
           node-version: 20
 
-      - run: npm install axios cheerio
+      - run: npm install rss-parser
 
       - run: node scripts/update-news.js
 
-      - name: Commit
-
-        run: |
-
+      - run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
 
           git add data/news.json
 
-          git commit -m "Update Pokemon GO Hub news" || echo "No changes"
+          git commit -m "Update News" || echo "No Changes"
 
           git push
