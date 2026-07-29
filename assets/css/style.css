@@ -622,3 +622,60 @@ footer img {
     text-align: center;
     color: white;
 }
+.news-card{
+
+    background:#fff;
+
+    border-radius:16px;
+
+    overflow:hidden;
+
+    box-shadow:0 8px 20px rgba(0,0,0,.08);
+
+    transition:.25s;
+
+}
+
+.news-card:hover{
+
+    transform:translateY(-5px);
+
+}
+
+.news-card img{
+
+    width:100%;
+
+    display:block;
+
+}
+
+.news-card-content{
+
+    padding:20px;
+
+}
+
+.news-card h3{
+
+    color:#153A5B;
+
+    margin-bottom:10px;
+
+}
+
+.news-date{
+
+    color:#777;
+
+    font-size:.9rem;
+
+    margin-bottom:12px;
+
+}
+
+.news-card p{
+
+    margin-bottom:18px;
+
+}
