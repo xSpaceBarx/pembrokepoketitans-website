@@ -2,36 +2,32 @@ name: Update Pokemon GO Hub News
 
 on:
   schedule:
-    - cron: "0 * * * *"
+    - cron: "0 */6 * * *"
 
   workflow_dispatch:
 
 jobs:
   update:
-
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
-
         with:
-          node-version: 20
+          node-version: 24
 
-      - run: npm install rss-parser
+      - run: npm install axios
 
       - run: node scripts/update-news.js
 
       - name: Commit Changes
-
         run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
 
           git add data/news.json
 
           git commit -m "Automatic Pokémon GO Hub update" || echo "No changes"
 
           git push
-          - run: npm install rss-parser axios
