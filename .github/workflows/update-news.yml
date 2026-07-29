@@ -34,3 +34,4 @@ jobs:
           git commit -m "Automatic Pokémon GO Hub update" || echo "No changes"
 
           git push
+          - run: npm install rss-parser axios
