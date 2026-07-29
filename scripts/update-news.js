@@ -1,53 +1,34 @@
-const Parser = require("rss-parser");
+const axios = require("axios");
 const fs = require("fs");
-
-const parser = new Parser();
 
 (async () => {
 
-const axios = require("axios");
+    const response = await axios.get(
+        "https://api.rss2json.com/v1/api.json?rss_url=https://pokemongohub.net/feed"
+    );
 
-const response = await axios.get(
-    "https://api.rss2json.com/v1/api.json?rss_url=https://pokemongohub.net/feed"
-);
+    const news = response.data.items.slice(0,5).map(item => ({
 
-const news = response.data.items.slice(0,5).map(item => ({
+        title: item.title,
 
-    title: item.title,
+        link: item.link,
 
-    link: item.link,
+        date: item.pubDate,
 
-    date: item.pubDate,
+        description:
+            item.description
+                .replace(/<[^>]*>/g,"")
+                .substring(0,140) + "...",
 
-    description: item.description
-        .replace(/<[^>]*>/g,"")
-        .substring(0,140) + "...",
+        image: item.thumbnail || ""
 
-    image: item.thumbnail
-
-}));
-
-    const news = feed.items
-        .slice(0,5)
-        .map(item => ({
-
-            title: item.title,
-
-            link: item.link,
-
-            date: item.pubDate,
-
-            description: item.contentSnippet,
-
-            image:
-                item.enclosure?.url ||
-                ""
-
-        }));
+    }));
 
     fs.writeFileSync(
         "data/news.json",
         JSON.stringify({ news }, null, 2)
     );
+
+    console.log("Updated " + news.length + " news articles.");
 
 })();
