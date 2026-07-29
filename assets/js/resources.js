@@ -123,3 +123,48 @@ function buildCards(containerId, items, buttonText) {
     });
 
 }
+fetch("./data/news.json")
+
+.then(response=>response.json())
+
+.then(data=>{
+
+const container=document.getElementById("news-grid");
+
+container.innerHTML="";
+
+data.news.forEach(article=>{
+
+container.innerHTML += `
+
+<div class="news-card">
+
+${article.image ?
+`<img src="${article.image}" alt="${article.title}">`
+: ""}
+
+<div class="news-card-content">
+
+<h3>${article.title}</h3>
+
+<div class="news-date">${article.date}</div>
+
+<p>${article.description}</p>
+
+<a class="hero-button"
+href="${article.link}"
+target="_blank">
+
+Read Article →
+
+</a>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+});
