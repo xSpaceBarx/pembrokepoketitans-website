@@ -1,4 +1,4 @@
-name: Update Pokemon GO News
+name: Update Pokemon GO Hub News
 
 on:
   schedule:
@@ -7,13 +7,11 @@ on:
   workflow_dispatch:
 
 jobs:
-
   update:
 
     runs-on: ubuntu-latest
 
     steps:
-
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
@@ -25,12 +23,14 @@ jobs:
 
       - run: node scripts/update-news.js
 
-      - run: |
+      - name: Commit Changes
+
+        run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
 
           git add data/news.json
 
-          git commit -m "Update News" || echo "No Changes"
+          git commit -m "Automatic Pokémon GO Hub update" || echo "No changes"
 
           git push
