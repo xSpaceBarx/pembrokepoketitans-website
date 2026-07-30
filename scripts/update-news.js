@@ -7,7 +7,7 @@ const fs = require("fs");
         "https://api.rss2json.com/v1/api.json?rss_url=https://pokemongohub.net/feed"
     );
 
-    const news = response.data.items.slice(0,5).map(item => ({
+    const news = response.data.items.slice(0,6).map(item => ({
 
         title: item.title,
 
@@ -20,7 +20,10 @@ const fs = require("fs");
                 .replace(/<[^>]*>/g,"")
                 .substring(0,140) + "...",
 
-        image: item.thumbnail || ""
+        image:
+    item.thumbnail ||
+    item.enclosure?.link ||
+    ""
 
     }));
 
