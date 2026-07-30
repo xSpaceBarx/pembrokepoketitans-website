@@ -4,34 +4,49 @@ const fs = require("fs");
 (async () => {
 
     const response = await axios.get(
-        "https://api.rss2json.com/v1/api.json?rss_url=https://pokemongohub.net/feed"
+        "https://pokemongohub.net/wp-json/wp/v2/posts?per_page=6&_embed"
     );
 
-    const news = response.data.items.slice(0,6).map(item => ({
+    const news = response.data.map(post => {
 
-        title: item.title,
+        let image = "";
 
-        link: item.link,
+        if (
+            post._embedded &&
+            post._embedded["wp:featuredmedia"] &&
+            post._embedded["wp:featuredmedia"][0]
+        ) {
+            image = post._embedded["wp:featuredmedia"][0].source_url;
+        }
 
-        date: item.pubDate,
+        return {
 
-        description:
-            item.description
-                .replace(/<[^>]*>/g,"")
-                .substring(0,140) + "...",
+            title: post.title.rendered,
 
-        image:
-    item.thumbnail ||
-    item.enclosure?.link ||
-    ""
+            link: post.link,
 
-    }));
+            date: new Date(post.date).toLocaleDateString("en-US", {
+                month: "long",
+                day: "numeric",
+                year: "numeric"
+            }),
+
+            description: post.excerpt.rendered
+                .replace(/<[^>]*>/g, "")
+                .replace(/\s+/g, " ")
+                .trim(),
+
+            image
+
+        };
+
+    });
 
     fs.writeFileSync(
         "data/news.json",
         JSON.stringify({ news }, null, 2)
     );
 
-    console.log("Updated " + news.length + " news articles.");
+    console.log("Updated", news.length, "articles.");
 
 })();
