@@ -4,43 +4,29 @@ const fs = require("fs");
 (async () => {
 
     const response = await axios.get(
-        "https://pokemongohub.net/wp-json/wp/v2/posts?per_page=6&_embed"
+        "https://api.rss2json.com/v1/api.json?rss_url=https://pokemongohub.net/feed"
     );
 
-    const news = response.data.map(post => {
+    const news = response.data.items
+        .slice(0,6)
+        .map(item => ({
 
-        let image = "";
+            title: item.title,
 
-        if (
-            post._embedded &&
-            post._embedded["wp:featuredmedia"] &&
-            post._embedded["wp:featuredmedia"][0]
-        ) {
-            image = post._embedded["wp:featuredmedia"][0].source_url;
-        }
+            link: item.link,
 
-        return {
+            date: item.pubDate,
 
-            title: post.title.rendered,
+            description:
+                item.description
+                    .replace(/<[^>]*>/g,"")
+                    .replace(/\s+/g," ")
+                    .trim()
+                    .substring(0,140) + "...",
 
-            link: post.link,
+            image: item.thumbnail || ""
 
-            date: new Date(post.date).toLocaleDateString("en-US", {
-                month: "long",
-                day: "numeric",
-                year: "numeric"
-            }),
-
-            description: post.excerpt.rendered
-                .replace(/<[^>]*>/g, "")
-                .replace(/\s+/g, " ")
-                .trim(),
-
-            image
-
-        };
-
-    });
+        }));
 
     fs.writeFileSync(
         "data/news.json",
