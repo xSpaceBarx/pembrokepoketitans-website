@@ -679,3 +679,42 @@ footer img {
     margin-bottom:18px;
 
 }
+.announcement-card{
+
+    background:#153A5B;
+
+    color:white;
+
+    padding:24px;
+
+    border-radius:16px;
+
+    text-align:center;
+
+    box-shadow:0 8px 20px rgba(0,0,0,.15);
+
+}
+
+.announcement-card h2{
+
+    margin-bottom:12px;
+
+    color:#FFD24A;
+
+}
+
+.announcement-card p{
+
+    margin-bottom:14px;
+
+    font-size:1.1rem;
+
+}
+
+.announcement-date{
+
+    opacity:.8;
+
+    font-size:.9rem;
+
+}
