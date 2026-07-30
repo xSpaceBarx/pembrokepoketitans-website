@@ -223,3 +223,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
 });
+fetch("./data/announcement.json")
+.then(response => response.json())
+.then(data => {
+
+    if(!data.enabled) return;
+
+    document.getElementById("announcement-section").style.display="block";
+
+    document.getElementById("announcement-title").textContent =
+        "📢 " + data.title;
+
+    document.getElementById("announcement-message").textContent =
+        data.message;
+
+    document.getElementById("announcement-date").textContent =
+        "Posted " + data.date;
+
+});
