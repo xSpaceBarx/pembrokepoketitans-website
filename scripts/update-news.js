@@ -24,7 +24,9 @@ const fs = require("fs");
                     .trim()
                     .substring(0,140) + "...",
 
-            image: item.thumbnail || ""
+            image:
+    item.thumbnail ||
+    "assets/images/resources/gohub-placeholder.png"
 
         }));
 
