@@ -2,14 +2,17 @@
   "raids": [
     {
       "type": "Legendary Raids",
+      "date": "Wednesday-Tuesday",
       "image": "assets/images/legendary.png"
     },
     {
       "type": "Mega Raids",
+      "date": "Wednesday-Tuesday",
       "image": "assets/images/mega.png"
     },
     {
       "type": "Shadow Raids",
+      "date": "Monthly",
       "image": "assets/images/shadow.png"
     }
   ]
