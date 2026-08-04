@@ -47,26 +47,40 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             if (!imageExists) continue;
 
-            container.innerHTML += `
+container.innerHTML += `
 
-                <div class="event-card">
+    <div class="event-card">
 
-                    <h2 class="section-title">
+        <h2 class="section-title">
+            ${event.title}
+        </h2>
 
-                        ${event.title}
+        <img
+            src="${event.image}"
+            alt="${event.alt}"
+            class="current-event-image">
 
-                    </h2>
-
-                    <img
-                        src="${event.image}"
-                        alt="${event.alt}"
-                        class="current-event-image">
-
+        ${
+            event.buttonLink
+                ? `
+                <div class="event-button-container">
+                    <a
+                        href="${event.buttonLink}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="event-button">
+                        ${event.buttonText || "Learn More"}
+                    </a>
                 </div>
+                `
+                : ""
+        }
 
-                <br><br>
+    </div>
 
-            `;
+    <br><br>
+
+`;
 
         }
 
