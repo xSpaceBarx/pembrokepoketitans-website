@@ -63,11 +63,13 @@
       "alt": "Pokémon GO Raid Day"
     },
 
-    {
-      "title": "Ticketed Event",
-      "image": "assets/images/ticketevent.png",
-      "alt": "Pokémon GO In-Person Event"
-    },
+{
+  "title": "Ticketed Event",
+  "image": "assets/images/ticketevent.png",
+  "alt": "Pokémon GO In-Person Ticketed Event",
+  "buttonText": "Purchase Tickets",
+  "buttonLink": "https://store.pokemongolive.com/..."
+}
 
         {
       "title": "In-Person Event",
