@@ -3,12 +3,12 @@
 
 <head>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>PokéTitans Alerts</title>
+    <title>PokéTitans Alerts</title>
 
-<link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css">
 
 </head>
 
@@ -23,7 +23,7 @@
         <h1>🔔 PokéTitans Alerts</h1>
 
         <p>
-            Stay informed about the updates that matter most to you.
+            Choose the alerts you'd like to receive from the PokéTitans Companion.
         </p>
 
     </div>
@@ -32,130 +32,152 @@
 
 <section class="section">
 
-<div class="container">
+    <div class="container">
 
-<div class="companion-card">
+        <div class="companion-card">
 
-<h2>Choose Your Alerts</h2>
+            <h2>Customize Your Notifications</h2>
 
-<p>
-Select the notifications you'd like to receive.
-You can update these anytime.
-</p>
+            <p>
+                All alerts are enabled by default for new users.
+                Turn off any categories you don't want and click
+                <strong>Save My Preferences</strong>.
+            </p>
 
-<div class="alert-option">
+            <!-- Meetups -->
 
-<label>
+            <div class="toggle-row">
 
-<input type="checkbox" id="meetups">
+                <div>
 
-📍 Campfire Meet Up Reminders
+                    <strong>📍 Campfire Meet Up Reminders</strong>
 
-</label>
+                    <div class="toggle-description">
+                        Raid Hours, Community Days, Gigantamax Battles and local meetups.
+                    </div>
 
-<p class="alert-description">
+                </div>
 
-Raid Hour, Community Day, Gigantamax Battles and local meetups.
+                <label class="switch">
 
-</p>
+                    <input type="checkbox" id="meetups">
 
-</div>
+                    <span class="slider"></span>
 
-<hr>
+                </label>
 
-<div class="alert-option">
+            </div>
 
-<label>
+            <!-- GO Pass -->
 
-<input type="checkbox" id="gopass">
+            <div class="toggle-row">
 
-🍀 GO Pass & Lucky Trinket Reminders
+                <div>
 
-</label>
+                    <strong>🍀 GO Pass & Lucky Trinket Reminders</strong>
 
-<p class="alert-description">
+                    <div class="toggle-description">
+                        Never forget to collect GO Pass rewards or Lucky Trinkets before they expire.
+                    </div>
 
-Never forget to collect rewards before they expire.
+                </div>
 
-</p>
+                <label class="switch">
 
-</div>
+                    <input type="checkbox" id="gopass">
 
-<hr>
+                    <span class="slider"></span>
 
-<div class="alert-option">
+                </label>
 
-<label>
+            </div>
 
-<input type="checkbox" id="events">
+            <!-- Events -->
 
-🎉 Event Start Reminders
+            <div class="toggle-row">
 
-</label>
+                <div>
 
-<p class="alert-description">
+                    <strong>🎉 Event Start Reminders</strong>
 
-Spotlight Hour, Raid Day, Community Day and more.
+                    <div class="toggle-description">
+                        Community Days, Spotlight Hours, Raid Days and major Pokémon GO events.
+                    </div>
 
-</p>
+                </div>
 
-</div>
+                <label class="switch">
 
-<hr>
+                    <input type="checkbox" id="events">
 
-<div class="alert-option">
+                    <span class="slider"></span>
 
-<label>
+                </label>
 
-<input type="checkbox" id="codes">
+            </div>
 
-🎁 Free Rewards & Promo Codes
+            <!-- Codes -->
 
-</label>
+            <div class="toggle-row">
 
-<p class="alert-description">
+                <div>
 
-Redemption codes, Web Store bonuses and free items.
+                    <strong>🎁 Redemption Codes</strong>
 
-</p>
+                    <div class="toggle-description">
+                        Free promo codes, Web Store rewards and bonus giveaways.
+                    </div>
 
-</div>
+                </div>
 
-<hr>
+                <label class="switch">
 
-<div class="alert-option">
+                    <input type="checkbox" id="codes">
 
-<label>
+                    <span class="slider"></span>
 
-<input type="checkbox" id="news">
+                </label>
 
-🚨 Pokémon GO Breaking News
+            </div>
 
-</label>
+            <!-- Breaking News -->
 
-<p class="alert-description">
+            <div class="toggle-row">
 
-Major announcements, surprise events and urgent updates.
+                <div>
 
-</p>
+                    <strong>🚨 Pokémon GO Breaking News</strong>
 
-</div>
+                    <div class="toggle-description">
+                        Major announcements, surprise events and important Pokémon GO updates.
+                    </div>
 
-<br>
+                </div>
 
-<button id="save-alerts" class="btn-orange">
+                <label class="switch">
 
-Save My Preferences
+                    <input type="checkbox" id="news">
 
-</button>
+                    <span class="slider"></span>
 
-<p id="save-status"></p>
+                </label>
 
-</div>
+            </div>
 
-</div>
+            <br>
+
+            <button id="save-alerts" class="btn-orange">
+                Save My Preferences
+            </button>
+
+            <p id="save-status"></p>
+
+        </div>
+
+    </div>
 
 </section>
+
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 
 <script>
