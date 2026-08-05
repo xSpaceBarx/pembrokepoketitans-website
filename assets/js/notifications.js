@@ -2,25 +2,44 @@ window.OneSignalDeferred = window.OneSignalDeferred || [];
 
 OneSignalDeferred.push(async function (OneSignal) {
 
-    document.getElementById("save-alerts").onclick = async function () {
+    const saveButton = document.getElementById("save-alerts");
+    const status = document.getElementById("save-status");
 
-        await OneSignal.User.addTags({
+    saveButton.addEventListener("click", async () => {
 
-            alerts_meetups: document.getElementById("meetups").checked,
+        status.innerHTML = "⏳ Saving preferences...";
 
-            alerts_gopass: document.getElementById("gopass").checked,
+        try {
 
-            alerts_events: document.getElementById("events").checked,
+            await OneSignal.User.addTags({
 
-            alerts_codes: document.getElementById("codes").checked,
+                alerts_meetups: document.getElementById("meetups").checked ? "true" : "false",
 
-            alerts_news: document.getElementById("news").checked
+                alerts_gopass: document.getElementById("gopass").checked ? "true" : "false",
 
-        });
+                alerts_events: document.getElementById("events").checked ? "true" : "false",
 
-        document.getElementById("save-status").innerHTML =
-            "✅ Preferences Saved";
+                alerts_codes: document.getElementById("codes").checked ? "true" : "false",
 
-    };
+                alerts_news: document.getElementById("news").checked ? "true" : "false"
+
+            });
+
+            // Read the tags back from OneSignal
+            const tags = OneSignal.User.tags;
+
+            console.log("Current Tags:", tags);
+
+            status.innerHTML = "✅ Preferences Saved Successfully";
+
+        } catch (err) {
+
+            console.error(err);
+
+            status.innerHTML = "❌ Unable to save preferences.";
+
+        }
+
+    });
 
 });
