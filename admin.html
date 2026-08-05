@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>PokéTitans Admin Portal</title>
+    <title>PokéTitans Command Center</title>
 
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/admin.css">
@@ -21,10 +21,10 @@
 
     <div class="hero-content">
 
-        <h1>🛠 PokéTitans Admin Portal</h1>
+        <h1>🛠 PokéTitans Command Center</h1>
 
         <p>
-            Community Management Dashboard
+            Manage your community from one place.
         </p>
 
     </div>
@@ -35,65 +35,219 @@
 
 <div class="container">
 
-<div class="admin-grid">
+    <div class="notification-center">
 
-<div class="admin-card">
+        <h2>📢 Notification Center</h2>
 
-<h2>📢 Notification Center</h2>
+        <p class="section-description">
+            Quickly create, schedule and send community notifications.
+        </p>
 
-<p>
-Send and schedule community notifications.
-</p>
+        <hr>
 
-<button id="openNotifications" class="btn-orange">
-Open Notification Center
-</button>
+        <h3>⚡ Quick Templates</h3>
 
-</div>
+        <div class="template-grid">
 
-<div class="admin-card">
+            <button class="template-btn" data-template="meetup">
+                📍 Campfire Meetup
+            </button>
 
-<h2>📅 Event Manager</h2>
+            <button class="template-btn" data-template="raidhour">
+                ⚡ Raid Hour
+            </button>
 
-<p>
-Create and edit events without touching JSON.
-</p>
+            <button class="template-btn" data-template="gopass">
+                🎟 GO Pass
+            </button>
 
-<button class="btn-orange" disabled>
-Coming Soon
-</button>
+            <button class="template-btn" data-template="trinket">
+                🍀 Lucky Trinket
+            </button>
 
-</div>
+            <button class="template-btn" data-template="codes">
+                🎁 Redemption Code
+            </button>
 
-<div class="admin-card">
+            <button class="template-btn" data-template="news">
+                🚨 Breaking News
+            </button>
 
-<h2>👥 Trainer Management</h2>
+        </div>
 
-<p>
-Manage trainer submissions.
-</p>
+        <hr>
 
-<button class="btn-orange" disabled>
-Coming Soon
-</button>
+        <h3>✏ Notification Editor</h3>
 
-</div>
+        <label for="notification-title">
+            Title
+        </label>
 
-<div class="admin-card">
+        <input
+            type="text"
+            id="notification-title"
+            placeholder="Notification title">
 
-<h2>📊 Analytics</h2>
+        <label for="notification-message">
+            Message
+        </label>
 
-<p>
-Website traffic and notification statistics.
-</p>
+        <textarea
+            id="notification-message"
+            rows="6"
+            placeholder="Type your notification message..."></textarea>
 
-<button class="btn-orange" disabled>
-Coming Soon
-</button>
+        <div class="editor-grid">
 
-</div>
+            <div>
 
-</div>
+                <label>Audience</label>
+
+                <select id="notification-audience">
+
+                    <option value="meetups">
+                        Campfire Meetup Reminders
+                    </option>
+
+                    <option value="gopass">
+                        GO Pass / Lucky Trinket
+                    </option>
+
+                    <option value="events">
+                        Event Start Reminders
+                    </option>
+
+                    <option value="codes">
+                        Redemption Codes
+                    </option>
+
+                    <option value="news">
+                        Breaking News
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div>
+
+                <label>Delivery</label>
+
+                <select id="notification-delivery">
+
+                    <option value="now">
+                        Send Immediately
+                    </option>
+
+                    <option value="schedule">
+                        Schedule
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+        <div class="schedule-grid">
+
+            <div>
+
+                <label>Date</label>
+
+                <input
+                    type="date"
+                    id="notification-date">
+
+            </div>
+
+            <div>
+
+                <label>Time</label>
+
+                <input
+                    type="time"
+                    id="notification-time">
+
+            </div>
+
+        </div>
+
+        <div class="button-row">
+
+            <button
+                id="previewNotification"
+                class="btn-orange">
+
+                👁 Preview
+
+            </button>
+
+            <button
+                id="sendNotification"
+                class="btn-orange">
+
+                📤 Send Notification
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <br><br>
+
+    <div class="admin-grid">
+
+        <div class="admin-card">
+
+            <h2>📅 Event Manager</h2>
+
+            <p>
+                Create and edit events without touching JSON.
+            </p>
+
+            <button class="btn-orange" disabled>
+
+                Coming Soon
+
+            </button>
+
+        </div>
+
+        <div class="admin-card">
+
+            <h2>👥 Trainer Management</h2>
+
+            <p>
+                Search, manage and approve trainer submissions.
+            </p>
+
+            <button class="btn-orange" disabled>
+
+                Coming Soon
+
+            </button>
+
+        </div>
+
+        <div class="admin-card">
+
+            <h2>📊 Analytics</h2>
+
+            <p>
+                Website traffic and notification statistics.
+            </p>
+
+            <button class="btn-orange" disabled>
+
+                Coming Soon
+
+            </button>
+
+        </div>
+
+    </div>
 
 </div>
 
