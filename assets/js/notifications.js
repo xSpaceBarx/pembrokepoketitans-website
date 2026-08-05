@@ -1,43 +1,33 @@
-window.OneSignalDeferred = window.OneSignalDeferred || [];
+// Load saved preferences
+document.addEventListener("DOMContentLoaded", () => {
 
-OneSignalDeferred.push(async function (OneSignal) {
+    const prefs = JSON.parse(
+        localStorage.getItem("poketitans-alerts")
+    ) || {};
 
-    alert("Notifications JS Loaded");
+    document.getElementById("meetups").checked = prefs.meetups ?? true;
+    document.getElementById("gopass").checked = prefs.gopass ?? true;
+    document.getElementById("events").checked = prefs.events ?? true;
+    document.getElementById("codes").checked = prefs.codes ?? true;
+    document.getElementById("news").checked = prefs.news ?? true;
 
-    console.log("OneSignal Object:", OneSignal);
-    console.log("OneSignal.User:", OneSignal.User);
+    document.getElementById("save-alerts").onclick = function () {
 
-    document.getElementById("save-alerts").addEventListener("click", async () => {
+        const preferences = {
+            meetups: document.getElementById("meetups").checked,
+            gopass: document.getElementById("gopass").checked,
+            events: document.getElementById("events").checked,
+            codes: document.getElementById("codes").checked,
+            news: document.getElementById("news").checked
+        };
 
-        try {
+        localStorage.setItem(
+            "poketitans-alerts",
+            JSON.stringify(preferences)
+        );
 
-            console.log("Saving...");
-
-            console.log("Subscription:",
-                OneSignal.User.PushSubscription.optedIn);
-
-            console.log("OneSignal ID:",
-                OneSignal.User.onesignalId);
-
-            await OneSignal.User.addTags({
-                alerts_meetups: "true"
-            });
-
-            console.log("Tags after save:",
-                OneSignal.User.tags);
-
-            document.getElementById("save-status").innerHTML =
-                "Saved";
-
-        } catch (e) {
-
-            console.error(e);
-
-            document.getElementById("save-status").innerHTML =
-                e.toString();
-
-        }
-
-    });
+        document.getElementById("save-status").innerHTML =
+            "✅ Preferences Saved";
+    };
 
 });
