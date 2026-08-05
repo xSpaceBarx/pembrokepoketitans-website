@@ -1,3 +1,4 @@
+alert("Notifications JS Loaded");
 window.OneSignalDeferred = window.OneSignalDeferred || [];
 
 OneSignalDeferred.push(async function (OneSignal) {
