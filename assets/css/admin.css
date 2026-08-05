@@ -1,1 +1,37 @@
+.admin-grid{
 
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+gap:25px;
+
+}
+
+.admin-card{
+
+background:#fff;
+padding:30px;
+border-radius:18px;
+box-shadow:0 8px 24px rgba(0,0,0,.12);
+text-align:center;
+
+}
+
+.admin-card h2{
+
+margin-bottom:15px;
+
+}
+
+.admin-card p{
+
+color:#666;
+margin-bottom:25px;
+line-height:1.6;
+
+}
+
+.admin-card button{
+
+width:100%;
+
+}
