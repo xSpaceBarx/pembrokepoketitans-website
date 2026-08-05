@@ -1,16 +1,25 @@
 // Load saved preferences
 document.addEventListener("DOMContentLoaded", () => {
 
-    const prefs = JSON.parse(
-        localStorage.getItem("poketitans-alerts")
-    ) || {};
+    const defaultPreferences = {
+    meetups: true,
+    gopass: true,
+    events: true,
+    codes: true,
+    news: true
+};
 
-    document.getElementById("meetups").checked = prefs.meetups ?? true;
-    document.getElementById("gopass").checked = prefs.gopass ?? true;
-    document.getElementById("events").checked = prefs.events ?? true;
-    document.getElementById("codes").checked = prefs.codes ?? true;
-    document.getElementById("news").checked = prefs.news ?? true;
+const savedPreferences = JSON.parse(
+    localStorage.getItem("poketitans-alerts")
+);
 
+const prefs = savedPreferences || defaultPreferences;
+
+document.getElementById("meetups").checked = prefs.meetups;
+document.getElementById("gopass").checked = prefs.gopass;
+document.getElementById("events").checked = prefs.events;
+document.getElementById("codes").checked = prefs.codes;
+document.getElementById("news").checked = prefs.news;
     document.getElementById("save-alerts").onclick = function () {
 
         const preferences = {
