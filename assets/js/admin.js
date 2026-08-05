@@ -1,19 +1,130 @@
+const templates = {
+
+    meetup: {
+
+        title: "📍 Campfire Meetup Reminder",
+
+        message:
+`Don't forget tonight's PokéTitans meetup!
+
+📍 Pembroke Historical Society
+🕠 Meetup begins at 5:45 PM
+
+We hope to see you there!`,
+
+        audience: "meetups"
+
+    },
+
+    raidhour: {
+
+        title: "⚡ Raid Hour Tonight!",
+
+        message:
+`Raid Hour starts tonight!
+
+Meet us at the Pembroke Historical Society at 5:45 PM.
+
+Let's raid together!`,
+
+        audience: "meetups"
+
+    },
+
+    gopass: {
+
+        title: "🎟 GO Pass Reminder",
+
+        message:
+`Don't forget to collect today's GO Pass rewards before they expire!`,
+
+        audience: "gopass"
+
+    },
+
+    trinket: {
+
+        title: "🍀 Lucky Trinket Reminder",
+
+        message:
+`Remember to collect your Lucky Trinket before midnight tonight!`,
+
+        audience: "gopass"
+
+    },
+
+    codes: {
+
+        title: "🎁 New Redemption Code",
+
+        message:
+`A new Pokémon GO redemption code is available!
+
+Claim it before it expires.`,
+
+        audience: "codes"
+
+    },
+
+    news: {
+
+        title: "",
+
+        message: "",
+
+        audience: "news"
+
+    }
+
+};
+
+document.querySelectorAll(".template-btn").forEach(button => {
+
+    button.addEventListener("click", () => {
+
+        const template = templates[button.dataset.template];
+
+        document.getElementById("notification-title").value =
+            template.title;
+
+        document.getElementById("notification-message").value =
+            template.message;
+
+        document.getElementById("notification-audience").value =
+            template.audience;
+
+    });
+
+});
+
 document
-.getElementById("openNotifications")
+.getElementById("previewNotification")
 .addEventListener("click", () => {
 
     alert(
-`🚧 Notification Center
 
-This will become your control panel for:
+`📢 Preview
 
-• Meetups
-• GO Pass
-• Lucky Trinkets
-• Redemption Codes
-• Breaking News
+Title:
 
-Next we'll build the actual sender.`
+${document.getElementById("notification-title").value}
+
+-----------------------
+
+${document.getElementById("notification-message").value}`
+
+    );
+
+});
+
+document
+.getElementById("sendNotification")
+.addEventListener("click", () => {
+
+    alert(
+
+"🚧 Next step:\n\nThis button will soon connect directly to Firebase and OneSignal."
+
     );
 
 });
