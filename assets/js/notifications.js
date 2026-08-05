@@ -1,7 +1,8 @@
 window.OneSignalDeferred = window.OneSignalDeferred || [];
 
 OneSignalDeferred.push(async function (OneSignal) {
-
+console.log("Subscribed:", await OneSignal.User.PushSubscription.optedIn);
+console.log("OneSignal ID:", OneSignal.User.onesignalId);
     const saveButton = document.getElementById("save-alerts");
     const status = document.getElementById("save-status");
 
