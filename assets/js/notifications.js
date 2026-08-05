@@ -1,47 +1,40 @@
-alert("Notifications JS Loaded");
 window.OneSignalDeferred = window.OneSignalDeferred || [];
 
 OneSignalDeferred.push(async function (OneSignal) {
-console.log("Subscribed:", await OneSignal.User.PushSubscription.optedIn);
-console.log("OneSignal ID:", OneSignal.User.onesignalId);
-    const saveButton = document.getElementById("save-alerts");
-    const status = document.getElementById("save-status");
 
-    saveButton.addEventListener("click", async () => {
+    alert("Notifications JS Loaded");
 
-        const tags = OneSignal.User.tags;
+    console.log("OneSignal Object:", OneSignal);
+    console.log("OneSignal.User:", OneSignal.User);
 
-status.innerHTML =
-`✅ Saved!<br><br><pre>${JSON.stringify(tags, null, 2)}</pre>`;
+    document.getElementById("save-alerts").addEventListener("click", async () => {
 
         try {
 
+            console.log("Saving...");
+
+            console.log("Subscription:",
+                OneSignal.User.PushSubscription.optedIn);
+
+            console.log("OneSignal ID:",
+                OneSignal.User.onesignalId);
+
             await OneSignal.User.addTags({
-
-                alerts_meetups: document.getElementById("meetups").checked ? "true" : "false",
-
-                alerts_gopass: document.getElementById("gopass").checked ? "true" : "false",
-
-                alerts_events: document.getElementById("events").checked ? "true" : "false",
-
-                alerts_codes: document.getElementById("codes").checked ? "true" : "false",
-
-                alerts_news: document.getElementById("news").checked ? "true" : "false"
-
+                alerts_meetups: "true"
             });
 
-            // Read the tags back from OneSignal
-            const tags = OneSignal.User.tags;
+            console.log("Tags after save:",
+                OneSignal.User.tags);
 
-            console.log("Current Tags:", tags);
+            document.getElementById("save-status").innerHTML =
+                "Saved";
 
-            status.innerHTML = "✅ Preferences Saved Successfully";
+        } catch (e) {
 
-        } catch (err) {
+            console.error(e);
 
-            console.error(err);
-
-            status.innerHTML = "❌ Unable to save preferences.";
+            document.getElementById("save-status").innerHTML =
+                e.toString();
 
         }
 
