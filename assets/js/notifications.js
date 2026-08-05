@@ -8,7 +8,10 @@ console.log("OneSignal ID:", OneSignal.User.onesignalId);
 
     saveButton.addEventListener("click", async () => {
 
-        status.innerHTML = "⏳ Saving preferences...";
+        const tags = OneSignal.User.tags;
+
+status.innerHTML =
+`✅ Saved!<br><br><pre>${JSON.stringify(tags, null, 2)}</pre>`;
 
         try {
 
