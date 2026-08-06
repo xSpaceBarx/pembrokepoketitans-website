@@ -11,7 +11,7 @@ const templates = {
 `Don't forget tonight's PokéTitans meetup!
 
 📍 Pembroke Historical Society
-🕠 Meetup begins at 5:45 PM
+🕠 Meetup begins at 6:00 PM
 
 We hope to see you there!`,
 
@@ -26,14 +26,63 @@ We hope to see you there!`,
         message:
 `Raid Hour starts tonight!
 
-Meet us at the Pembroke Historical Society at 5:45 PM.
+6:00-7:00 PM
 
 Let's raid together!`,
 
         audience: "meetups"
 
     },
+spotlight: {
 
+    title: "✨ Spotlight Hour Tonight!",
+
+    message:
+`Spotlight Hour begins tonight!
+
+Event runs from 6:00–7:00 PM.`,
+
+    audience: "events"
+
+},
+    raidday: {
+
+    title: "Raid Day Today!",
+
+    message:
+`Raid Day is here!
+
+Good luck, Trainers!`,
+
+    audience: "events"
+
+},
+    hatchday: {
+
+    title: "🥚 Hatch Day Today!",
+
+    message:
+`It's Hatch Day!
+
+Don't forget your Egg Incubators and enjoy the bonus hatch distance while the event is active.`,
+
+    audience: "events"
+
+},
+    globalevent: {
+
+    title: "🌎 Global Event Begins!",
+
+    message:
+`Today's global Pokémon GO event is now live!
+
+Check the Today View for bonuses, featured Pokémon, and event tasks.
+
+Have fun, Trainers!`,
+
+    audience: "events"
+
+},
     gopass: {
 
         title: "🎟 GO Pass Reminder",
@@ -50,7 +99,7 @@ Let's raid together!`,
         title: "🍀 Lucky Trinket Reminder",
 
         message:
-`Remember to collect your Lucky Trinket before midnight tonight!`,
+`Remember to use your Lucky Trinket before 8:00 PM Tonight!`,
 
         audience: "gopass"
 
