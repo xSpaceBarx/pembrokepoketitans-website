@@ -1,4 +1,5 @@
 import { db } from "./firebase.js";
+import { loadDraft } from "./editDraft.js";
 
 import {
     collection,
@@ -9,63 +10,86 @@ import {
 
 export async function loadDrafts() {
 
-    const draftContainer =
-        document.getElementById("draftQueue");
+    const draftContainer = document.getElementById("draftQueue");
 
     if (!draftContainer) return;
 
     draftContainer.innerHTML = "Loading drafts...";
 
-    const q = query(
-        collection(db, "notifications"),
-        orderBy("created", "desc")
-    );
+    try {
 
-    const snapshot = await getDocs(q);
+        const q = query(
+            collection(db, "notifications"),
+            orderBy("created", "desc")
+        );
 
-    if (snapshot.empty) {
+        const snapshot = await getDocs(q);
 
-        draftContainer.innerHTML =
-            "<p>No drafts yet.</p>";
+        if (snapshot.empty) {
 
-        return;
+            draftContainer.innerHTML =
+                "<p>No drafts yet.</p>";
+
+            return;
+
+        }
+
+        draftContainer.innerHTML = "";
+
+        snapshot.forEach(doc => {
+
+            const draft = doc.data();
+            draft.id = doc.id;
+
+            draftContainer.innerHTML += `
+
+            <div class="draft-card">
+
+                <h3>${draft.title}</h3>
+
+                <p>Audience: ${draft.audience}</p>
+
+                <span class="draft-status">
+                    ${draft.status}
+                </span>
+
+                <div class="draft-buttons">
+
+                    <button
+                        class="edit-draft"
+                        data-id="${draft.id}">
+                        ✏ Edit
+                    </button>
+
+                </div>
+
+            </div>
+
+            `;
+
+        });
+
+        document.querySelectorAll(".edit-draft").forEach(button => {
+
+            button.addEventListener("click", () => {
+
+                loadDraft(button.dataset.id);
+
+            });
+
+        });
 
     }
 
-    draftContainer.innerHTML = "";
+    catch (err) {
 
-    snapshot.forEach(doc => {
+        console.error(err);
 
-    const draft = doc.data();
-    draft.id = doc.id;
+        draftContainer.innerHTML =
+            "<p>Unable to load drafts.</p>";
 
-        draftContainer.innerHTML += `
-
-        <div class="draft-card">
-
-            <h3>${draft.title}</h3>
-
-            <p>${draft.audience}</p>
-
-            <span class="draft-status">
-                ${draft.status}
-            </span>
-
-        </div>
-
-        `;
-
-    });
+    }
 
 }
-import { loadDraft } from "./editDraft.js";
 
-document.querySelectorAll(".edit-draft").forEach(button=>{
-
-    button.addEventListener("click",()=>{
-
-        loadDraft(button.dataset.id);
-
-    });
-
-});
+loadDrafts();
