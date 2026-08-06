@@ -12,170 +12,192 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 const audienceNames = {
-    meetups: "📍 Campfire Meetup Reminders",
-    gopass: "🎟 GO Pass / Lucky Trinket",
-    events: "🎉 Event Start Reminders",
+
+    meetup: "📍 PokéTitans Campfire Meetups",
+    raidhour: "⚡ Raid Hour",
+    spotlight: "✨ Spotlight Hour",
+    maxmonday: "💎 Max Monday",
+    raidrotation: "🆕 New Raid Boss Rotation",
+    gopass: "🎟 Daily Bonuses & GO Pass",
+
+    communityday: "🎉 Community Day",
+    raidday: "⚔ Raid Day",
+    hatchday: "🥚 Hatch Day",
+    globalevent: "🌎 Global Event",
+    trinket: "🍀 Lucky Trinket",
+    research: "📦 Special Research",
     codes: "🎁 Redemption Codes",
     news: "🚨 Breaking News"
+
 };
 
-export async function loadDrafts() {
+export async function loadDrafts(){
 
-    const draftContainer = document.getElementById("draftQueue");
+    const container = document.getElementById("draftQueue");
 
-    if (!draftContainer) return;
+    if(!container) return;
 
-    draftContainer.innerHTML = "Loading drafts...";
+    container.innerHTML = "Loading notifications...";
 
-    try {
+    const q = query(
+        collection(db,"notifications"),
+        orderBy("created","desc")
+    );
 
-        const q = query(
-            collection(db, "notifications"),
-            orderBy("created", "desc")
-        );
+    const snapshot = await getDocs(q);
 
-        const snapshot = await getDocs(q);
+    const drafts = [];
+    const scheduled = [];
+    const published = [];
 
-        if (snapshot.empty) {
+    snapshot.forEach(doc=>{
 
-            draftContainer.innerHTML =
-                "<p>No drafts yet.</p>";
+        const notification = {
+            id: doc.id,
+            ...doc.data()
+        };
 
-            return;
+        switch(notification.status){
 
-        }
+            case "draft":
+                drafts.push(notification);
+                break;
 
-        let draftCount = 0;
-        let scheduledCount = 0;
-        let sentCount = 0;
+            case "schedule":
+                scheduled.push(notification);
+                break;
 
-        draftContainer.innerHTML = "";
-
-        snapshot.forEach(doc => {
-
-            const draft = doc.data();
-            draft.id = doc.id;
-
-            if (draft.status === "draft") draftCount++;
-            if (draft.status === "scheduled") scheduledCount++;
-            if (draft.status === "sent") sentCount++;
-
-            let badge = "🟠 Draft";
-
-            if (draft.status === "scheduled")
-                badge = "🟢 Scheduled";
-
-            if (draft.status === "sent")
-                badge = "🔵 Sent";
-
-draftContainer.innerHTML += `
-
-<div class="draft-card">
-
-    <h3>${draft.title}</h3>
-
-    <p><strong>Audience:</strong> ${draft.audience}</p>
-
-    <p>
-        <strong>Date:</strong>
-        ${draft.date ? draft.date : "Not Scheduled"}
-    </p>
-
-    <p>
-        <strong>Time:</strong>
-        ${draft.time ? draft.time : "--"}
-    </p>
-
-    <span class="draft-status">
-
-        ${draft.status}
-
-    </span>
-
-<div class="draft-buttons">
-
-    <button
-        class="edit-draft"
-        data-id="${draft.id}">
-        ✏ Edit
-    </button>
-
-    <button
-        class="duplicate-draft"
-        data-id="${draft.id}">
-        📋 Duplicate
-    </button>
-
-    <button
-        class="delete-draft"
-        data-id="${draft.id}">
-        🗑 Delete
-    </button>
-
-</div>
-
-</div>
-
-`;
-
-        });
-
-        const counts = document.getElementById("draftCounts");
-
-        if (counts) {
-
-            counts.innerHTML = `
-                📝 Drafts: <strong>${draftCount}</strong>
-                &nbsp;&nbsp;&nbsp;
-                ⏰ Scheduled: <strong>${scheduledCount}</strong>
-                &nbsp;&nbsp;&nbsp;
-                ✅ Sent: <strong>${sentCount}</strong>
-            `;
+            case "published":
+                published.push(notification);
+                break;
 
         }
-
-        document.querySelectorAll(".edit-draft").forEach(button => {
-
-            button.addEventListener("click", () => {
-
-                loadDraft(button.dataset.id);
-
-            });
-
-        });
-
-document.querySelectorAll(".duplicate-draft").forEach(button => {
-
-    button.addEventListener("click", async () => {
-
-        await duplicateDraft(button.dataset.id);
 
     });
 
-});
+    document.getElementById("draftCounts").innerHTML = `
+        📝 Drafts: <strong>${drafts.length}</strong>
+        &nbsp;&nbsp;&nbsp;
+        📅 Scheduled: <strong>${scheduled.length}</strong>
+        &nbsp;&nbsp;&nbsp;
+        🚀 Published: <strong>${published.length}</strong>
+    `;
 
-        document.querySelectorAll(".delete-draft").forEach(button => {
+    container.innerHTML = "";
 
-            button.addEventListener("click", async () => {
+    renderSection("📝 Drafts", drafts);
+    renderSection("📅 Scheduled", scheduled);
+    renderSection("🚀 Published", published);
 
-                await deleteDraft(button.dataset.id);
+    wireButtons();
 
-                loadDrafts();
-updatePlannerStatus();
-            });
+}
+
+function renderSection(title,list){
+
+    const container = document.getElementById("draftQueue");
+
+    container.innerHTML += `<h3>${title} (${list.length})</h3>`;
+
+    if(list.length===0){
+
+        container.innerHTML += `<p>No notifications.</p>`;
+        return;
+
+    }
+
+    list.forEach(notification=>{
+
+        container.innerHTML += `
+
+        <div class="draft-card">
+
+            <h3>${notification.title}</h3>
+
+            <p>
+                <strong>Audience:</strong>
+                ${audienceNames[notification.audience] || notification.audience}
+            </p>
+
+            <p>
+                <strong>Date:</strong>
+                ${notification.date || "--"}
+            </p>
+
+            <p>
+                <strong>Time:</strong>
+                ${notification.time || "--"}
+            </p>
+
+            <div class="button-row">
+
+                <button
+                    class="edit-draft"
+                    data-id="${notification.id}">
+                    ✏ Edit
+                </button>
+
+                <button
+                    class="duplicate-draft"
+                    data-id="${notification.id}">
+                    📋 Duplicate
+                </button>
+
+                <button
+                    class="delete-draft"
+                    data-id="${notification.id}">
+                    🗑 Delete
+                </button>
+
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+}
+
+function wireButtons(){
+
+    document.querySelectorAll(".edit-draft").forEach(button=>{
+
+        button.addEventListener("click",()=>{
+
+            loadDraft(button.dataset.id);
 
         });
 
-    }
+    });
 
-    catch (err) {
+    document.querySelectorAll(".duplicate-draft").forEach(button=>{
 
-        console.error(err);
+        button.addEventListener("click",async()=>{
 
-        draftContainer.innerHTML =
-            "<p>Unable to load drafts.</p>";
+            await duplicateDraft(button.dataset.id);
 
-    }
+            await loadDrafts();
+
+            await updatePlannerStatus();
+
+        });
+
+    });
+
+    document.querySelectorAll(".delete-draft").forEach(button=>{
+
+        button.addEventListener("click",async()=>{
+
+            await deleteDraft(button.dataset.id);
+
+            await loadDrafts();
+
+            await updatePlannerStatus();
+
+        });
+
+    });
 
 }
 
