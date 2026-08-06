@@ -1,3 +1,4 @@
+import { loadDrafts } from "./draftQueue.js";
 import { saveNotification } from "./notifications-admin.js";
 const templates = {
 
@@ -143,8 +144,13 @@ document
             document.getElementById("notification-time").value
 
     };
+const id =
+document.getElementById("notification-id").value;
+    await saveNotification(notification,id);
 
-    await saveNotification(notification);
+document.getElementById("notification-id").value = "";
+
+loadDrafts();
 
 });
 document.querySelectorAll(".planner-load").forEach(button => {
