@@ -143,17 +143,15 @@ draftContainer.innerHTML += `
 
         });
 
-        document.querySelectorAll(".duplicate-draft").forEach(button => {
+document.querySelectorAll(".duplicate-draft").forEach(button => {
 
-            button.addEventListener("click", async () => {
+    button.addEventListener("click", async () => {
 
-                await duplicateDraft(button.dataset.id);
+        await duplicateDraft(button.dataset.id);
 
-                loadDrafts();
+    });
 
-            });
-
-        });
+});
 
         document.querySelectorAll(".delete-draft").forEach(button => {
 
