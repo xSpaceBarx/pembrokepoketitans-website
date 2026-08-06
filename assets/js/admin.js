@@ -15,7 +15,7 @@ const templates = {
 
 We hope to see you there!`,
 
-        audience: "meetups"
+        audience: "meetup"
 
     },
 
@@ -62,7 +62,7 @@ Take on Max Battles with the community and earn those Max Particles!`,
 
     },
 
-    raidboss: {
+    raidrotation: {
 
         title: "🆕 New Raid Boss Rotation!",
 
@@ -71,13 +71,13 @@ Take on Max Battles with the community and earn those Max Particles!`,
 
 Check out what's appearing in Gyms!`,
 
-        audience: "raidboss"
+        audience: "raidrotation"
 
     },
 
     raidday: {
 
-        title: "Raid Day Today!",
+        title: "⚔ Raid Day Today!",
 
         message:
 `Raid Day is here!
@@ -103,7 +103,7 @@ Don't forget your Egg Incubators and enjoy the bonuses while the event is active
 
     communityday: {
 
-        title: "🏞 Community Day Today!",
+        title: "🎉 Community Day Today!",
 
         message:
 `Community Day has begun!
