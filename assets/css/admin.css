@@ -541,3 +541,26 @@
     margin-bottom:15px;
 
 }
+.status-draft{
+
+    color:#2f9e44;
+
+    font-weight:700;
+
+}
+
+.status-scheduled{
+
+    color:#b8860b;
+
+    font-weight:700;
+
+}
+
+.status-published{
+
+    color:#0066cc;
+
+    font-weight:700;
+
+}
