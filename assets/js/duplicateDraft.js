@@ -24,7 +24,7 @@ export async function duplicateDraft(id){
 
             ...draft,
 
-            title: draft.title + " (Copy)",
+            title: draft.title,
 
             status: "draft",
 
