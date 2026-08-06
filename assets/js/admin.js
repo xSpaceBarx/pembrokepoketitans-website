@@ -288,9 +288,9 @@ await saveNotification(notification,id);
 
 document.getElementById("notification-id").value = "";
 
-loadDrafts();
+await loadDrafts();
 
-updatePlannerStatus();
+await updatePlannerStatus();
 
 });
 
@@ -318,9 +318,9 @@ For now, save your notification as a draft.`
 
 updatePreview();
 
-loadDrafts();
+await loadDrafts();
 
-updatePlannerStatus();
+await updatePlannerStatus();
 document
 .getElementById("clearNotification")
 .addEventListener("click",()=>{
