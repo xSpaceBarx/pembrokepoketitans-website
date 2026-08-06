@@ -5,32 +5,58 @@ import {
     getDocs
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
-export async function updatePlannerStatus(){
+const statusPriority = {
+    draft: 1,
+    schedule: 2,
+    published: 3
+};
+
+export async function updatePlannerStatus() {
 
     const snapshot = await getDocs(
-        collection(db,"notifications")
+        collection(db, "notifications")
     );
 
-    // Reset all cards
-    document.querySelectorAll(".planner-status").forEach(status=>{
+    // Reset every planner card
+    document.querySelectorAll(".planner-status").forEach(status => {
 
         status.innerHTML = "⚪ Missing";
-
         status.className = "planner-status";
 
     });
 
-    snapshot.forEach(doc=>{
+    const highestStatus = {};
+
+    snapshot.forEach(doc => {
 
         const notification = doc.data();
 
-        const badge = document.getElementById(
-            `planner-${notification.audience}`
-        );
+        if (!notification.audience) return;
 
-        if(!badge) return;
+        const current = highestStatus[notification.audience];
 
-        switch(notification.status){
+        if (
+            !current ||
+            statusPriority[notification.status] >
+            statusPriority[current.status]
+        ) {
+
+            highestStatus[notification.audience] = notification;
+
+        }
+
+    });
+
+    Object.keys(highestStatus).forEach(audience => {
+
+        const badge =
+            document.getElementById(`planner-${audience}`);
+
+        if (!badge) return;
+
+        const status = highestStatus[audience].status;
+
+        switch (status) {
 
             case "draft":
 
