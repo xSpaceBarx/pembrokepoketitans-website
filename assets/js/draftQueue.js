@@ -91,25 +91,27 @@ draftContainer.innerHTML += `
 
     </span>
 
-    <div class="draft-buttons">
+<div class="draft-buttons">
 
-        <button
-            class="edit-draft"
-            data-id="${draft.id}">
+    <button
+        class="edit-draft"
+        data-id="${draft.id}">
+        ✏ Edit
+    </button>
 
-            ✏ Edit
+    <button
+        class="duplicate-draft"
+        data-id="${draft.id}">
+        📋 Duplicate
+    </button>
 
-        </button>
+    <button
+        class="delete-draft"
+        data-id="${draft.id}">
+        🗑 Delete
+    </button>
 
-        <button
-            class="delete-draft"
-            data-id="${draft.id}">
-
-            🗑 Delete
-
-        </button>
-
-    </div>
+</div>
 
 </div>
 
