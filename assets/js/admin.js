@@ -301,15 +301,26 @@ await updatePlannerStatus();
 
 document
 .getElementById("publishNotification")
-.addEventListener("click", () => {
+.addEventListener("click", async () => {
 
-    alert(
-`🚀 Publishing
+    const id =
+        document.getElementById("notification-id").value;
 
-Direct publishing is coming soon.
+    if(!id){
 
-For now, save your notification as a draft.`
-    );
+        alert("Please save this notification as a draft first.");
+
+        return;
+
+    }
+
+    await publishNotification(id);
+
+    await loadDrafts();
+
+    await updatePlannerStatus();
+
+    alert("✅ Notification published successfully.");
 
 });
 
