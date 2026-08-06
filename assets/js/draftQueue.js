@@ -2,6 +2,7 @@ import { db } from "./firebase.js";
 import { loadDraft } from "./editDraft.js";
 import { deleteDraft } from "./deleteDraft.js";
 import { duplicateDraft } from "./duplicateDraft.js";
+import { updatePlannerStatus } from "./plannerStatus.js";
 
 import {
     collection,
@@ -160,7 +161,7 @@ document.querySelectorAll(".duplicate-draft").forEach(button => {
                 await deleteDraft(button.dataset.id);
 
                 loadDrafts();
-
+updatePlannerStatus();
             });
 
         });
