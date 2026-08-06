@@ -58,3 +58,14 @@ export async function loadDrafts() {
     });
 
 }
+import { loadDraft } from "./editDraft.js";
+
+document.querySelectorAll(".edit-draft").forEach(button=>{
+
+    button.addEventListener("click",()=>{
+
+        loadDraft(button.dataset.id);
+
+    });
+
+});
