@@ -26,11 +26,11 @@ We hope to see you there!`,
         message:
 `Raid Hour starts tonight!
 
-6:00–7:00 PM
+⏰ 6:00–7:00 PM
 
 Let's raid together!`,
 
-        audience: "meetups"
+        audience: "raidhour"
 
     },
 
@@ -41,22 +41,50 @@ Let's raid together!`,
         message:
 `Spotlight Hour begins tonight!
 
-Event runs from 6:00–7:00 PM.`,
+⏰ 6:00–7:00 PM
 
-        audience: "events"
+Good luck, Trainers!`,
+
+        audience: "spotlight"
+
+    },
+
+    maxmonday: {
+
+        title: "💎 Max Monday Tonight!",
+
+        message:
+`Max Monday begins tonight!
+
+Take on Max Battles with the community and earn those Max Particles!`,
+
+        audience: "maxmonday"
+
+    },
+
+    raidboss: {
+
+        title: "🆕 New Raid Boss Rotation!",
+
+        message:
+`A brand new Raid Boss rotation is now live!
+
+Check out what's appearing in Gyms!`,
+
+        audience: "raidboss"
 
     },
 
     raidday: {
 
-        title: "⚔ Raid Day Today!",
+        title: "Raid Day Today!",
 
         message:
 `Raid Day is here!
 
 Good luck, Trainers!`,
 
-        audience: "events"
+        audience: "raidday"
 
     },
 
@@ -67,9 +95,22 @@ Good luck, Trainers!`,
         message:
 `It's Hatch Day!
 
-Don't forget your Egg Incubators and enjoy the bonus hatch distance while the event is active.`,
+Don't forget your Egg Incubators and enjoy the bonuses while the event is active.`,
 
-        audience: "events"
+        audience: "hatchday"
+
+    },
+
+    communityday: {
+
+        title: "🏞 Community Day Today!",
+
+        message:
+`Community Day has begun!
+
+Good luck catching today's featured Pokémon and enjoy all of the event bonuses!`,
+
+        audience: "communityday"
 
     },
 
@@ -80,20 +121,20 @@ Don't forget your Egg Incubators and enjoy the bonus hatch distance while the ev
         message:
 `Today's global Pokémon GO event is now live!
 
-Check the Today View for bonuses, featured Pokémon, and event tasks.
+Check the Today View for bonuses, featured Pokémon and event tasks.
 
 Have fun, Trainers!`,
 
-        audience: "events"
+        audience: "globalevent"
 
     },
 
     gopass: {
 
-        title: "🎟 Daily Bonuses",
+        title: "🎟 Daily Bonuses & GO Pass",
 
         message:
-`Don't forget to collect today's GO Pass rewards before they expire!`,
+`Don't forget to collect today's Daily Bonuses and GO Pass rewards before they expire!`,
 
         audience: "gopass"
 
@@ -106,7 +147,20 @@ Have fun, Trainers!`,
         message:
 `Remember to use your Lucky Trinket before 8:00 PM tonight!`,
 
-        audience: "gopass"
+        audience: "trinket"
+
+    },
+
+    research: {
+
+        title: "📦 New Special Research",
+
+        message:
+`New Special or Timed Research is now available!
+
+Open Pokémon GO and start working through the new tasks.`,
+
+        audience: "research"
 
     },
 
