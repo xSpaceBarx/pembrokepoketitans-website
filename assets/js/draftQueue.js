@@ -1,3 +1,4 @@
+import { deleteDraft } from "./deleteDraft.js";
 import { db } from "./firebase.js";
 import { loadDraft } from "./editDraft.js";
 
@@ -86,7 +87,17 @@ export async function loadDrafts() {
         });
 
     }
+document.querySelectorAll(".delete-draft").forEach(button=>{
 
+    button.addEventListener("click",async()=>{
+
+        await deleteDraft(button.dataset.id);
+
+        loadDrafts();
+
+    });
+
+});
     catch (err) {
 
         console.error(err);
