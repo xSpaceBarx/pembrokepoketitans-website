@@ -279,7 +279,6 @@ document.querySelectorAll(".planner-item").forEach(card => {
 /* ============================
    SAVE DRAFT
 ============================ */
-
 document
 .getElementById("sendNotification")
 .addEventListener("click", async () => {
@@ -306,20 +305,24 @@ document
 
     };
 
-const savedId = await saveNotification(notification, id);
+    const id =
+        document.getElementById("notification-id").value;
 
-if (savedId) {
+    const savedId =
+        await saveNotification(notification, id);
 
-    document.getElementById("notification-id").value = savedId;
+    if (savedId) {
 
-}
+        document.getElementById("notification-id").value =
+            savedId;
 
-await loadDrafts();
+    }
 
-await updatePlannerStatus();
+    await loadDrafts();
+
+    await updatePlannerStatus();
 
 });
-
 /* ============================
    PUBLISH
 ============================ */
