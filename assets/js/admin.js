@@ -26,66 +26,71 @@ We hope to see you there!`,
         message:
 `Raid Hour starts tonight!
 
-6:00-7:00 PM
+6:00–7:00 PM
 
 Let's raid together!`,
 
         audience: "meetups"
 
     },
-spotlight: {
 
-    title: "✨ Spotlight Hour Tonight!",
+    spotlight: {
 
-    message:
+        title: "✨ Spotlight Hour Tonight!",
+
+        message:
 `Spotlight Hour begins tonight!
 
 Event runs from 6:00–7:00 PM.`,
 
-    audience: "events"
+        audience: "events"
 
-},
+    },
+
     raidday: {
 
-    title: "Raid Day Today!",
+        title: "⚔ Raid Day Today!",
 
-    message:
+        message:
 `Raid Day is here!
 
 Good luck, Trainers!`,
 
-    audience: "events"
+        audience: "events"
 
-},
+    },
+
     hatchday: {
 
-    title: "🥚 Hatch Day Today!",
+        title: "🥚 Hatch Day Today!",
 
-    message:
+        message:
 `It's Hatch Day!
 
 Don't forget your Egg Incubators and enjoy the bonus hatch distance while the event is active.`,
 
-    audience: "events"
+        audience: "events"
 
-},
+    },
+
     globalevent: {
 
-    title: "🌎 Global Event Begins!",
+        title: "🌎 Global Event Begins!",
 
-    message:
+        message:
 `Today's global Pokémon GO event is now live!
 
 Check the Today View for bonuses, featured Pokémon, and event tasks.
 
 Have fun, Trainers!`,
 
-    audience: "events"
+        audience: "events"
 
-},
+    },
+
     gopass: {
 
-        title: "🎟 GO Pass Reminder",
+        title: "🎟 Daily Bonuses",
 
         message:
 `Don't forget to collect today's GO Pass rewards before they expire!`,
@@ -99,7 +104,7 @@ Have fun, Trainers!`,
         title: "🍀 Lucky Trinket Reminder",
 
         message:
-`Remember to use your Lucky Trinket before 8:00 PM Tonight!`,
+`Remember to use your Lucky Trinket before 8:00 PM tonight!`,
 
         audience: "gopass"
 
@@ -131,11 +136,11 @@ Claim it before it expires.`,
 
 };
 
-/* =======================================
+/* ============================
    LIVE PREVIEW
-======================================= */
+============================ */
 
-function updatePreview(){
+function updatePreview() {
 
     document.getElementById("preview-title").textContent =
         document.getElementById("notification-title").value ||
@@ -155,15 +160,17 @@ document
 .getElementById("notification-message")
 .addEventListener("input", updatePreview);
 
-/* =======================================
-   TEMPLATE BUTTONS
-======================================= */
+/* ============================
+   WEEKLY PLANNER
+============================ */
 
-document.querySelectorAll(".template-btn").forEach(button => {
+document.querySelectorAll(".planner-item").forEach(card => {
 
-    button.addEventListener("click", () => {
+    card.addEventListener("click", () => {
 
-        const template = templates[button.dataset.template];
+        const template = templates[card.dataset.template];
+
+        if (!template) return;
 
         document.getElementById("notification-title").value =
             template.title;
@@ -176,28 +183,12 @@ document.querySelectorAll(".template-btn").forEach(button => {
 
         updatePreview();
 
-    });
-
-});
-
-/* =======================================
-   WEEKLY PLANNER
-======================================= */
-
-document.querySelectorAll(".planner-load").forEach(button => {
-
-    button.addEventListener("click", () => {
-
-        document.querySelector(
-            `.template-btn[data-template="${button.dataset.template}"]`
-        ).click();
-
         window.scrollTo({
 
             top:
                 document.querySelector(".notification-center").offsetTop - 20,
 
-            behavior:"smooth"
+            behavior: "smooth"
 
         });
 
@@ -205,9 +196,9 @@ document.querySelectorAll(".planner-load").forEach(button => {
 
 });
 
-/* =======================================
+/* ============================
    SAVE DRAFT
-======================================= */
+============================ */
 
 document
 .getElementById("sendNotification")
@@ -238,7 +229,7 @@ document
     const id =
         document.getElementById("notification-id").value;
 
-    await saveNotification(notification,id);
+    await saveNotification(notification, id);
 
     document.getElementById("notification-id").value = "";
 
@@ -246,13 +237,13 @@ document
 
 });
 
-/* =======================================
-   PUBLISH (Coming Soon)
-======================================= */
+/* ============================
+   PUBLISH
+============================ */
 
 document
 .getElementById("publishNotification")
-.addEventListener("click",()=>{
+.addEventListener("click", () => {
 
     alert(
 `🚀 Publishing
@@ -264,9 +255,9 @@ For now, save your notification as a draft.`
 
 });
 
-/* =======================================
+/* ============================
    INITIALIZE
-======================================= */
+============================ */
 
 updatePreview();
 
