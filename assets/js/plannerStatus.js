@@ -5,78 +5,107 @@ import {
     getDocs
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
-const statusPriority = {
+const priority = {
     draft: 1,
     schedule: 2,
     published: 3
 };
 
-export async function updatePlannerStatus() {
+function formatDate(date,time){
+
+    if(!date) return "";
+
+    const d = new Date(`${date}T${time || "00:00"}`);
+
+    return d.toLocaleDateString("en-US",{
+
+        month:"short",
+        day:"numeric"
+
+    }) + (time ? ` • ${time}` : "");
+
+}
+
+export async function updatePlannerStatus(){
 
     const snapshot = await getDocs(
-        collection(db, "notifications")
+        collection(db,"notifications")
     );
 
-    // Reset every planner card
-    document.querySelectorAll(".planner-status").forEach(status => {
+    document.querySelectorAll(".planner-status").forEach(status=>{
 
-        status.innerHTML = "⚪ Missing";
-        status.className = "planner-status";
+        status.className="planner-status";
+
+        status.innerHTML="⚪ Missing";
 
     });
 
-    const highestStatus = {};
+    const latest={};
 
-    snapshot.forEach(doc => {
+    snapshot.forEach(doc=>{
 
-        const notification = doc.data();
+        const n=doc.data();
 
-        if (!notification.audience) return;
+        if(!n.audience) return;
 
-        const current = highestStatus[notification.audience];
+        if(
 
-        if (
-            !current ||
-            statusPriority[notification.status] >
-            statusPriority[current.status]
-        ) {
+            !latest[n.audience] ||
 
-            highestStatus[notification.audience] = notification;
+            priority[n.status] >
+            priority[latest[n.audience].status]
+
+        ){
+
+            latest[n.audience]=n;
 
         }
 
     });
 
-    Object.keys(highestStatus).forEach(audience => {
+    Object.entries(latest).forEach(([audience,n])=>{
 
-        const badge =
-            document.getElementById(`planner-${audience}`);
+        const badge=document.getElementById(
+            `planner-${audience}`
+        );
 
-        if (!badge) return;
+        if(!badge) return;
 
-        const status = highestStatus[audience].status;
+        let icon="⚪";
+        let text="Missing";
+        let css="";
 
-        switch (status) {
+        switch(n.status){
 
             case "draft":
 
-                badge.innerHTML = "🟢 Draft Saved";
-                badge.classList.add("status-draft");
+                icon="🟢";
+                text="Draft Saved";
+                css="status-draft";
                 break;
 
             case "schedule":
 
-                badge.innerHTML = "🟡 Scheduled";
-                badge.classList.add("status-scheduled");
+                icon="🟡";
+                text="Scheduled";
+                css="status-scheduled";
                 break;
 
             case "published":
 
-                badge.innerHTML = "🔵 Published";
-                badge.classList.add("status-published");
+                icon="🔵";
+                text="Published";
+                css="status-published";
                 break;
 
         }
+
+        badge.classList.add(css);
+
+        badge.innerHTML=`
+            <div>${icon} ${text}</div>
+            <small>${formatDate(n.date,n.time)}</small>
+        `;
 
     });
 
