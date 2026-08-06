@@ -1,3 +1,4 @@
+import { saveNotification } from "./notifications-admin.js";
 const templates = {
 
     meetup: {
@@ -119,13 +120,31 @@ ${document.getElementById("notification-message").value}`
 
 document
 .getElementById("sendNotification")
-.addEventListener("click", () => {
+.addEventListener("click", async () => {
 
-    alert(
+    const notification = {
 
-"🚧 Next step:\n\nThis button will soon connect directly to Firebase and OneSignal."
+        title:
+            document.getElementById("notification-title").value,
 
-    );
+        message:
+            document.getElementById("notification-message").value,
+
+        audience:
+            document.getElementById("notification-audience").value,
+
+        delivery:
+            document.getElementById("notification-delivery").value,
+
+        date:
+            document.getElementById("notification-date").value,
+
+        time:
+            document.getElementById("notification-time").value
+
+    };
+
+    await saveNotification(notification);
 
 });
 document.querySelectorAll(".planner-load").forEach(button => {
