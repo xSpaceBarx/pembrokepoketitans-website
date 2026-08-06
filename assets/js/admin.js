@@ -163,3 +163,6 @@ document.querySelectorAll(".planner-load").forEach(button => {
     });
 
 });
+import { loadDrafts } from "./draftQueue.js";
+
+loadDrafts();
