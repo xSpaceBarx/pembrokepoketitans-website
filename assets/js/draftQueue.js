@@ -53,15 +53,21 @@ export async function loadDrafts() {
                     ${draft.status}
                 </span>
 
-                <div class="draft-buttons">
+               <div class="draft-buttons">
 
-                    <button
-                        class="edit-draft"
-                        data-id="${draft.id}">
-                        ✏ Edit
-                    </button>
+    <button
+        class="edit-draft"
+        data-id="${draft.id}">
+        ✏ Edit
+    </button>
 
-                </div>
+    <button
+        class="delete-draft"
+        data-id="${draft.id}">
+        🗑 Delete
+    </button>
+
+</div>
 
             </div>
 
