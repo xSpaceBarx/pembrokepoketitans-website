@@ -14,6 +14,10 @@ export async function loadDraft(id){
     const draft = snap.data();
 
     document.getElementById("notification-id").value = id;
+    document.getElementById("editingBanner").style.display="block";
+
+document.getElementById("sendNotification").innerHTML=
+    "💾 Update Draft";
 
     document.getElementById("notification-title").value =
         draft.title || "";
