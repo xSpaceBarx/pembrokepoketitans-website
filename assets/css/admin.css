@@ -412,3 +412,68 @@
 }
 
 }
+/* ==========================
+   Live Notification Preview
+========================== */
+
+.notification-preview{
+
+    max-width:420px;
+
+    background:white;
+
+    border-radius:18px;
+
+    border:1px solid #ddd;
+
+    box-shadow:0 8px 24px rgba(0,0,0,.12);
+
+    padding:18px;
+
+    margin-top:25px;
+
+}
+
+.preview-header{
+
+    font-size:14px;
+
+    color:#666;
+
+    font-weight:600;
+
+    margin-bottom:10px;
+
+}
+
+.preview-title{
+
+    font-size:20px;
+
+    font-weight:700;
+
+    margin-bottom:12px;
+
+    color:#222;
+
+}
+
+.preview-message{
+
+    color:#444;
+
+    line-height:1.5;
+
+    margin-bottom:18px;
+
+    white-space:pre-wrap;
+
+}
+
+.preview-footer{
+
+    color:#999;
+
+    font-size:13px;
+
+}
