@@ -34,63 +34,69 @@
 <section class="section">
 
 <div class="container">
-<div class="weekly-planner">
 
-    <h2>📅 Weekly Notification Planner</h2>
+    <!-- Weekly Planner -->
 
-    <p class="section-description">
-        Build your entire week's notifications before sending them.
-    </p>
+    <div class="weekly-planner">
 
-    <div class="planner-grid">
+        <h2>📅 Weekly Notification Planner</h2>
 
-        <div class="planner-item">
-            <span>⚡ Raid Hour</span>
-            <button class="planner-load" data-template="raidhour">
-                Load
-            </button>
-        </div>
+        <p class="section-description">
+            Build your entire week's notifications before sending them.
+        </p>
 
-        <div class="planner-item">
-            <span>🍀 Lucky Trinket</span>
-            <button class="planner-load" data-template="trinket">
-                Load
-            </button>
-        </div>
+        <div class="planner-grid">
 
-        <div class="planner-item">
-            <span>🎟 GO Pass</span>
-            <button class="planner-load" data-template="gopass">
-                Load
-            </button>
-        </div>
+            <div class="planner-item">
+                <span>⚡ Raid Hour</span>
+                <button class="planner-load" data-template="raidhour">
+                    Load
+                </button>
+            </div>
 
-        <div class="planner-item">
-            <span>🎁 Redemption Code</span>
-            <button class="planner-load" data-template="codes">
-                Load
-            </button>
-        </div>
+            <div class="planner-item">
+                <span>🍀 Lucky Trinket</span>
+                <button class="planner-load" data-template="trinket">
+                    Load
+                </button>
+            </div>
 
-        <div class="planner-item">
-            <span>📍 Campfire Meetup</span>
-            <button class="planner-load" data-template="meetup">
-                Load
-            </button>
-        </div>
+            <div class="planner-item">
+                <span>🎟 GO Pass</span>
+                <button class="planner-load" data-template="gopass">
+                    Load
+                </button>
+            </div>
 
-        <div class="planner-item">
-            <span>🚨 Breaking News</span>
-            <button class="planner-load" data-template="news">
-                Load
-            </button>
+            <div class="planner-item">
+                <span>🎁 Redemption Code</span>
+                <button class="planner-load" data-template="codes">
+                    Load
+                </button>
+            </div>
+
+            <div class="planner-item">
+                <span>📍 Campfire Meetup</span>
+                <button class="planner-load" data-template="meetup">
+                    Load
+                </button>
+            </div>
+
+            <div class="planner-item">
+                <span>🚨 Breaking News</span>
+                <button class="planner-load" data-template="news">
+                    Load
+                </button>
+            </div>
+
         </div>
 
     </div>
 
-</div>
+    <br>
 
-<br>
+    <!-- Notification Center -->
+
     <div class="notification-center">
 
         <h2>📢 Notification Center</h2>
@@ -135,18 +141,14 @@
 
         <h3>✏ Notification Editor</h3>
 
-        <label for="notification-title">
-            Title
-        </label>
+        <label for="notification-title">Title</label>
 
         <input
             type="text"
             id="notification-title"
             placeholder="Notification title">
 
-        <label for="notification-message">
-            Message
-        </label>
+        <label for="notification-message">Message</label>
 
         <textarea
             id="notification-message"
@@ -252,6 +254,24 @@
     </div>
 
     <br><br>
+
+    <!-- Draft Queue -->
+
+    <div class="draft-section">
+
+        <h2>📋 Draft Queue</h2>
+
+        <div id="draftQueue">
+
+            Loading drafts...
+
+        </div>
+
+    </div>
+
+    <br><br>
+
+    <!-- Future Modules -->
 
     <div class="admin-grid">
 
