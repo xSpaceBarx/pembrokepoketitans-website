@@ -10,6 +10,14 @@ import {
     query
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
+const audienceNames = {
+    meetups: "📍 Campfire Meetup Reminders",
+    gopass: "🎟 GO Pass / Lucky Trinket",
+    events: "🎉 Event Start Reminders",
+    codes: "🎁 Redemption Codes",
+    news: "🚨 Breaking News"
+};
+
 export async function loadDrafts() {
 
     const draftContainer = document.getElementById("draftQueue");
@@ -36,6 +44,10 @@ export async function loadDrafts() {
 
         }
 
+        let draftCount = 0;
+        let scheduledCount = 0;
+        let sentCount = 0;
+
         draftContainer.innerHTML = "";
 
         snapshot.forEach(doc => {
@@ -43,39 +55,74 @@ export async function loadDrafts() {
             const draft = doc.data();
             draft.id = doc.id;
 
+            if (draft.status === "draft") draftCount++;
+            if (draft.status === "scheduled") scheduledCount++;
+            if (draft.status === "sent") sentCount++;
+
+            let badge = "🟠 Draft";
+
+            if (draft.status === "scheduled")
+                badge = "🟢 Scheduled";
+
+            if (draft.status === "sent")
+                badge = "🔵 Sent";
+
             draftContainer.innerHTML += `
 
             <div class="draft-card">
 
                 <h3>${draft.title}</h3>
 
-                <p>Audience: ${draft.audience}</p>
+                <div class="draft-info">
 
-                <span class="draft-status">
-                    ${draft.status}
-                </span>
+                    <div>
+                        <strong>📍 Audience</strong><br>
+                        ${audienceNames[draft.audience] || draft.audience}
+                    </div>
 
-<div class="draft-buttons">
+                    <div>
+                        <strong>📅 Delivery</strong><br>
+                        ${draft.delivery === "schedule" ? "Scheduled" : "Send Immediately"}
+                    </div>
 
-    <button
-        class="edit-draft"
-        data-id="${draft.id}">
-        ✏ Edit
-    </button>
+                    <div>
+                        <strong>🗓 Date</strong><br>
+                        ${draft.date || "-"}
+                    </div>
 
-    <button
-        class="duplicate-draft"
-        data-id="${draft.id}">
-        📋 Duplicate
-    </button>
+                    <div>
+                        <strong>🕠 Time</strong><br>
+                        ${draft.time || "-"}
+                    </div>
 
-    <button
-        class="delete-draft"
-        data-id="${draft.id}">
-        🗑 Delete
-    </button>
+                    <div>
+                        <strong>Status</strong><br>
+                        <span class="draft-status">${badge}</span>
+                    </div>
 
-</div>
+                </div>
+
+                <div class="draft-buttons">
+
+                    <button
+                        class="edit-draft"
+                        data-id="${draft.id}">
+                        ✏ Edit
+                    </button>
+
+                    <button
+                        class="duplicate-draft"
+                        data-id="${draft.id}">
+                        📋 Duplicate
+                    </button>
+
+                    <button
+                        class="delete-draft"
+                        data-id="${draft.id}">
+                        🗑 Delete
+                    </button>
+
+                </div>
 
             </div>
 
@@ -83,7 +130,20 @@ export async function loadDrafts() {
 
         });
 
-        // Edit buttons
+        const counts = document.getElementById("draftCounts");
+
+        if (counts) {
+
+            counts.innerHTML = `
+                📝 Drafts: <strong>${draftCount}</strong>
+                &nbsp;&nbsp;&nbsp;
+                ⏰ Scheduled: <strong>${scheduledCount}</strong>
+                &nbsp;&nbsp;&nbsp;
+                ✅ Sent: <strong>${sentCount}</strong>
+            `;
+
+        }
+
         document.querySelectorAll(".edit-draft").forEach(button => {
 
             button.addEventListener("click", () => {
@@ -93,19 +153,19 @@ export async function loadDrafts() {
             });
 
         });
-        // Duplicate buttons
-document.querySelectorAll(".duplicate-draft").forEach(button=>{
 
-    button.addEventListener("click",async()=>{
+        document.querySelectorAll(".duplicate-draft").forEach(button => {
 
-        await duplicateDraft(button.dataset.id);
+            button.addEventListener("click", async () => {
 
-        loadDrafts();
+                await duplicateDraft(button.dataset.id);
 
-    });
+                loadDrafts();
 
-});
-        // Delete buttons
+            });
+
+        });
+
         document.querySelectorAll(".delete-draft").forEach(button => {
 
             button.addEventListener("click", async () => {
