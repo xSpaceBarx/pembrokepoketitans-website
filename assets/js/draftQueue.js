@@ -36,7 +36,8 @@ export async function loadDrafts() {
 
     snapshot.forEach(doc => {
 
-        const draft = doc.data();
+    const draft = doc.data();
+    draft.id = doc.id;
 
         draftContainer.innerHTML += `
 
