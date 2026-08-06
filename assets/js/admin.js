@@ -71,9 +71,10 @@ Claim it before it expires.`,
 
     news: {
 
-        title: "",
+        title: "🚨 Pokémon GO Breaking News",
 
-        message: "",
+        message:
+`Important Pokémon GO news will appear here.`,
 
         audience: "news"
 
@@ -81,17 +82,39 @@ Claim it before it expires.`,
 
 };
 
-// -------------------------
-// TEMPLATE BUTTONS
-// -------------------------
+/* =======================================
+   LIVE PREVIEW
+======================================= */
+
+function updatePreview(){
+
+    document.getElementById("preview-title").textContent =
+        document.getElementById("notification-title").value ||
+        "Notification Title";
+
+    document.getElementById("preview-message").textContent =
+        document.getElementById("notification-message").value ||
+        "Your notification message will appear here.";
+
+}
+
+document
+.getElementById("notification-title")
+.addEventListener("input", updatePreview);
+
+document
+.getElementById("notification-message")
+.addEventListener("input", updatePreview);
+
+/* =======================================
+   TEMPLATE BUTTONS
+======================================= */
 
 document.querySelectorAll(".template-btn").forEach(button => {
 
     button.addEventListener("click", () => {
 
         const template = templates[button.dataset.template];
-
-        if (!template) return;
 
         document.getElementById("notification-title").value =
             template.title;
@@ -102,68 +125,40 @@ document.querySelectorAll(".template-btn").forEach(button => {
         document.getElementById("notification-audience").value =
             template.audience;
 
+        updatePreview();
+
     });
 
 });
 
-// -------------------------
-// WEEKLY PLANNER BUTTONS
-// -------------------------
+/* =======================================
+   WEEKLY PLANNER
+======================================= */
 
 document.querySelectorAll(".planner-load").forEach(button => {
 
     button.addEventListener("click", () => {
 
-        const templateButton = document.querySelector(
+        document.querySelector(
             `.template-btn[data-template="${button.dataset.template}"]`
-        );
+        ).click();
 
-        if (templateButton) {
+        window.scrollTo({
 
-            templateButton.click();
+            top:
+                document.querySelector(".notification-center").offsetTop - 20,
 
-            window.scrollTo({
+            behavior:"smooth"
 
-                top:
-                    document.querySelector(".notification-center").offsetTop - 30,
-
-                behavior: "smooth"
-
-            });
-
-        }
+        });
 
     });
 
 });
 
-// -------------------------
-// PREVIEW
-// -------------------------
-
-document
-.getElementById("previewNotification")
-.addEventListener("click", () => {
-
-    alert(
-
-`📢 Preview
-
-Title:
-
-${document.getElementById("notification-title").value}
-
-------------------------------------
-
-${document.getElementById("notification-message").value}`
-
-    );
-
-});
-
-// -------------------------
-// SAVE / UPDATE DRAFT
-// -------------------------
+/* =======================================
+   SAVE DRAFT
+======================================= */
 
 document
 .getElementById("sendNotification")
@@ -194,28 +189,36 @@ document
     const id =
         document.getElementById("notification-id").value;
 
-    try {
+    await saveNotification(notification,id);
 
-        await saveNotification(notification, id);
+    document.getElementById("notification-id").value = "";
 
-        document.getElementById("notification-id").value = "";
-
-        loadDrafts();
-
-    }
-
-    catch (err) {
-
-        console.error(err);
-
-        alert("Unable to save notification.");
-
-    }
+    loadDrafts();
 
 });
 
-// -------------------------
-// INITIAL LOAD
-// -------------------------
+/* =======================================
+   PUBLISH (Coming Soon)
+======================================= */
+
+document
+.getElementById("publishNotification")
+.addEventListener("click",()=>{
+
+    alert(
+`🚀 Publishing
+
+Direct publishing is coming soon.
+
+For now, save your notification as a draft.`
+    );
+
+});
+
+/* =======================================
+   INITIALIZE
+======================================= */
+
+updatePreview();
 
 loadDrafts();
