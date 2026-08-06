@@ -1,5 +1,6 @@
 import { loadDrafts } from "./draftQueue.js";
 import { saveNotification } from "./notifications-admin.js";
+
 const templates = {
 
     meetup: {
@@ -80,11 +81,17 @@ Claim it before it expires.`,
 
 };
 
+// -------------------------
+// TEMPLATE BUTTONS
+// -------------------------
+
 document.querySelectorAll(".template-btn").forEach(button => {
 
     button.addEventListener("click", () => {
 
         const template = templates[button.dataset.template];
+
+        if (!template) return;
 
         document.getElementById("notification-title").value =
             template.title;
@@ -99,6 +106,41 @@ document.querySelectorAll(".template-btn").forEach(button => {
 
 });
 
+// -------------------------
+// WEEKLY PLANNER BUTTONS
+// -------------------------
+
+document.querySelectorAll(".planner-load").forEach(button => {
+
+    button.addEventListener("click", () => {
+
+        const templateButton = document.querySelector(
+            `.template-btn[data-template="${button.dataset.template}"]`
+        );
+
+        if (templateButton) {
+
+            templateButton.click();
+
+            window.scrollTo({
+
+                top:
+                    document.querySelector(".notification-center").offsetTop - 30,
+
+                behavior: "smooth"
+
+            });
+
+        }
+
+    });
+
+});
+
+// -------------------------
+// PREVIEW
+// -------------------------
+
 document
 .getElementById("previewNotification")
 .addEventListener("click", () => {
@@ -111,13 +153,17 @@ Title:
 
 ${document.getElementById("notification-title").value}
 
------------------------
+------------------------------------
 
 ${document.getElementById("notification-message").value}`
 
     );
 
 });
+
+// -------------------------
+// SAVE / UPDATE DRAFT
+// -------------------------
 
 document
 .getElementById("sendNotification")
@@ -144,31 +190,32 @@ document
             document.getElementById("notification-time").value
 
     };
-const id =
-document.getElementById("notification-id").value;
-    await saveNotification(notification,id);
 
-document.getElementById("notification-id").value = "";
+    const id =
+        document.getElementById("notification-id").value;
 
-loadDrafts();
+    try {
 
-});
-document.querySelectorAll(".planner-load").forEach(button => {
+        await saveNotification(notification, id);
 
-    button.addEventListener("click", () => {
+        document.getElementById("notification-id").value = "";
 
-        document.querySelector(
-            `.template-btn[data-template="${button.dataset.template}"]`
-        ).click();
+        loadDrafts();
 
-        window.scrollTo({
-            top: document.querySelector(".notification-center").offsetTop - 30,
-            behavior: "smooth"
-        });
+    }
 
-    });
+    catch (err) {
+
+        console.error(err);
+
+        alert("Unable to save notification.");
+
+    }
 
 });
-import { loadDrafts } from "./draftQueue.js";
+
+// -------------------------
+// INITIAL LOAD
+// -------------------------
 
 loadDrafts();
