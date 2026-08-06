@@ -1,38 +1,23 @@
-import { db } from "./firebase.js";
-
-import {
-    doc,
-    getDoc,
-    addDoc,
-    collection,
-    serverTimestamp
-} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+import { loadDraft } from "./editDraft.js";
 
 export async function duplicateDraft(id){
 
-    const snap = await getDoc(
-        doc(db,"notifications",id)
-    );
+    await loadDraft(id);
 
-    if(!snap.exists()) return;
+    document.getElementById("notification-id").value = "";
 
-    const draft = snap.data();
+    document.getElementById("editingBanner").style.display = "none";
 
-    await addDoc(
-        collection(db,"notifications"),
-        {
+    document.getElementById("sendNotification").innerHTML =
+        "💾 Save Draft";
 
-            ...draft,
+    const title =
+        document.getElementById("notification-title");
 
-            title: draft.title,
+    if (!title.value.includes("(Copy)")){
 
-            status: "draft",
+        title.value += " (Copy)";
 
-            created: serverTimestamp(),
-
-            updated: serverTimestamp()
-
-        }
-    );
+    }
 
 }
