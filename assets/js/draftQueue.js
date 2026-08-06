@@ -67,66 +67,53 @@ export async function loadDrafts() {
             if (draft.status === "sent")
                 badge = "🔵 Sent";
 
-            draftContainer.innerHTML += `
+draftContainer.innerHTML += `
 
-            <div class="draft-card">
+<div class="draft-card">
 
-                <h3>${draft.title}</h3>
+    <h3>${draft.title}</h3>
 
-                <div class="draft-info">
+    <p><strong>Audience:</strong> ${draft.audience}</p>
 
-                    <div>
-                        <strong>📍 Audience</strong><br>
-                        ${audienceNames[draft.audience] || draft.audience}
-                    </div>
+    <p>
+        <strong>Date:</strong>
+        ${draft.date ? draft.date : "Not Scheduled"}
+    </p>
 
-                    <div>
-                        <strong>📅 Delivery</strong><br>
-                        ${draft.delivery === "schedule" ? "Scheduled" : "Send Immediately"}
-                    </div>
+    <p>
+        <strong>Time:</strong>
+        ${draft.time ? draft.time : "--"}
+    </p>
 
-                    <div>
-                        <strong>🗓 Date</strong><br>
-                        ${draft.date || "-"}
-                    </div>
+    <span class="draft-status">
 
-                    <div>
-                        <strong>🕠 Time</strong><br>
-                        ${draft.time || "-"}
-                    </div>
+        ${draft.status}
 
-                    <div>
-                        <strong>Status</strong><br>
-                        <span class="draft-status">${badge}</span>
-                    </div>
+    </span>
 
-                </div>
+    <div class="draft-buttons">
 
-                <div class="draft-buttons">
+        <button
+            class="edit-draft"
+            data-id="${draft.id}">
 
-                    <button
-                        class="edit-draft"
-                        data-id="${draft.id}">
-                        ✏ Edit
-                    </button>
+            ✏ Edit
 
-                    <button
-                        class="duplicate-draft"
-                        data-id="${draft.id}">
-                        📋 Duplicate
-                    </button>
+        </button>
 
-                    <button
-                        class="delete-draft"
-                        data-id="${draft.id}">
-                        🗑 Delete
-                    </button>
+        <button
+            class="delete-draft"
+            data-id="${draft.id}">
 
-                </div>
+            🗑 Delete
 
-            </div>
+        </button>
 
-            `;
+    </div>
+
+</div>
+
+`;
 
         });
 
