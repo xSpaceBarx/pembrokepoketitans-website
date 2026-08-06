@@ -11,7 +11,7 @@ export async function updatePlannerStatus(){
         collection(db,"notifications")
     );
 
-    // Reset everything
+    // Reset all cards
     document.querySelectorAll(".planner-status").forEach(status=>{
 
         status.innerHTML = "⚪ Missing";
@@ -22,35 +22,32 @@ export async function updatePlannerStatus(){
 
     snapshot.forEach(doc=>{
 
-        const draft = doc.data();
+        const notification = doc.data();
 
         const badge = document.getElementById(
-            `planner-${draft.audience}`
+            `planner-${notification.audience}`
         );
 
         if(!badge) return;
 
-        switch(draft.status){
+        switch(notification.status){
 
             case "draft":
 
                 badge.innerHTML = "🟢 Draft Saved";
                 badge.classList.add("status-draft");
-
                 break;
 
             case "schedule":
 
                 badge.innerHTML = "🟡 Scheduled";
                 badge.classList.add("status-scheduled");
-
                 break;
 
             case "published":
 
                 badge.innerHTML = "🔵 Published";
                 badge.classList.add("status-published");
-
                 break;
 
         }
