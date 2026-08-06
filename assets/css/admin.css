@@ -261,17 +261,21 @@
 
     display:inline-block;
 
-    background:#fff3cd;
+    margin-top:12px;
 
-    color:#8a6d3b;
+    margin-bottom:15px;
 
-    padding:5px 12px;
+    padding:6px 12px;
 
-    border-radius:25px;
+    border-radius:20px;
 
-    font-size:13px;
+    background:#ffe8b3;
+
+    color:#7a4d00;
 
     font-weight:700;
+
+    font-size:.9rem;
 
 }
 
