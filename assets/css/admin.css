@@ -477,3 +477,48 @@
     font-size:13px;
 
 }
+/* ==========================
+   Planner Cards
+========================== */
+
+.planner-item{
+
+    cursor:pointer;
+
+    transition:.25s;
+
+}
+
+.planner-item:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:0 10px 22px rgba(0,0,0,.12);
+
+}
+
+.planner-item h3{
+
+    margin:0;
+
+    font-size:18px;
+
+}
+
+.planner-status{
+
+    margin-top:12px;
+
+    display:inline-block;
+
+    padding:6px 12px;
+
+    border-radius:25px;
+
+    background:#efefef;
+
+    font-weight:600;
+
+    color:#666;
+
+}
