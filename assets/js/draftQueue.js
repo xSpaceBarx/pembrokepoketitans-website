@@ -3,6 +3,7 @@ import { loadDraft } from "./editDraft.js";
 import { deleteDraft } from "./deleteDraft.js";
 import { duplicateDraft } from "./duplicateDraft.js";
 import { updatePlannerStatus } from "./plannerStatus.js";
+import { plannerLookup } from "./plannerLookup.js";
 
 import {
     collection,
@@ -23,7 +24,7 @@ const audienceNames = {
     communityday: "🎉 Community Day",
     raidday: "⚔ Raid Day",
     hatchday: "🥚 Hatch Day",
-    globalevent: "🌎 Global Event",
+    globalevent: "🌎 Global Events",
     trinket: "🍀 Lucky Trinket",
     research: "📦 Special Research",
     codes: "🎁 Redemption Codes",
@@ -31,82 +32,129 @@ const audienceNames = {
 
 };
 
-export async function loadDrafts(){
+const statusPriority = {
 
-    const container = document.getElementById("draftQueue");
+    draft: 1,
+    schedule: 2,
+    published: 3
 
-    if(!container) return;
+};
 
-    container.innerHTML = "Loading notifications...";
+export async function loadDrafts() {
 
-    const q = query(
-        collection(db,"notifications"),
-        orderBy("created","desc")
-    );
+    const draftContainer = document.getElementById("draftQueue");
 
-    const snapshot = await getDocs(q);
+    if (!draftContainer) return;
 
-    const drafts = [];
-    const scheduled = [];
-    const published = [];
+    draftContainer.innerHTML = "Loading notifications...";
 
-    snapshot.forEach(doc=>{
+    Object.keys(plannerLookup).forEach(key => delete plannerLookup[key]);
 
-        const notification = {
-            id: doc.id,
-            ...doc.data()
-        };
+    try {
 
-        switch(notification.status){
+        const q = query(
+            collection(db, "notifications"),
+            orderBy("created", "desc")
+        );
 
-            case "draft":
-                drafts.push(notification);
-                break;
+        const snapshot = await getDocs(q);
 
-            case "schedule":
-                scheduled.push(notification);
-                break;
+        const drafts = [];
+        const scheduled = [];
+        const published = [];
 
-            case "published":
-                published.push(notification);
-                break;
+        snapshot.forEach(doc => {
 
-        }
+            const notification = {
 
-    });
+                id: doc.id,
+                ...doc.data()
 
-    document.getElementById("draftCounts").innerHTML = `
-        📝 Drafts: <strong>${drafts.length}</strong>
-        &nbsp;&nbsp;&nbsp;
-        📅 Scheduled: <strong>${scheduled.length}</strong>
-        &nbsp;&nbsp;&nbsp;
-        🚀 Published: <strong>${published.length}</strong>
-    `;
+            };
 
-    container.innerHTML = "";
+            const existing = plannerLookup[notification.audience];
 
-    renderSection("📝 Drafts", drafts);
-    renderSection("📅 Scheduled", scheduled);
-    renderSection("🚀 Published", published);
+            if (
+                !existing ||
+                statusPriority[notification.status] >
+                statusPriority[existing.status]
+            ) {
 
-    wireButtons();
+                plannerLookup[notification.audience] = {
+
+                    id: notification.id,
+                    status: notification.status
+
+                };
+
+            }
+
+            switch (notification.status) {
+
+                case "draft":
+                    drafts.push(notification);
+                    break;
+
+                case "schedule":
+                    scheduled.push(notification);
+                    break;
+
+                case "published":
+                    published.push(notification);
+                    break;
+
+            }
+
+        });
+
+        document.getElementById("draftCounts").innerHTML = `
+            📝 Drafts: <strong>${drafts.length}</strong>
+            &nbsp;&nbsp;&nbsp;
+            📅 Scheduled: <strong>${scheduled.length}</strong>
+            &nbsp;&nbsp;&nbsp;
+            🚀 Published: <strong>${published.length}</strong>
+        `;
+
+        draftContainer.innerHTML = "";
+
+        renderSection("📝 Drafts", drafts);
+        renderSection("📅 Scheduled", scheduled);
+        renderSection("🚀 Published", published);
+
+        wireButtons();
+
+    }
+
+    catch (err) {
+
+        console.error(err);
+
+        draftContainer.innerHTML =
+            "<p>Unable to load notifications.</p>";
+
+    }
 
 }
 
-function renderSection(title,list){
+function renderSection(title, list) {
 
     const container = document.getElementById("draftQueue");
 
     container.innerHTML += `<h3>${title} (${list.length})</h3>`;
 
-    if(list.length===0){
+    if (list.length === 0) {
 
-        container.innerHTML += `<p>No notifications.</p>`;
+        container.innerHTML += `
+            <p class="empty-section">
+                No notifications.
+            </p>
+        `;
+
         return;
 
     }
 
-    list.forEach(notification=>{
+    list.forEach(notification => {
 
         container.innerHTML += `
 
@@ -159,11 +207,11 @@ function renderSection(title,list){
 
 }
 
-function wireButtons(){
+function wireButtons() {
 
-    document.querySelectorAll(".edit-draft").forEach(button=>{
+    document.querySelectorAll(".edit-draft").forEach(button => {
 
-        button.addEventListener("click",()=>{
+        button.addEventListener("click", () => {
 
             loadDraft(button.dataset.id);
 
@@ -171,9 +219,9 @@ function wireButtons(){
 
     });
 
-    document.querySelectorAll(".duplicate-draft").forEach(button=>{
+    document.querySelectorAll(".duplicate-draft").forEach(button => {
 
-        button.addEventListener("click",async()=>{
+        button.addEventListener("click", async () => {
 
             await duplicateDraft(button.dataset.id);
 
@@ -185,9 +233,9 @@ function wireButtons(){
 
     });
 
-    document.querySelectorAll(".delete-draft").forEach(button=>{
+    document.querySelectorAll(".delete-draft").forEach(button => {
 
-        button.addEventListener("click",async()=>{
+        button.addEventListener("click", async () => {
 
             await deleteDraft(button.dataset.id);
 
