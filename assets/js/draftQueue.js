@@ -55,21 +55,27 @@ export async function loadDrafts() {
                     ${draft.status}
                 </span>
 
-                <div class="draft-buttons">
+<div class="draft-buttons">
 
-                    <button
-                        class="edit-draft"
-                        data-id="${draft.id}">
-                        ✏ Edit
-                    </button>
+    <button
+        class="edit-draft"
+        data-id="${draft.id}">
+        ✏ Edit
+    </button>
 
-                    <button
-                        class="delete-draft"
-                        data-id="${draft.id}">
-                        🗑 Delete
-                    </button>
+    <button
+        class="duplicate-draft"
+        data-id="${draft.id}">
+        📋 Duplicate
+    </button>
 
-                </div>
+    <button
+        class="delete-draft"
+        data-id="${draft.id}">
+        🗑 Delete
+    </button>
+
+</div>
 
             </div>
 
@@ -87,7 +93,18 @@ export async function loadDrafts() {
             });
 
         });
+        // Duplicate buttons
+document.querySelectorAll(".duplicate-draft").forEach(button=>{
 
+    button.addEventListener("click",async()=>{
+
+        await duplicateDraft(button.dataset.id);
+
+        loadDrafts();
+
+    });
+
+});
         // Delete buttons
         document.querySelectorAll(".delete-draft").forEach(button => {
 
