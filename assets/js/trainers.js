@@ -48,7 +48,6 @@ export async function loadTrainers() {
 
             const trainer = doc.data();
 
-            // Format friend code for display
             let displayCode = trainer.friendCode || "";
 
             const digits = displayCode.replace(/\D/g, "");
@@ -56,9 +55,9 @@ export async function loadTrainers() {
             if (digits.length === 12) {
 
                 displayCode =
-                    digits.substring(0,4) + " " +
-                    digits.substring(4,8) + " " +
-                    digits.substring(8,12);
+                    digits.substring(0, 4) + " " +
+                    digits.substring(4, 8) + " " +
+                    digits.substring(8, 12);
 
             }
 
@@ -90,9 +89,41 @@ export async function loadTrainers() {
 
             button.addEventListener("click", async () => {
 
+                const code = button.dataset.code;
+
                 try {
 
-                    await navigator.clipboard.writeText(button.dataset.code);
+                    // Modern clipboard API
+                    if (navigator.clipboard && window.isSecureContext) {
+
+                        await navigator.clipboard.writeText(code);
+
+                    }
+
+                    // Fallback for browsers that block clipboard API
+                    else {
+
+                        const textArea = document.createElement("textarea");
+
+                        textArea.value = code;
+                        textArea.style.position = "fixed";
+                        textArea.style.top = "-9999px";
+                        textArea.style.left = "-9999px";
+
+                        document.body.appendChild(textArea);
+
+                        textArea.focus();
+                        textArea.select();
+
+                        const successful = document.execCommand("copy");
+
+                        document.body.removeChild(textArea);
+
+                        if (!successful) {
+                            throw new Error("Fallback copy failed.");
+                        }
+
+                    }
 
                     const originalText = button.innerHTML;
 
@@ -108,9 +139,9 @@ export async function loadTrainers() {
 
                 catch (err) {
 
-                    console.error(err);
+                    console.error("Copy failed:", err);
 
-                    alert("Unable to copy friend code.");
+                    alert("Unable to copy friend code. Please copy it manually.");
 
                 }
 
