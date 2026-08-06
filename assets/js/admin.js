@@ -1,5 +1,6 @@
 import { loadDrafts } from "./draftQueue.js";
 import { saveNotification } from "./notifications-admin.js";
+import { updatePlannerStatus } from "./plannerStatus.js";
 
 const templates = {
 
@@ -283,11 +284,13 @@ document
     const id =
         document.getElementById("notification-id").value;
 
-    await saveNotification(notification, id);
+await saveNotification(notification,id);
 
-    document.getElementById("notification-id").value = "";
+document.getElementById("notification-id").value = "";
 
-    loadDrafts();
+loadDrafts();
+
+updatePlannerStatus();
 
 });
 
@@ -316,6 +319,8 @@ For now, save your notification as a draft.`
 updatePreview();
 
 loadDrafts();
+
+updatePlannerStatus();
 document
 .getElementById("clearNotification")
 .addEventListener("click",()=>{
