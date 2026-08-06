@@ -3,32 +3,58 @@ import { db } from "./firebase.js";
 import {
     collection,
     addDoc,
+    doc,
+    updateDoc,
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
-export async function saveNotification(notification) {
+export async function saveNotification(notification,id){
 
-    try {
+    try{
 
-        await addDoc(collection(db, "notifications"), {
+        if(id){
 
-            ...notification,
+            await updateDoc(
+                doc(db,"notifications",id),
+                {
 
-            status: "draft",
+                    ...notification,
 
-            created: serverTimestamp()
+                    updated:serverTimestamp()
 
-        });
+                }
+            );
 
-        alert("✅ Notification draft saved.");
+            alert("✅ Draft Updated");
+
+        }
+
+        else{
+
+            await addDoc(
+                collection(db,"notifications"),
+                {
+
+                    ...notification,
+
+                    status:"draft",
+
+                    created:serverTimestamp()
+
+                }
+            );
+
+            alert("✅ Draft Saved");
+
+        }
 
     }
 
-    catch (err) {
+    catch(err){
 
         console.error(err);
 
-        alert("Unable to save notification.");
+        alert("Unable to save draft.");
 
     }
 
