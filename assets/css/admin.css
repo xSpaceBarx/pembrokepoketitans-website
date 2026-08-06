@@ -1,279 +1,414 @@
-.notification-center{
-    background:#ffffff;
-    border-radius:20px;
-    padding:35px;
-    box-shadow:0 10px 30px rgba(0,0,0,.12);
-}
+/* ==========================
+   Weekly Planner
+========================== */
 
-.notification-center h2{
-    margin-bottom:10px;
+.weekly-planner,
+.notification-center,
+.draft-section {
+
+    background: #fff;
+
+    border-radius: 18px;
+
+    padding: 30px;
+
+    margin-bottom: 30px;
+
+    box-shadow: 0 6px 18px rgba(0,0,0,.08);
+
 }
 
 .section-description{
+
     color:#666;
+
     margin-bottom:20px;
-    line-height:1.6;
-}
-
-.notification-center hr{
-    margin:30px 0;
-    border:none;
-    border-top:1px solid #e5e5e5;
-}
-
-.notification-center h3{
-    margin-bottom:18px;
-}
-
-.template-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:15px;
-    margin-bottom:20px;
-}
-
-.template-btn{
-    background:#f5f5f5;
-    border:none;
-    border-radius:12px;
-    padding:16px;
-    font-size:16px;
-    font-weight:600;
-    cursor:pointer;
-    transition:.2s ease;
-}
-
-.template-btn:hover{
-    background:#ff8c00;
-    color:white;
-    transform:translateY(-2px);
-}
-
-.notification-center label{
-    display:block;
-    margin-top:20px;
-    margin-bottom:8px;
-    font-weight:600;
-}
-
-.notification-center input,
-.notification-center textarea,
-.notification-center select{
-    width:100%;
-    padding:14px;
-    border-radius:10px;
-    border:1px solid #d9d9d9;
-    font-size:15px;
-    box-sizing:border-box;
-}
-
-.notification-center textarea{
-    resize:vertical;
-}
-
-.editor-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:20px;
-    margin-top:15px;
-}
-
-.schedule-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:20px;
-    margin-top:20px;
-}
-
-.button-row{
-    display:flex;
-    gap:20px;
-    margin-top:35px;
-}
-
-.button-row button{
-    flex:1;
-}
-
-.admin-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-    gap:25px;
-}
-
-.admin-card{
-    background:#ffffff;
-    border-radius:20px;
-    padding:30px;
-    text-align:center;
-    box-shadow:0 10px 30px rgba(0,0,0,.12);
-}
-
-.admin-card h2{
-    margin-bottom:15px;
-}
-
-.admin-card p{
-    color:#666;
-    line-height:1.6;
-    margin-bottom:25px;
-}
-
-.admin-card button{
-    width:100%;
-}
-
-@media (max-width:768px){
-
-.editor-grid,
-.schedule-grid{
-    grid-template-columns:1fr;
-}
-
-.button-row{
-    flex-direction:column;
-}
 
 }
-.weekly-planner{
 
-background:white;
-padding:30px;
-border-radius:20px;
-box-shadow:0 10px 30px rgba(0,0,0,.12);
-
-}
+/* ==========================
+   Planner
+========================== */
 
 .planner-grid{
 
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-gap:15px;
-margin-top:25px;
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
+    gap:18px;
 
 }
 
 .planner-item{
 
-display:flex;
-justify-content:space-between;
-align-items:center;
+    background:#f7f7f7;
 
-padding:15px 20px;
+    border-radius:12px;
 
-background:#f7f7f7;
+    padding:18px;
 
-border-radius:12px;
+    display:flex;
 
-}
+    justify-content:space-between;
 
-.planner-item span{
-
-font-weight:600;
+    align-items:center;
 
 }
 
 .planner-load{
 
-background:#ff8c00;
+    background:#f57c00;
 
-color:white;
+    color:white;
 
-border:none;
+    border:none;
 
-padding:10px 20px;
+    border-radius:8px;
 
-border-radius:10px;
+    padding:8px 16px;
 
-cursor:pointer;
+    cursor:pointer;
 
-font-weight:600;
-
-transition:.2s;
+    font-weight:bold;
 
 }
 
 .planner-load:hover{
 
-opacity:.9;
-transform:translateY(-2px);
+    background:#e36f00;
 
 }
-.draft-section{
 
-margin-top:40px;
+/* ==========================
+   Templates
+========================== */
 
-background:white;
+.template-grid{
 
-padding:30px;
+    display:grid;
 
-border-radius:20px;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
 
-box-shadow:0 10px 30px rgba(0,0,0,.12);
+    gap:15px;
+
+    margin:20px 0;
+
+}
+
+.template-btn{
+
+    background:#f57c00;
+
+    color:white;
+
+    border:none;
+
+    border-radius:10px;
+
+    padding:15px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.2s;
+
+}
+
+.template-btn:hover{
+
+    transform:translateY(-2px);
+
+    background:#e36f00;
+
+}
+
+/* ==========================
+   Notification Editor
+========================== */
+
+.notification-center input,
+.notification-center textarea,
+.notification-center select{
+
+    width:100%;
+
+    padding:12px;
+
+    border:1px solid #ddd;
+
+    border-radius:10px;
+
+    margin-bottom:18px;
+
+    font-size:15px;
+
+}
+
+.editor-grid,
+.schedule-grid{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:20px;
+
+}
+
+.button-row{
+
+    display:flex;
+
+    gap:15px;
+
+    margin-top:20px;
+
+}
+
+/* ==========================
+   Pipeline Stats
+========================== */
+
+.draft-counts{
+
+    background:#f5f5f5;
+
+    padding:15px;
+
+    border-radius:12px;
+
+    margin:20px 0;
+
+    font-weight:600;
+
+    text-align:center;
+
+    font-size:15px;
+
+}
+
+/* ==========================
+   Draft Cards
+========================== */
+
+#draftQueue{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(360px,1fr));
+
+    gap:20px;
 
 }
 
 .draft-card{
 
-padding:20px;
+    background:#fafafa;
 
-margin-top:15px;
+    border:1px solid #ececec;
 
-border:1px solid #ececec;
+    border-radius:14px;
 
-border-radius:12px;
+    padding:22px;
+
+    transition:.25s;
+
+}
+
+.draft-card:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:0 10px 24px rgba(0,0,0,.08);
+
+}
+
+.draft-card h3{
+
+    margin-top:0;
+
+    margin-bottom:20px;
+
+    color:#f57c00;
+
+}
+
+.draft-info{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:18px;
+
+    margin-bottom:20px;
+
+}
+
+.draft-info strong{
+
+    color:#444;
+
+    display:block;
+
+    margin-bottom:4px;
 
 }
 
 .draft-status{
 
-display:inline-block;
+    display:inline-block;
 
-margin-top:10px;
+    background:#fff3cd;
 
-padding:5px 12px;
+    color:#8a6d3b;
 
-background:#ff8c00;
+    padding:5px 12px;
 
-color:white;
+    border-radius:25px;
 
-border-radius:20px;
+    font-size:13px;
 
-font-size:12px;
-
-font-weight:600;
+    font-weight:700;
 
 }
+
+/* ==========================
+   Draft Buttons
+========================== */
+
 .draft-buttons{
 
-margin-top:18px;
+    display:flex;
 
-display:flex;
+    justify-content:space-between;
 
-gap:12px;
+    gap:10px;
+
+    margin-top:20px;
 
 }
 
 .draft-buttons button{
 
-background:#ff8c00;
+    flex:1;
 
-color:white;
+    border:none;
 
-border:none;
+    border-radius:8px;
 
-padding:10px 16px;
+    padding:10px;
 
-border-radius:10px;
+    cursor:pointer;
 
-cursor:pointer;
+    font-weight:600;
 
-font-weight:600;
+    transition:.2s;
 
 }
 
-.draft-buttons button:hover{
+.edit-draft{
 
-opacity:.9;
+    background:#1976d2;
+
+    color:white;
+
+}
+
+.edit-draft:hover{
+
+    background:#125ca7;
+
+}
+
+.duplicate-draft{
+
+    background:#43a047;
+
+    color:white;
+
+}
+
+.duplicate-draft:hover{
+
+    background:#388e3c;
+
+}
+
+.delete-draft{
+
+    background:#d32f2f;
+
+    color:white;
+
+}
+
+.delete-draft:hover{
+
+    background:#b71c1c;
+
+}
+
+/* ==========================
+   Future Modules
+========================== */
+
+.admin-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+
+    gap:20px;
+
+}
+
+.admin-card{
+
+    background:white;
+
+    border-radius:18px;
+
+    padding:25px;
+
+    text-align:center;
+
+    box-shadow:0 6px 18px rgba(0,0,0,.08);
+
+}
+
+.admin-card button{
+
+    margin-top:15px;
+
+}
+
+/* ==========================
+   Mobile
+========================== */
+
+@media(max-width:768px){
+
+.editor-grid,
+.schedule-grid,
+.draft-info{
+
+    grid-template-columns:1fr;
+
+}
+
+.button-row{
+
+    flex-direction:column;
+
+}
+
+.draft-buttons{
+
+    flex-direction:column;
+
+}
 
 }
