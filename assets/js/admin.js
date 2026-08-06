@@ -2,6 +2,8 @@ import { loadDrafts } from "./draftQueue.js";
 import { saveNotification } from "./notifications-admin.js";
 import { updatePlannerStatus } from "./plannerStatus.js";
 import { publishNotification } from "./publishNotification.js";
+import { plannerLookup } from "./plannerLookup.js";
+import { loadDraft } from "./editDraft.js";
 
 const templates = {
 
@@ -224,7 +226,29 @@ document.querySelectorAll(".planner-item").forEach(card => {
 
     card.addEventListener("click", () => {
 
-        const template = templates[card.dataset.template];
+        const audience = card.dataset.template;
+
+        // If a notification already exists for this audience,
+        // open it instead of loading the template.
+        if (plannerLookup[audience]) {
+
+            loadDraft(plannerLookup[audience].id);
+
+            window.scrollTo({
+
+                top:
+                    document.querySelector(".notification-center").offsetTop - 20,
+
+                behavior: "smooth"
+
+            });
+
+            return;
+
+        }
+
+        // Otherwise load the template.
+        const template = templates[audience];
 
         if (!template) return;
 
