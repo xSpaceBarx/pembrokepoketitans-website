@@ -128,3 +128,19 @@ document
     );
 
 });
+document.querySelectorAll(".planner-load").forEach(button => {
+
+    button.addEventListener("click", () => {
+
+        document.querySelector(
+            `.template-btn[data-template="${button.dataset.template}"]`
+        ).click();
+
+        window.scrollTo({
+            top: document.querySelector(".notification-center").offsetTop - 30,
+            behavior: "smooth"
+        });
+
+    });
+
+});
