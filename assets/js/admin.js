@@ -306,12 +306,13 @@ document
 
     };
 
-    const id =
-        document.getElementById("notification-id").value;
+const savedId = await saveNotification(notification, id);
 
-await saveNotification(notification,id);
+if (savedId) {
 
-document.getElementById("notification-id").value = "";
+    document.getElementById("notification-id").value = savedId;
+
+}
 
 await loadDrafts();
 
