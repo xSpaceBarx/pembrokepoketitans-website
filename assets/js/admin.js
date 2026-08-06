@@ -316,3 +316,25 @@ For now, save your notification as a draft.`
 updatePreview();
 
 loadDrafts();
+document
+.getElementById("clearNotification")
+.addEventListener("click",()=>{
+
+    document.getElementById("notification-id").value="";
+
+    document.getElementById("notification-title").value="";
+
+    document.getElementById("notification-message").value="";
+
+    document.getElementById("notification-date").value="";
+
+    document.getElementById("notification-time").value="";
+
+    document.getElementById("sendNotification").innerHTML=
+        "💾 Save Draft";
+
+    document.getElementById("editingBanner").style.display="none";
+
+    updatePreview();
+
+});
