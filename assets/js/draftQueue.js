@@ -75,9 +75,12 @@ export async function loadDrafts() {
             const existing = plannerLookup[notification.audience];
 
             if (
+
                 !existing ||
+
                 statusPriority[notification.status] >
                 statusPriority[existing.status]
+
             ) {
 
                 plannerLookup[notification.audience] = {
@@ -107,6 +110,53 @@ export async function loadDrafts() {
 
         });
 
+        // Drafts -> newest updated first
+        drafts.sort((a, b) => {
+
+            const aTime =
+                a.updated?.seconds || a.created?.seconds || 0;
+
+            const bTime =
+                b.updated?.seconds || b.created?.seconds || 0;
+
+            return bTime - aTime;
+
+        });
+
+        // Scheduled -> soonest date/time first
+        scheduled.sort((a, b) => {
+
+            const aDate = new Date(
+                `${a.date || "9999-12-31"}T${a.time || "23:59"}`
+            );
+
+            const bDate = new Date(
+                `${b.date || "9999-12-31"}T${b.time || "23:59"}`
+            );
+
+            return aDate - bDate;
+
+        });
+
+        // Published -> newest published first
+        published.sort((a, b) => {
+
+            const aTime =
+                a.publishedAt?.seconds ||
+                a.updated?.seconds ||
+                a.created?.seconds ||
+                0;
+
+            const bTime =
+                b.publishedAt?.seconds ||
+                b.updated?.seconds ||
+                b.created?.seconds ||
+                0;
+
+            return bTime - aTime;
+
+        });
+
         document.getElementById("draftCounts").innerHTML = `
             📝 Drafts: <strong>${drafts.length}</strong>
             &nbsp;&nbsp;&nbsp;
@@ -117,9 +167,23 @@ export async function loadDrafts() {
 
         draftContainer.innerHTML = "";
 
-        renderSection("📝 Drafts", drafts);
-        renderSection("📅 Scheduled", scheduled);
-        renderSection("🚀 Published", published);
+        renderSection(
+            "📝 Drafts",
+            "Newest drafts appear first",
+            drafts
+        );
+
+        renderSection(
+            "📅 Scheduled",
+            "Soonest notifications appear first",
+            scheduled
+        );
+
+        renderSection(
+            "🚀 Published",
+            "Most recently published first",
+            published
+        );
 
         wireButtons();
 
@@ -136,11 +200,16 @@ export async function loadDrafts() {
 
 }
 
-function renderSection(title, list) {
+function renderSection(title, subtitle, list) {
 
     const container = document.getElementById("draftQueue");
 
-    container.innerHTML += `<h3>${title} (${list.length})</h3>`;
+    container.innerHTML += `
+        <div class="pipeline-section-header">
+            <h3>${title} (${list.length})</h3>
+            <p>${subtitle}</p>
+        </div>
+    `;
 
     if (list.length === 0) {
 
