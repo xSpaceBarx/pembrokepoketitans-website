@@ -94,9 +94,6 @@ container.innerHTML += `
         }
 
     </div>
-
-    <br><br>
-
 `;
 
         }
