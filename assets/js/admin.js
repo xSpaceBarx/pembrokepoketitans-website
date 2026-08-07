@@ -221,36 +221,21 @@ document
 /* ============================
    WEEKLY PLANNER
 ============================ */
-
 document.querySelectorAll(".planner-item").forEach(card => {
 
     card.addEventListener("click", () => {
 
-        const audience = card.dataset.template;
-
-        // If a notification already exists for this audience,
-        // open it instead of loading the template.
-        if (plannerLookup[audience]) {
-
-            loadDraft(plannerLookup[audience].id);
-
-            window.scrollTo({
-
-                top:
-                    document.querySelector(".notification-center").offsetTop - 20,
-
-                behavior: "smooth"
-
-            });
-
-            return;
-
-        }
-
-        // Otherwise load the template.
-        const template = templates[audience];
+        const template = templates[card.dataset.template];
 
         if (!template) return;
+
+        // Start a brand new notification
+        document.getElementById("notification-id").value = "";
+
+        document.getElementById("editingBanner").style.display = "none";
+
+        document.getElementById("sendNotification").innerHTML =
+            "💾 Save Draft";
 
         document.getElementById("notification-title").value =
             template.title;
@@ -260,6 +245,13 @@ document.querySelectorAll(".planner-item").forEach(card => {
 
         document.getElementById("notification-audience").value =
             template.audience;
+
+        document.getElementById("notification-delivery").value =
+            "now";
+
+        document.getElementById("notification-date").value = "";
+
+        document.getElementById("notification-time").value = "";
 
         updatePreview();
 
