@@ -630,20 +630,14 @@ Status Badges
 
 }
 
-.status-draft{
-
+.status-badge.status-draft{
     background:#2f9e44;
-
 }
 
-.status-schedule{
-
+.status-badge.status-schedule{
     background:#d48806;
-
 }
 
-.status-published{
-
+.status-badge.status-published{
     background:#1677ff;
-
 }
