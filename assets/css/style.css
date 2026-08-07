@@ -942,3 +942,131 @@ footer img {
     }
 
 }
+/* ==========================================
+   NOTIFICATION DEVICE SETUP
+========================================== */
+
+.notification-setup-card{
+    background:#ffffff;
+    border-radius:18px;
+    padding:30px;
+    margin-bottom:30px;
+    box-shadow:0 8px 24px rgba(0,0,0,.10);
+    border-top:6px solid #F57C00;
+}
+
+.notification-setup-heading{
+    display:flex;
+    align-items:center;
+    gap:18px;
+    margin-bottom:28px;
+}
+
+.notification-setup-icon{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:64px;
+    height:64px;
+    flex-shrink:0;
+    border-radius:50%;
+    background:#153A5B;
+    font-size:30px;
+}
+
+.notification-setup-heading h2{
+    color:#153A5B;
+    margin-bottom:6px;
+}
+
+.notification-setup-heading p{
+    color:#666;
+    margin:0;
+}
+
+.device-setup-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+}
+
+.device-setup-option{
+    display:flex;
+    flex-direction:column;
+    text-align:center;
+    background:#f5f7fa;
+    border:1px solid #e5e7eb;
+    border-radius:14px;
+    padding:24px 20px;
+}
+
+.device-icon{
+    font-size:38px;
+    margin-bottom:10px;
+}
+
+.device-setup-option h3{
+    color:#153A5B;
+    margin-bottom:8px;
+}
+
+.device-setup-option p{
+    color:#666;
+    font-size:.92rem;
+    line-height:1.5;
+    margin-bottom:20px;
+}
+
+.device-setup-button{
+    display:inline-block;
+    width:100%;
+    margin-top:auto;
+    padding:12px 16px;
+    border:none;
+    border-radius:8px;
+    background:#F57C00;
+    color:#ffffff;
+    font-family:inherit;
+    font-size:.95rem;
+    font-weight:600;
+    text-decoration:none;
+    text-align:center;
+    cursor:pointer;
+}
+
+.device-setup-button:hover{
+    background:#e46f00;
+}
+
+.notification-setup-status{
+    margin-top:22px;
+    text-align:center;
+    font-weight:600;
+    color:#2e8b57;
+    min-height:24px;
+}
+
+.notification-help{
+    color:#666;
+    margin-bottom:10px;
+}
+
+
+/* Mobile */
+
+@media (max-width:768px){
+
+    .device-setup-grid{
+        grid-template-columns:1fr;
+    }
+
+    .notification-setup-heading{
+        flex-direction:column;
+        text-align:center;
+    }
+
+    .notification-setup-card{
+        padding:24px 18px;
+    }
+
+}
