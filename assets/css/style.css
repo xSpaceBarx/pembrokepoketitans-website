@@ -875,3 +875,70 @@ footer img {
     color:#2e8b57;
     min-height:24px;
 }
+/* ============================
+   HOMEPAGE ALERTS CARD
+============================ */
+
+.alerts-home-card{
+    display:flex;
+    align-items:center;
+    gap:22px;
+    margin:35px 0 45px;
+    padding:28px 32px;
+
+    background:#ffffff;
+
+    border:2px solid #f28c28;
+    border-radius:18px;
+
+    box-shadow:
+        0 8px 24px rgba(0,0,0,.10);
+}
+
+.alerts-home-icon{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    width:70px;
+    height:70px;
+
+    flex-shrink:0;
+
+    border-radius:50%;
+
+    background:#0b3157;
+
+    font-size:32px;
+}
+
+.alerts-home-content{
+    flex:1;
+}
+
+.alerts-home-content h2{
+    margin:0 0 8px;
+
+    font-size:1.45rem;
+}
+
+.alerts-home-content p{
+    margin:0 0 18px;
+
+    color:#555;
+    line-height:1.6;
+}
+
+
+/* Mobile */
+
+@media (max-width:700px){
+
+    .alerts-home-card{
+        flex-direction:column;
+        text-align:center;
+
+        padding:25px 20px;
+    }
+
+}
