@@ -1,4 +1,8 @@
-import { db } from "./firebase.js";
+import { app, db } from "./firebase.js";
+
+import {
+    getAuth
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 import {
     doc,
@@ -65,6 +69,33 @@ export async function deleteDraft(id) {
             notification.oneSignalNotificationId
         ) {
 
+            /*
+             * Confirm the Admin is still
+             * signed into Firebase.
+             */
+            const user =
+                getAuth(app).currentUser;
+
+
+            if (!user) {
+
+                alert(
+                    "Your Admin login has expired. Please refresh the page and sign in again."
+                );
+
+                return false;
+
+            }
+
+
+            const idToken =
+                await user.getIdToken();
+
+
+            /*
+             * Ask Cloudflare to cancel the
+             * scheduled OneSignal message.
+             */
             const response =
                 await fetch(
                     WORKER_URL,
@@ -73,7 +104,10 @@ export async function deleteDraft(id) {
 
                         headers: {
                             "Content-Type":
-                                "application/json"
+                                "application/json",
+
+                            "Authorization":
+                                `Bearer ${idToken}`
                         },
 
                         body:
