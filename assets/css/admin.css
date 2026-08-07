@@ -641,3 +641,71 @@ Status Badges
 .status-badge.status-published{
     background:#1677ff;
 }
+/* ==========================================
+   ADMIN LOGIN
+========================================== */
+
+#admin-auth-overlay{
+    position:fixed;
+    inset:0;
+    z-index:99999;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:#f5f7fa;
+
+    padding:25px;
+}
+
+.admin-login-card{
+    width:100%;
+    max-width:460px;
+
+    background:#ffffff;
+
+    border-radius:20px;
+    border-top:6px solid #F57C00;
+
+    padding:45px 35px;
+
+    text-align:center;
+
+    box-shadow:
+        0 12px 40px rgba(0,0,0,.15);
+}
+
+.admin-login-icon{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    width:76px;
+    height:76px;
+
+    margin:0 auto 20px;
+
+    border-radius:50%;
+
+    background:#153A5B;
+
+    font-size:34px;
+}
+
+.admin-login-card h1{
+    color:#153A5B;
+    margin-bottom:10px;
+}
+
+.admin-login-card p{
+    color:#666;
+    margin-bottom:22px;
+}
+
+.admin-auth-message{
+    margin-top:22px;
+    margin-bottom:0 !important;
+
+    font-size:.9rem;
+}
