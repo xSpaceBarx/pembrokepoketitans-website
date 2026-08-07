@@ -14,7 +14,39 @@
 </head>
 
 <body>
+<div id="admin-auth-overlay">
 
+    <div class="admin-login-card">
+
+        <div class="admin-login-icon">
+            🔐
+        </div>
+
+        <h1>PokéTitans Admin</h1>
+
+        <p>
+            Administrator access is restricted.
+        </p>
+
+        <button
+            id="admin-google-login"
+            class="hero-button">
+
+            Sign in with Google
+
+        </button>
+
+        <p
+            id="admin-auth-message"
+            class="admin-auth-message">
+
+            Checking login...
+
+        </p>
+
+    </div>
+
+</div>
 <section class="page-hero">
 
     <div class="overlay"></div>
@@ -464,7 +496,10 @@
 
 </section>
 
-<script type="module" src="assets/js/admin.js?v=3"></script>
+<script
+    type="module"
+    src="assets/js/admin-auth.js?v=1">
+</script>
 
 </body>
 
