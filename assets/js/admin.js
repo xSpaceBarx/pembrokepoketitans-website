@@ -1,7 +1,7 @@
 import { loadDrafts } from "./draftQueue.js";
 import { saveNotification } from "./notifications-admin.js";
 import { updatePlannerStatus } from "./plannerStatus.js";
-import { publishNotification } from "./publishNotification.js?v=2";
+import { publishNotification } from "./publishNotification.js?v=3";
 
 const templates = {
 
@@ -324,27 +324,47 @@ document
     const id =
         document.getElementById("notification-id").value;
 
+
     if (!id) {
+
         alert(
             "Please save this notification as a draft first."
         );
+
         return;
+
     }
 
-    const published =
+
+    const result =
         await publishNotification(id);
 
-    if (!published) {
+
+    if (!result) {
         return;
     }
 
+
     await loadDrafts();
+
     await updatePlannerStatus();
 
-    alert(
-        "✅ Notification sent and published successfully."
-    );
 
+    if (result === "scheduled") {
+
+        alert(
+            "✅ Notification scheduled successfully."
+        );
+
+    } else {
+
+        alert(
+            "✅ Notification sent and published successfully."
+        );
+
+    }
+
+});
 });
 /* ============================
    INITIALIZE
