@@ -324,24 +324,28 @@ document
     const id =
         document.getElementById("notification-id").value;
 
-    if(!id){
-
-        alert("Please save this notification as a draft first.");
-
+    if (!id) {
+        alert(
+            "Please save this notification as a draft first."
+        );
         return;
-
     }
 
-    await publishNotification(id);
+    const published =
+        await publishNotification(id);
+
+    if (!published) {
+        return;
+    }
 
     await loadDrafts();
-
     await updatePlannerStatus();
 
-    alert("✅ Notification published successfully.");
+    alert(
+        "✅ Notification sent and published successfully."
+    );
 
 });
-
 /* ============================
    INITIALIZE
 ============================ */
