@@ -14,12 +14,29 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const data = await response.json();
 
-        // ==========================
-        // Last Updated
-        // ==========================
+// ==========================
+// Last Updated
+// ==========================
 
-        document.getElementById("last-updated").innerHTML =
-            `Last Updated: ${data.lastUpdated}`;
+const lastModified = response.headers.get("Last-Modified");
+
+if (lastModified) {
+
+    const updatedDate = new Date(lastModified);
+
+    document.getElementById("last-updated").innerHTML =
+        `Last Updated: ${updatedDate.toLocaleDateString("en-US", {
+            month: "long",
+            day: "numeric",
+            year: "numeric"
+        })}`;
+
+} else {
+
+    document.getElementById("last-updated").innerHTML =
+        `Last Updated: ${data.lastUpdated}`;
+
+}
 
         // ==========================
         // Event Cards
