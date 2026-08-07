@@ -38,6 +38,11 @@
 
   "websites": [
     {
+  "title": "Official Pokémon GO Website",
+  "url": "https://pokemongo.com",
+  "description": "Official Pokémon GO website with game news, events, updates, features and links to play."
+},
+    {
       "title": "DittoBase – Best Mega Attackers",
       "url": "https://www.dittobase.com/pokemon-go/best-attackers/mega",
       "description": "One of the best community-maintained resources for identifying the strongest Mega Pokémon attackers for raids."
@@ -86,7 +91,12 @@
       "title": "LeekDuck Events",
       "url": "https://leekduck.com/events/",
       "description": "Current and upcoming Pokémon GO events from around the world."
-    }
+    },
+    {
+  "title": "DataDitto – Pokémon GO Progress Tracker",
+  "url": "https://dataditto.app",
+  "description": "Track Pokémon GO progress from screenshots, including XP, catches, distance, PokéStops, medals and community leaderboards."
+}
   ],
 
   "podcasts": [
