@@ -245,6 +245,21 @@ function renderSection(title, subtitle, list) {
                 <strong>Time:</strong>
                 ${notification.time || "--"}
             </p>
+<p class="last-updated">
+    <strong>Last Updated:</strong>
+    ${
+        notification.updated
+            ? new Date(
+                  notification.updated.seconds * 1000
+              ).toLocaleString()
+            : notification.created
+            ? new Date(
+                  notification.created.seconds * 1000
+              ).toLocaleString()
+            : "--"
+    }
+</p>
+
 
             <div class="button-row">
 
