@@ -1,81 +1,82 @@
 {
   "lastUpdated": "August 1, 2026",
-
   "events": [
-
     {
       "title": "Monthly Calendar",
       "image": "assets/images/monthlycalendar.png",
       "alt": "Pokémon GO Monthly Event Calendar"
     },
-
     {
       "title": "Current Event",
       "image": "assets/images/currentevent.png",
       "alt": "Current Pokémon GO Event"
     },
-
     {
       "title": "Upcoming Event",
       "image": "assets/images/upcomingevent.png",
       "alt": "Upcoming Pokémon GO Event"
     },
-
     {
       "title": "Future Event",
       "image": "assets/images/futureevent.png",
       "alt": "Future Pokémon GO Event"
     },
-   
     {
       "title": "Future Event",
       "image": "assets/images/futureevent2.png",
       "alt": "Future Pokémon GO Event"
     },
-    
-       {
+    {
+      "title": "Seasonal Details",
+      "image": "assets/images/seasonaldetails.png",
+      "alt": "Pokémon GO Seasonal Details"
+    },
+    {
+      "title": "Max Monday",
+      "image": "assets/images/maxmonday.png",
+      "alt": "Pokémon GO Max Monday"
+    },
+    {
+      "title": "Spotlight Hours",
+      "image": "assets/images/spotlighthour.png",
+      "alt": "Pokémon GO Spotlight Hours"
+    },
+    {
       "title": "Max Battle Day",
       "image": "assets/images/maxbattleday.png",
       "alt": "Pokémon GO Max Battle Day"
     },
- 
-        {
+    {
       "title": "Hatch Day",
       "image": "assets/images/hatchday.png",
       "alt": "Pokémon GO Hatch Day"
     },
-
     {
       "title": "Community Day",
       "image": "assets/images/communityday.png",
       "alt": "Pokémon GO Community Day"
     },
-
     {
       "title": "Community Day Classic",
       "image": "assets/images/communitydayclassic.png",
       "alt": "Pokémon GO Community Day Classic"
     },
-
     {
       "title": "Raid Day",
       "image": "assets/images/raidday.png",
       "alt": "Pokémon GO Raid Day"
     },
-
-{
-  "title": "Ticketed Event",
-  "image": "assets/images/ticketevent.png",
-  "alt": "Pokémon GO In-Person Ticketed Event",
-  "buttonText": "Purchase Tickets",
-  "buttonLink": "https://tickets.nianticlabs.com/events/#/eventlisting?appId=pgo"
-},
-
-        {
+    {
+      "title": "Ticketed Event",
+      "image": "assets/images/ticketevent.png",
+      "alt": "Pokémon GO In-Person Ticketed Event",
+      "buttonText": "Purchase Tickets",
+      "buttonLink": "https://tickets.nianticlabs.com/events/#/eventlisting?appId=pgo"
+    },
+    {
       "title": "In-Person Event",
       "image": "assets/images/inpersonevent.png",
       "alt": "Pokémon GO In-Person Event"
     }
-
   ]
 }
