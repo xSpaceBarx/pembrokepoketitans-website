@@ -575,4 +575,22 @@
     opacity:.75;
 
 }
+/* ==========================
+Last Updated Timestamp
+========================== */
 
+.last-updated{
+
+    margin-top:12px;
+
+    font-size:.85rem;
+
+    color:#777;
+
+}
+
+.last-updated strong{
+
+    color:#555;
+
+}
