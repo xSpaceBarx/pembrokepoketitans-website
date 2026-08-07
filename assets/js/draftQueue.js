@@ -231,10 +231,18 @@ function renderSection(title, subtitle, list) {
 
             <h3>${notification.title}</h3>
 
-            <p>
-                <strong>Audience:</strong>
-                ${audienceNames[notification.audience] || notification.audience}
-            </p>
+<div class="draft-header">
+
+    <p>
+        <strong>Audience:</strong>
+        ${audienceNames[notification.audience] || notification.audience}
+    </p>
+
+    <span class="status-badge status-${notification.status}">
+        ${notification.status.toUpperCase()}
+    </span>
+
+</div>
 
             <p>
                 <strong>Date:</strong>
