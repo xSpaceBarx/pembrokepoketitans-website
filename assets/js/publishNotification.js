@@ -15,25 +15,40 @@ const WORKER_URL =
 export async function publishNotification(id) {
 
     if (!id) {
-        alert("Please save this notification before publishing.");
+
+        alert(
+            "Please save this notification before publishing."
+        );
+
         return false;
+
     }
+
 
     try {
 
-        /*
-         * Load the notification from Firestore.
-         */
         const notificationRef =
-            doc(db, "notifications", id);
+            doc(
+                db,
+                "notifications",
+                id
+            );
+
 
         const notificationSnap =
-            await getDoc(notificationRef);
+            await getDoc(
+                notificationRef
+            );
 
 
         if (!notificationSnap.exists()) {
-            alert("Unable to find this notification.");
+
+            alert(
+                "Unable to find this notification."
+            );
+
             return false;
+
         }
 
 
@@ -41,72 +56,147 @@ export async function publishNotification(id) {
             notificationSnap.data();
 
 
-        /*
-         * Make sure we have everything needed
-         * to send the push notification.
-         */
         if (
             !notification.title ||
             !notification.message ||
             !notification.audience
         ) {
+
             alert(
                 "This notification is missing a title, message or audience."
             );
 
             return false;
+
         }
 
 
         /*
-         * Scheduled notifications will be wired up
-         * separately. Do not accidentally send them now.
+         * Determine whether this is immediate
+         * or scheduled delivery.
          */
-        if (notification.delivery === "schedule") {
-
-            alert(
-                "Scheduled delivery is not connected yet. " +
-                "This notification was not sent."
-            );
-
-            return false;
-        }
+        let sendAfter = null;
 
 
-        /*
-         * Send to the PokéTitans Cloudflare Worker.
-         *
-         * The Worker:
-         * 1. Reads notificationSubscribers from Firebase
-         * 2. Finds users subscribed to this audience
-         * 3. Sends only to those OneSignal subscription IDs
-         */
-        const response = await fetch(
-            WORKER_URL,
-            {
-                method: "POST",
+        if (
+            notification.delivery ===
+            "schedule"
+        ) {
 
-                headers: {
-                    "Content-Type": "application/json"
-                },
+            if (
+                !notification.date ||
+                !notification.time
+            ) {
 
-                body: JSON.stringify({
-                    title: notification.title,
-                    message: notification.message,
-                    audience: notification.audience
-                })
+                alert(
+                    "Please choose both a date and time for the scheduled notification."
+                );
+
+                return false;
+
             }
-        );
+
+
+            /*
+             * The browser interprets this using
+             * your local timezone.
+             *
+             * For you this means Eastern Time,
+             * including daylight-saving changes.
+             */
+            const scheduledDate =
+                new Date(
+                    `${notification.date}T${notification.time}`
+                );
+
+
+            if (
+                Number.isNaN(
+                    scheduledDate.getTime()
+                )
+            ) {
+
+                alert(
+                    "The scheduled date or time is invalid."
+                );
+
+                return false;
+
+            }
+
+
+            if (
+                scheduledDate.getTime() <=
+                Date.now()
+            ) {
+
+                alert(
+                    "Scheduled notifications must be set for a future time."
+                );
+
+                return false;
+
+            }
+
+
+            /*
+             * Convert local date/time to the
+             * UTC format OneSignal expects.
+             */
+            sendAfter =
+                scheduledDate.toISOString();
+
+        }
+
+
+        /*
+         * Send to Cloudflare.
+         */
+        const response =
+            await fetch(
+                WORKER_URL,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            title:
+                                notification.title,
+
+                            message:
+                                notification.message,
+
+                            audience:
+                                notification.audience,
+
+                            sendAfter:
+                                sendAfter
+
+                        })
+                }
+            );
 
 
         let result;
 
+
         try {
-            result = await response.json();
+
+            result =
+                await response.json();
+
         } catch {
+
             throw new Error(
                 "The notification server returned an invalid response."
             );
+
         }
 
 
@@ -117,26 +207,52 @@ export async function publishNotification(id) {
 
 
         /*
-         * Cloudflare or OneSignal reported an error.
+         * Cloudflare / OneSignal failure.
          */
-        if (!response.ok || !result.success) {
+        if (
+            !response.ok ||
+            !result.success ||
+            !result.oneSignalResponse?.id
+        ) {
 
             console.error(
                 "Notification send failed:",
                 result
             );
 
-            alert(
-                "Unable to send notification. " +
-                "The draft has NOT been marked as published."
-            );
+
+            const oneSignalErrors =
+                result.oneSignalResponse?.errors;
+
+
+            if (
+                Array.isArray(
+                    oneSignalErrors
+                )
+            ) {
+
+                alert(
+                    "OneSignal did not accept the notification:\n\n" +
+                    oneSignalErrors.join("\n")
+                );
+
+            } else {
+
+                alert(
+                    "Unable to send notification. " +
+                    "The notification has NOT been published."
+                );
+
+            }
+
 
             return false;
+
         }
 
 
         /*
-         * Nobody currently has this category enabled.
+         * Nobody currently has the category enabled.
          */
         if (
             result.sent === false ||
@@ -144,22 +260,59 @@ export async function publishNotification(id) {
         ) {
 
             alert(
-                "This notification was not sent because " +
-                "there are no subscribers for this alert category."
+                "There are currently no subscribers for this alert category."
             );
 
             return false;
+
         }
 
 
         /*
-         * OneSignal accepted the notification.
-         * Now mark the Firestore notification as published.
+         * Scheduled notification
+         */
+        if (
+            notification.delivery ===
+            "schedule"
+        ) {
+
+            await updateDoc(
+                notificationRef,
+                {
+
+                    status:
+                        "schedule",
+
+                    updated:
+                        serverTimestamp(),
+
+                    recipientCount:
+                        result.recipients || 0,
+
+                    oneSignalNotificationId:
+                        result.oneSignalResponse.id,
+
+                    scheduledFor:
+                        sendAfter
+
+                }
+            );
+
+
+            return "scheduled";
+
+        }
+
+
+        /*
+         * Immediate notification
          */
         await updateDoc(
             notificationRef,
             {
-                status: "published",
+
+                status:
+                    "published",
 
                 publishedAt:
                     serverTimestamp(),
@@ -171,17 +324,13 @@ export async function publishNotification(id) {
                     result.recipients || 0,
 
                 oneSignalNotificationId:
-                    result.oneSignalResponse?.id || null
+                    result.oneSignalResponse.id
+
             }
         );
 
 
-        console.log(
-            `Notification sent to ${result.recipients || 0} subscriber(s).`
-        );
-
-
-        return true;
+        return "published";
 
 
     } catch (error) {
@@ -191,11 +340,15 @@ export async function publishNotification(id) {
             error
         );
 
+
         alert(
             "Unable to send notification. " +
             "Please check the console for details."
         );
 
+
         return false;
+
     }
+
 }
