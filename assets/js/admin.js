@@ -1,7 +1,7 @@
 import { loadDrafts } from "./draftQueue.js";
 import { saveNotification } from "./notifications-admin.js";
 import { updatePlannerStatus } from "./plannerStatus.js";
-import { publishNotification } from "./publishNotification.js";
+import { publishNotification } from "./publishNotification.js?v=2";
 
 const templates = {
 
