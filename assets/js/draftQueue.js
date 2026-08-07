@@ -179,42 +179,14 @@ export async function loadDrafts() {
             scheduled
         );
 
-renderSection(
-    "🚀 Published",
-    "Most recently published first",
-    published,
-    true
-);
+        renderSection(
+            "🚀 Published",
+            "Most recently published first",
+            published
+        );
 
         wireButtons();
-document.querySelectorAll(".pipeline-section-header")
-.forEach(header => {
 
-    header.addEventListener("click", () => {
-
-        const body =
-            header.nextElementSibling;
-
-        const chevron =
-            header.querySelector(".pipeline-chevron");
-
-        if (!body) return;
-
-        if (body.style.display === "none") {
-
-            body.style.display = "block";
-            chevron.textContent = "▼";
-
-        } else {
-
-            body.style.display = "none";
-            chevron.textContent = "▶";
-
-        }
-
-    });
-
-});
     }
 
     catch (err) {
@@ -228,35 +200,16 @@ document.querySelectorAll(".pipeline-section-header")
 
 }
 
-function renderSection(title, subtitle, list, collapsed = false) {
+function renderSection(title, subtitle, list) {
 
     const container = document.getElementById("draftQueue");
-container.innerHTML += `
-<div class="pipeline-section">
 
-    <div class="pipeline-section-header ${collapsed ? "collapsed" : ""}">
-
-        <div class="pipeline-title">
-
-            <h3>${title} (${list.length})</h3>
-
-            <p>${subtitle}</p>
-
-        </div>
-
-        <span class="pipeline-chevron">
-            ${collapsed ? "▶" : "▼"}
-        </span>
-
-    </div>
-
-    <div class="pipeline-section-body"
-        style="${collapsed ? "display:none;" : ""}">
-`;
     container.innerHTML += `
-    </div>
-</div>
-`;
+        <div class="pipeline-section-header">
+            <h3>${title} (${list.length})</h3>
+            <p>${subtitle}</p>
+        </div>
+    `;
 
     if (list.length === 0) {
 
@@ -320,10 +273,7 @@ container.innerHTML += `
         `;
 
     });
-container.innerHTML += `
-        </div>
-    </div>
-`;
+
 }
 
 function wireButtons() {
