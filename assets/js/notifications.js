@@ -26,7 +26,75 @@ const preferenceKeys = [
 
 
 document.addEventListener("DOMContentLoaded", () => {
+async function enablePushNotifications() {
 
+    const status =
+        document.getElementById("notification-setup-status");
+
+    status.innerHTML =
+        "Enabling notifications...";
+
+    window.OneSignalDeferred =
+        window.OneSignalDeferred || [];
+
+    OneSignalDeferred.push(
+        async function(OneSignal) {
+
+            try {
+
+                await OneSignal.Notifications.requestPermission();
+
+                if (
+                    !OneSignal.User.PushSubscription.optedIn
+                ) {
+                    await OneSignal.User.PushSubscription.optIn();
+                }
+
+                if (
+                    OneSignal.User.PushSubscription.optedIn
+                ) {
+
+                    status.innerHTML =
+                        "✅ Notifications are enabled!";
+
+                } else {
+
+                    status.innerHTML =
+                        "⚠️ Notifications were not enabled.";
+
+                }
+
+            } catch (error) {
+
+                console.error(
+                    "Notification setup error:",
+                    error
+                );
+
+                status.innerHTML =
+                    "⚠️ Unable to enable notifications.";
+
+            }
+
+        }
+    );
+}
+
+
+document
+.getElementById("enable-android")
+.addEventListener(
+    "click",
+    enablePushNotifications
+);
+
+
+document
+.getElementById("enable-desktop")
+.addEventListener(
+    "click",
+    enablePushNotifications
+);
     const savedPreferences = JSON.parse(
         localStorage.getItem("poketitans-alerts")
     ) || {};
