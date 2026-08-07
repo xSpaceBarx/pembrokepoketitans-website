@@ -1,4 +1,8 @@
-import { db } from "./firebase.js";
+import { app, db } from "./firebase.js";
+
+import {
+    getAuth
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 import {
     doc,
@@ -152,16 +156,31 @@ export async function publishNotification(id) {
         /*
          * Send to Cloudflare.
          */
+        const user =
+    getAuth(app).currentUser;
+
+if (!user) {
+    alert(
+        "Your Admin login has expired. Please refresh the page and sign in again."
+    );
+    return false;
+}
+
+const idToken =
+    await user.getIdToken();
         const response =
             await fetch(
                 WORKER_URL,
                 {
                     method: "POST",
 
-                    headers: {
-                        "Content-Type":
-                            "application/json"
-                    },
+headers: {
+    "Content-Type":
+        "application/json",
+
+    "Authorization":
+        `Bearer ${idToken}`
+},
 
                     body:
                         JSON.stringify({
