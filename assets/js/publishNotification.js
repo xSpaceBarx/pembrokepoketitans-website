@@ -225,54 +225,96 @@ headers: {
         );
 
 
-        /*
-         * Cloudflare / OneSignal failure.
-         */
-        if (
-            !response.ok ||
-            !result.success ||
-            !result.oneSignalResponse?.id
-        ) {
+       /*
+ * Cloudflare / authentication failure.
+ */
+if (
+    !response.ok ||
+    !result.success
+) {
 
-            console.error(
-                "Notification send failed:",
-                result
-            );
+    console.error(
+        "Notification send failed:",
+        result
+    );
 
+    if (result.authorized === false) {
 
-            const oneSignalErrors =
-                result.oneSignalResponse?.errors;
+        alert(
+            "Your Admin login is not authorized. Please refresh the page and sign in again."
+        );
 
+        return false;
 
-            if (
-                Array.isArray(
-                    oneSignalErrors
-                )
-            ) {
-
-                alert(
-                    "OneSignal did not accept the notification:\n\n" +
-                    oneSignalErrors.join("\n")
-                );
-
-            } else {
-
-                alert(
-                    "Unable to send notification. " +
-                    "The notification has NOT been published."
-                );
-
-            }
+    }
 
 
-            return false;
+    const oneSignalErrors =
+        result.oneSignalResponse?.errors;
 
-        }
+
+    if (
+        Array.isArray(
+            oneSignalErrors
+        )
+    ) {
+
+        alert(
+            "OneSignal did not accept the notification:\n\n" +
+            oneSignalErrors.join("\n")
+        );
+
+    } else {
+
+        alert(
+            "Unable to send notification. " +
+            "The notification has NOT been published."
+        );
+
+    }
 
 
-        /*
-         * Nobody currently has the category enabled.
-         */
+    return false;
+
+}
+
+
+/*
+ * Nobody currently has the category enabled.
+ */
+if (
+    result.sent === false ||
+    result.recipients === 0
+) {
+
+    alert(
+        "There are currently no subscribers for this alert category."
+    );
+
+    return false;
+
+}
+
+
+/*
+ * OneSignal should return a message ID
+ * whenever a push was actually accepted.
+ */
+if (!result.oneSignalResponse?.id) {
+
+    console.error(
+        "OneSignal message ID missing:",
+        result
+    );
+
+    alert(
+        "OneSignal did not create the notification. " +
+        "The notification has NOT been published."
+    );
+
+    return false;
+
+}
         if (
             result.sent === false ||
             result.recipients === 0
