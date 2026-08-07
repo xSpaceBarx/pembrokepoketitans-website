@@ -26,87 +26,180 @@ const preferenceKeys = [
 
 
 document.addEventListener("DOMContentLoaded", () => {
-async function enablePushNotifications() {
 
-    const status =
+    const androidButton =
+        document.getElementById("enable-android");
+
+    const desktopButton =
+        document.getElementById("enable-desktop");
+
+    const setupStatus =
         document.getElementById("notification-setup-status");
 
-    status.innerHTML =
-        "Enabling notifications...";
 
+    /* ============================
+       PUSH SETUP
+    ============================ */
+
+    function showEnabledState() {
+
+        if (androidButton) {
+            androidButton.innerHTML =
+                "✅ Notifications Enabled";
+        }
+
+        if (desktopButton) {
+            desktopButton.innerHTML =
+                "✅ Notifications Enabled";
+        }
+
+        if (setupStatus) {
+            setupStatus.innerHTML =
+                "✅ Push notifications are enabled on this device.";
+        }
+
+    }
+
+
+    async function enablePushNotifications() {
+
+        if (setupStatus) {
+            setupStatus.innerHTML =
+                "Enabling notifications...";
+        }
+
+
+        window.OneSignalDeferred =
+            window.OneSignalDeferred || [];
+
+
+        OneSignalDeferred.push(
+            async function(OneSignal) {
+
+                try {
+
+                    if (
+                        OneSignal.User.PushSubscription.optedIn
+                    ) {
+
+                        showEnabledState();
+
+                        return;
+
+                    }
+
+
+                    await OneSignal.Notifications.requestPermission();
+
+
+                    if (
+                        !OneSignal.User.PushSubscription.optedIn
+                    ) {
+
+                        await OneSignal.User.PushSubscription.optIn();
+
+                    }
+
+
+                    if (
+                        OneSignal.User.PushSubscription.optedIn
+                    ) {
+
+                        showEnabledState();
+
+                    } else {
+
+                        if (setupStatus) {
+                            setupStatus.innerHTML =
+                                "⚠️ Notifications were not enabled. Check your browser notification settings and try again.";
+                        }
+
+                    }
+
+                } catch (error) {
+
+                    console.error(
+                        "Notification setup error:",
+                        error
+                    );
+
+
+                    if (setupStatus) {
+                        setupStatus.innerHTML =
+                            "⚠️ Unable to enable notifications on this device.";
+                    }
+
+                }
+
+            }
+        );
+
+    }
+
+
+    if (androidButton) {
+
+        androidButton.addEventListener(
+            "click",
+            enablePushNotifications
+        );
+
+    }
+
+
+    if (desktopButton) {
+
+        desktopButton.addEventListener(
+            "click",
+            enablePushNotifications
+        );
+
+    }
+
+
+    /*
+     * Check whether this device is already
+     * subscribed when the page loads.
+     */
     window.OneSignalDeferred =
         window.OneSignalDeferred || [];
+
 
     OneSignalDeferred.push(
         async function(OneSignal) {
 
-            try {
+            if (
+                OneSignal.User.PushSubscription.optedIn
+            ) {
 
-                await OneSignal.Notifications.requestPermission();
-
-                if (
-                    !OneSignal.User.PushSubscription.optedIn
-                ) {
-                    await OneSignal.User.PushSubscription.optIn();
-                }
-
-                if (
-                    OneSignal.User.PushSubscription.optedIn
-                ) {
-
-                    status.innerHTML =
-                        "✅ Notifications are enabled!";
-
-                } else {
-
-                    status.innerHTML =
-                        "⚠️ Notifications were not enabled.";
-
-                }
-
-            } catch (error) {
-
-                console.error(
-                    "Notification setup error:",
-                    error
-                );
-
-                status.innerHTML =
-                    "⚠️ Unable to enable notifications.";
+                showEnabledState();
 
             }
 
         }
     );
-}
 
 
-document
-.getElementById("enable-android")
-.addEventListener(
-    "click",
-    enablePushNotifications
-);
+    /* ============================
+       LOAD SAVED PREFERENCES
+    ============================ */
+
+    const savedPreferences =
+        JSON.parse(
+            localStorage.getItem(
+                "poketitans-alerts"
+            )
+        ) || {};
 
 
-document
-.getElementById("enable-desktop")
-.addEventListener(
-    "click",
-    enablePushNotifications
-);
-    const savedPreferences = JSON.parse(
-        localStorage.getItem("poketitans-alerts")
-    ) || {};
-
-
-    // Load preferences.
-    // Any preference that has never been saved defaults to ON.
     preferenceKeys.forEach(key => {
 
-        const checkbox = document.getElementById(key);
+        const checkbox =
+            document.getElementById(key);
+
 
         if (!checkbox) return;
+
 
         checkbox.checked =
             savedPreferences[key] !== undefined
@@ -116,173 +209,186 @@ document
     });
 
 
-    const saveButton = document.getElementById("save-alerts");
+    /* ============================
+       SAVE PREFERENCES
+    ============================ */
 
-    saveButton.addEventListener("click", async () => {
-
-        const status = document.getElementById("save-status");
-
-        saveButton.disabled = true;
-
-        status.innerHTML = "Saving preferences...";
-
-
-        const preferences = {};
-
-        preferenceKeys.forEach(key => {
-
-            preferences[key] =
-                document.getElementById(key).checked;
-
-        });
-
-
-        // Always save locally first.
-        localStorage.setItem(
-            "poketitans-alerts",
-            JSON.stringify(preferences)
+    const saveButton =
+        document.getElementById(
+            "save-alerts"
         );
 
 
-        try {
+    saveButton.addEventListener(
+        "click",
+        async () => {
+
+            const status =
+                document.getElementById(
+                    "save-status"
+                );
+
+
+            saveButton.disabled =
+                true;
+
+
+            status.innerHTML =
+                "Saving preferences...";
+
+
+            const preferences = {};
+
+
+            preferenceKeys.forEach(key => {
+
+                preferences[key] =
+                    document.getElementById(
+                        key
+                    ).checked;
+
+            });
+
+
+            /*
+             * Save locally first.
+             */
+            localStorage.setItem(
+                "poketitans-alerts",
+                JSON.stringify(
+                    preferences
+                )
+            );
+
 
             window.OneSignalDeferred =
                 window.OneSignalDeferred || [];
 
 
-            OneSignalDeferred.push(async function(OneSignal) {
+            OneSignalDeferred.push(
+                async function(OneSignal) {
 
-                try {
+                    try {
 
-                    /*
-                     * If notification permission has not been granted,
-                     * ask the user now.
-                     */
-                    if (!OneSignal.Notifications.permission) {
+                        if (
+                            !OneSignal.Notifications.permission
+                        ) {
 
-                        await OneSignal.Notifications.requestPermission();
+                            await OneSignal.Notifications.requestPermission();
 
-                    }
-
-
-                    /*
-                     * Make sure this browser/device actually has
-                     * an active OneSignal push subscription.
-                     */
-                    if (!OneSignal.User.PushSubscription.optedIn) {
-
-                        await OneSignal.User.PushSubscription.optIn();
-
-                    }
-
-
-                    /*
-                     * Get the unique OneSignal Push Subscription ID.
-                     */
-                    let subscriptionId =
-                        OneSignal.User.PushSubscription.id;
-
-
-                    /*
-                     * Sometimes OneSignal needs a moment after opt-in
-                     * before the subscription ID becomes available.
-                     */
-                    if (!subscriptionId) {
-
-                        await new Promise(resolve =>
-                            setTimeout(resolve, 1500)
-                        );
-
-                        subscriptionId =
-                            OneSignal.User.PushSubscription.id;
-
-                    }
-
-
-                    if (!subscriptionId) {
-
-                        throw new Error(
-                            "OneSignal subscription ID was not available."
-                        );
-
-                    }
-
-
-                    /*
-                     * Save this device and its 14 notification
-                     * preferences to Firestore.
-                     *
-                     * Each OneSignal subscription gets its own document.
-                     */
-                    await setDoc(
-
-                        doc(
-                            db,
-                            "notificationSubscribers",
-                            subscriptionId
-                        ),
-
-                        {
-                            subscriptionId: subscriptionId,
-
-                            ...preferences,
-
-                            active: true,
-
-                            updatedAt: serverTimestamp()
-                        },
-
-                        {
-                            merge: true
                         }
 
-                    );
+
+                        if (
+                            !OneSignal.User.PushSubscription.optedIn
+                        ) {
+
+                            await OneSignal.User.PushSubscription.optIn();
+
+                        }
 
 
-                    status.innerHTML =
-                        "✅ Preferences Saved";
-
-                    saveButton.disabled = false;
+                        let subscriptionId =
+                            OneSignal.User.PushSubscription.id;
 
 
-                    console.log(
-                        "PokéTitans notification preferences saved:",
-                        subscriptionId,
-                        preferences
-                    );
+                        /*
+                         * Give OneSignal a moment to create
+                         * the subscription if this is a new user.
+                         */
+                        if (!subscriptionId) {
 
-                } catch (error) {
+                            await new Promise(
+                                resolve =>
+                                    setTimeout(
+                                        resolve,
+                                        1500
+                                    )
+                            );
 
-                    console.error(
-                        "Unable to save notification subscription:",
-                        error
-                    );
+
+                            subscriptionId =
+                                OneSignal.User.PushSubscription.id;
+
+                        }
 
 
-                    /*
-                     * The local preferences were still saved even if
-                     * notification permission was denied.
-                     */
-                    status.innerHTML =
-                        "⚠️ Preferences saved, but browser notifications are not currently enabled.";
+                        if (!subscriptionId) {
 
-                    saveButton.disabled = false;
+                            throw new Error(
+                                "OneSignal subscription ID was not available."
+                            );
+
+                        }
+
+
+                        await setDoc(
+
+                            doc(
+                                db,
+                                "notificationSubscribers",
+                                subscriptionId
+                            ),
+
+                            {
+                                subscriptionId:
+                                    subscriptionId,
+
+                                ...preferences,
+
+                                active:
+                                    true,
+
+                                updatedAt:
+                                    serverTimestamp()
+                            },
+
+                            {
+                                merge:
+                                    true
+                            }
+
+                        );
+
+
+                        status.innerHTML =
+                            "✅ Preferences Saved";
+
+
+                        saveButton.disabled =
+                            false;
+
+
+                        showEnabledState();
+
+
+                        console.log(
+                            "PokéTitans notification preferences saved:",
+                            subscriptionId,
+                            preferences
+                        );
+
+                    } catch (error) {
+
+                        console.error(
+                            "Unable to save notification subscription:",
+                            error
+                        );
+
+
+                        status.innerHTML =
+                            "⚠️ Preferences saved, but notifications are not currently enabled on this device.";
+
+
+                        saveButton.disabled =
+                            false;
+
+                    }
 
                 }
-
-            });
-
-        } catch (error) {
-
-            console.error(error);
-
-            status.innerHTML =
-                "⚠️ Unable to save notification preferences.";
-
-            saveButton.disabled = false;
+            );
 
         }
-
-    });
+    );
 
 });
