@@ -179,11 +179,12 @@ export async function loadDrafts() {
             scheduled
         );
 
-        renderSection(
-            "🚀 Published",
-            "Most recently published first",
-            published
-        );
+renderSection(
+    "🚀 Published",
+    "Most recently published first",
+    published,
+    true
+);
 
         wireButtons();
 
@@ -200,16 +201,32 @@ export async function loadDrafts() {
 
 }
 
-function renderSection(title, subtitle, list) {
+function renderSection(title, subtitle, list, collapsed = false) {
 
     const container = document.getElementById("draftQueue");
 
-    container.innerHTML += `
-        <div class="pipeline-section-header">
-            <h3>${title} (${list.length})</h3>
-            <p>${subtitle}</p>
+container.innerHTML += `
+    <div class="pipeline-section-header ${collapsed ? "collapsed" : ""}">
+        <div class="pipeline-header-row">
+            <div>
+                <h3>${title} (${list.length})</h3>
+                <p>${subtitle}</p>
+            </div>
+
+            ${
+                collapsed
+                    ? `<button class="toggle-section">
+                        Show Published
+                    </button>`
+                    : ""
+            }
+
         </div>
-    `;
+
+        <div class="pipeline-section-body" style="${
+            collapsed ? "display:none;" : ""
+        }">
+`;
 
     if (list.length === 0) {
 
@@ -273,7 +290,10 @@ function renderSection(title, subtitle, list) {
         `;
 
     });
-
+container.innerHTML += `
+        </div>
+    </div>
+`;
 }
 
 function wireButtons() {
