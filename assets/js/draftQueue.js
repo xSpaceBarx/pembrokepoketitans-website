@@ -9,7 +9,10 @@ import {
     collection,
     getDocs,
     orderBy,
-    query
+    query,
+    doc,
+    updateDoc,
+    serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 const audienceNames = {
@@ -40,9 +43,99 @@ const statusPriority = {
 
 };
 
+async function finalizeScheduledNotifications() {
+
+    const snapshot =
+        await getDocs(
+            collection(db, "notifications")
+        );
+
+    const now =
+        Date.now();
+
+    const updates = [];
+
+
+    snapshot.forEach(snapshotDoc => {
+
+        const notification =
+            snapshotDoc.data();
+
+
+        // Only check notifications that are still scheduled
+        if (
+            notification.status !== "schedule" ||
+            !notification.scheduledFor
+        ) {
+            return;
+        }
+
+
+        const scheduledTime =
+            new Date(
+                notification.scheduledFor
+            ).getTime();
+
+
+        if (
+            Number.isNaN(scheduledTime)
+        ) {
+            return;
+        }
+
+
+        /*
+         * If the scheduled delivery time has passed,
+         * move it into Published.
+         */
+        if (
+            scheduledTime <= now
+        ) {
+
+            updates.push(
+
+                updateDoc(
+                    doc(
+                        db,
+                        "notifications",
+                        snapshotDoc.id
+                    ),
+                    {
+                        status: "published",
+
+                        publishedAt:
+                            serverTimestamp(),
+
+                        updated:
+                            serverTimestamp()
+                    }
+                )
+
+            );
+
+        }
+
+    });
+
+
+    if (updates.length > 0) {
+
+        await Promise.all(updates);
+
+        console.log(
+            `${updates.length} scheduled notification(s) moved to Published.`
+        );
+
+    }
+
+}
+
 export async function loadDrafts() {
 
-    const draftContainer = document.getElementById("draftQueue");
+    await finalizeScheduledNotifications();
+
+    const draftContainer =
+        document.getElementById("draftQueue");
 
     if (!draftContainer) return;
 
