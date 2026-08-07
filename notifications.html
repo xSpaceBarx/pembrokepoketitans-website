@@ -285,31 +285,31 @@
         Save My Preferences
     </button>
 
-    <p id="save-status"></p>
-
-</div>
-
-            <p id="save-status"></p>
-
-        </div>
+        <p id="save-status"></p>
 
     </div>
 
-</section>
+</div>
 
-<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script
+    src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js"
+    defer>
+</script>
 
 <script>
 window.OneSignalDeferred = window.OneSignalDeferred || [];
+
 OneSignalDeferred.push(async function(OneSignal) {
     await OneSignal.init({
-        appId: "fb2114bf-a28e-4e5f-af72-029e40927655",
+        appId: "fb2114bf-a28e-4e5f-af72-029e40927655"
     });
 });
 </script>
 
-<script src="assets/js/notifications.js"></script>
+<script
+    type="module"
+    src="assets/js/notifications.js">
+</script>
 
 </body>
-
 </html>
