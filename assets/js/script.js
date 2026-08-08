@@ -1,3 +1,12 @@
+import { db } from "./firebase.js";
+
+import {
+    collection,
+    getDocs,
+    query,
+    orderBy
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
 console.log("Script loaded");
 
 document.addEventListener("DOMContentLoaded", async () => {
