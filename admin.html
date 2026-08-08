@@ -437,26 +437,189 @@
 </div>
 
     <br><br>
+<!-- Meetup Manager -->
 
+<div class="notification-center meetup-manager">
+
+    <h2>📅 Meetup Manager</h2>
+
+    <p class="section-description">
+        Create and manage upcoming PokéTitans Campfire meetups.
+    </p>
+
+    <hr>
+
+    <h3 id="meetup-editor-title">
+        ➕ Create Meetup
+    </h3>
+
+    <input
+        type="hidden"
+        id="meetup-id">
+
+    <label for="meetup-title">
+        Event Title
+    </label>
+
+    <input
+        type="text"
+        id="meetup-title"
+        placeholder="Lunala Raid Hour - Shiny Debut">
+
+    <div class="editor-grid">
+
+        <div>
+
+            <label for="meetup-type">
+                Event Type
+            </label>
+
+            <select id="meetup-type">
+
+                <option value="Raid Hour">
+                    ⚡ Raid Hour
+                </option>
+
+                <option value="Community Day">
+                    🎉 Community Day
+                </option>
+
+                <option value="Raid Day">
+                    ⚔ Raid Day
+                </option>
+
+                <option value="Max Battle">
+                    💎 Max Battle
+                </option>
+
+                <option value="Special Event">
+                    🌎 Special Event
+                </option>
+
+                <option value="Other">
+                    📍 Other
+                </option>
+
+            </select>
+
+        </div>
+
+        <div>
+
+            <label for="meetup-date">
+                Date
+            </label>
+
+            <input
+                type="date"
+                id="meetup-date">
+
+        </div>
+
+    </div>
+
+    <div class="editor-grid">
+
+        <div>
+
+            <label for="meetup-start-time">
+                Start Time
+            </label>
+
+            <input
+                type="time"
+                id="meetup-start-time">
+
+        </div>
+
+        <div>
+
+            <label for="meetup-end-time">
+                End Time
+            </label>
+
+            <input
+                type="time"
+                id="meetup-end-time">
+
+        </div>
+
+    </div>
+
+    <label for="meetup-location">
+        Location
+    </label>
+
+    <input
+        type="text"
+        id="meetup-location"
+        value="Pembroke Historical Society Museum">
+
+    <label for="meetup-attendance">
+        Expected Attendance
+    </label>
+
+    <input
+        type="text"
+        id="meetup-attendance"
+        placeholder="8-12 Trainers">
+
+    <label for="meetup-description">
+        Description
+    </label>
+
+    <textarea
+        id="meetup-description"
+        rows="4"
+        placeholder="Shiny release of Lunala!"></textarea>
+
+    <label for="meetup-link">
+        Campfire Meetup Link
+    </label>
+
+    <input
+        type="url"
+        id="meetup-link"
+        placeholder="https://cmpf.re/...">
+
+    <br><br>
+
+    <button
+        id="saveMeetup"
+        class="btn-orange">
+
+        💾 Save Meetup
+
+    </button>
+
+    <button
+        id="clearMeetup"
+        class="btn-orange">
+
+        🗑 Clear Editor
+
+    </button>
+
+    <br><br>
+
+    <hr>
+
+    <h3>
+        📋 Upcoming Meetups
+    </h3>
+
+    <div id="meetup-list">
+        Loading meetups...
+    </div>
+
+</div>
+
+<br><br>
     <!-- Future Modules -->
 
     <div class="admin-grid">
 
         <div class="admin-card">
-
-            <h2>📅 Event Manager</h2>
-
-            <p>
-                Create and edit events without touching JSON.
-            </p>
-
-            <button class="btn-orange" disabled>
-
-                Coming Soon
-
-            </button>
-
-        </div>
 
         <div class="admin-card">
 
