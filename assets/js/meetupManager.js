@@ -23,9 +23,7 @@ const meetupsCollection =
 ============================ */
 
 function getElement(id) {
-
     return document.getElementById(id);
-
 }
 
 
@@ -46,7 +44,6 @@ function formatDate(timestamp) {
             year: "numeric"
         }
     );
-
 }
 
 
@@ -65,7 +62,6 @@ function formatTime(timestamp) {
                 minute: "2-digit"
             }
         );
-
 }
 
 
@@ -102,7 +98,6 @@ function clearMeetupEditor() {
 
     getElement("saveMeetup").textContent =
         "💾 Save Meetup";
-
 }
 
 
@@ -155,7 +150,6 @@ async function saveMeetup() {
         );
 
         return;
-
     }
 
 
@@ -178,7 +172,6 @@ async function saveMeetup() {
 
         endDate =
             startDate;
-
     }
 
 
@@ -192,7 +185,6 @@ async function saveMeetup() {
         );
 
         return;
-
     }
 
 
@@ -206,7 +198,6 @@ async function saveMeetup() {
         );
 
         return;
-
     }
 
 
@@ -230,7 +221,6 @@ async function saveMeetup() {
 
         updatedAt:
             serverTimestamp()
-
     };
 
 
@@ -252,7 +242,6 @@ async function saveMeetup() {
                 meetupsCollection,
                 meetup
             );
-
         }
 
 
@@ -271,9 +260,7 @@ async function saveMeetup() {
         alert(
             "Unable to save meetup."
         );
-
     }
-
 }
 
 
@@ -326,7 +313,59 @@ function editMeetup(id, meetup) {
             behavior: "smooth",
             block: "start"
         });
+}
 
+
+/* ============================
+   DUPLICATE
+============================ */
+
+function duplicateMeetup(meetup) {
+
+    // Clear ID so Save creates a NEW Firestore document
+    getElement("meetup-id").value = "";
+
+    getElement("meetup-title").value =
+        meetup.title || "";
+
+    getElement("meetup-type").value =
+        meetup.eventType || "Other";
+
+    // Leave date blank so an old date is not duplicated accidentally
+    getElement("meetup-date").value = "";
+
+    getElement("meetup-start-time").value =
+        meetup.startTime || "";
+
+    getElement("meetup-end-time").value =
+        meetup.endTime || "";
+
+    getElement("meetup-location").value =
+        meetup.location ||
+        "Pembroke Historical Society Museum";
+
+    getElement("meetup-attendance").value =
+        meetup.attendance || "";
+
+    getElement("meetup-description").value =
+        meetup.description || "";
+
+    // Campfire meetup URLs should be unique
+    getElement("meetup-link").value = "";
+
+    getElement("meetup-editor-title").textContent =
+        "📋 Duplicate Meetup";
+
+    getElement("saveMeetup").textContent =
+        "💾 Save New Meetup";
+
+
+    document
+        .querySelector(".meetup-manager")
+        .scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
 }
 
 
@@ -343,9 +382,7 @@ async function deleteMeetup(id, title) {
 
 
     if (!confirmed) {
-
         return;
-
     }
 
 
@@ -368,9 +405,7 @@ async function deleteMeetup(id, title) {
         alert(
             "Unable to delete meetup."
         );
-
     }
-
 }
 
 
@@ -417,21 +452,16 @@ async function loadMeetups() {
                 meetup.endDateTime
                     .toDate() < now
             ) {
-
                 return;
-
             }
 
 
             meetups.push({
-
                 id:
                     documentSnapshot.id,
 
                 ...meetup
-
             });
-
         });
 
 
@@ -444,7 +474,6 @@ async function loadMeetups() {
             `;
 
             return;
-
         }
 
 
@@ -475,7 +504,6 @@ async function loadMeetups() {
                     ` – ${formatTime(
                         meetup.endDateTime
                     )}`;
-
             }
 
 
@@ -513,6 +541,13 @@ async function loadMeetups() {
                 }
 
                 <button
+                    class="btn-orange meetup-duplicate">
+
+                    📋 Duplicate
+
+                </button>
+
+                <button
                     class="btn-orange meetup-edit">
 
                     ✏ Edit
@@ -531,6 +566,21 @@ async function loadMeetups() {
 
             card
                 .querySelector(
+                    ".meetup-duplicate"
+                )
+                .addEventListener(
+                    "click",
+                    () => {
+
+                        duplicateMeetup(
+                            meetup
+                        );
+                    }
+                );
+
+
+            card
+                .querySelector(
                     ".meetup-edit"
                 )
                 .addEventListener(
@@ -541,7 +591,6 @@ async function loadMeetups() {
                             meetup.id,
                             meetup
                         );
-
                     }
                 );
 
@@ -558,13 +607,11 @@ async function loadMeetups() {
                             meetup.id,
                             meetup.title
                         );
-
                     }
                 );
 
 
             container.appendChild(card);
-
         });
 
 
@@ -580,9 +627,7 @@ async function loadMeetups() {
                 Unable to load meetups.
             </p>
         `;
-
     }
-
 }
 
 
@@ -607,5 +652,4 @@ export async function initMeetupManager() {
 
 
     await loadMeetups();
-
 }
