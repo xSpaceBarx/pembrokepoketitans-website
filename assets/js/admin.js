@@ -2,6 +2,7 @@ import { loadDrafts } from "./draftQueue.js";
 import { saveNotification } from "./notifications-admin.js";
 import { updatePlannerStatus } from "./plannerStatus.js";
 import { publishNotification } from "./publishNotification.js?v=3";
+import { initMeetupManager } from "./meetupManager.js";
 
 const templates = {
 
@@ -374,6 +375,8 @@ updatePreview();
 await loadDrafts();
 
 await updatePlannerStatus();
+
+await initMeetupManager();
 document
 .getElementById("clearNotification")
 .addEventListener("click",()=>{
