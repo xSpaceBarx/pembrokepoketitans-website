@@ -4,162 +4,332 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
 
-        // ==========================
-        // MEET UPS
-        // ==========================
+// ==========================
+// MEET UPS
+// ==========================
 
-        const eventResponse = await fetch("./data/events.json");
+const meetupQuery = query(
+    collection(db, "meetups"),
+    orderBy("startDateTime", "asc")
+);
 
-        if (!eventResponse.ok) {
-            throw new Error("Unable to load events.json");
-        }
+const meetupSnapshot = await getDocs(meetupQuery);
 
-        const eventData = await eventResponse.json();
-        const events = eventData.events;
+const now = new Date();
 
-        // ==========================
-        // NEXT MEET UP
-        // ==========================
+const events = [];
 
-        const nextEvent = events[0];
+meetupSnapshot.forEach(docSnapshot => {
 
-        let nextMapLink;
+    const event = docSnapshot.data();
 
-        if (nextEvent.location === "Pembroke Historical Society Museum") {
+    // Hide meetup after its end time
+    if (
+        event.endDateTime &&
+        event.endDateTime.toDate() < now
+    ) {
+        return;
+    }
 
-            nextMapLink =
-                "https://www.google.com/maps/search/?api=1&query=Pembroke+Historical+Society+Museum+147+Center+Street+Pembroke+MA";
+    events.push({
+        id: docSnapshot.id,
+        ...event
+    });
 
-        } else {
+});
 
-            nextMapLink =
-                "https://www.google.com/maps/search/?api=1&query=" +
-                encodeURIComponent(nextEvent.location);
 
-        }
+function formatMeetupDate(timestamp) {
 
-        document.getElementById("event-card").innerHTML = `
+    return timestamp
+        .toDate()
+        .toLocaleDateString(
+            "en-US",
+            {
+                weekday: "long",
+                month: "long",
+                day: "numeric"
+            }
+        );
 
-            <div class="event-card">
+}
 
-                <h3>${nextEvent.title}</h3>
 
-                <p>📅 ${nextEvent.date}</p>
+function formatMeetupTime(event) {
 
-                <p>🕕 ${nextEvent.time}</p>
+    const start =
+        event.startDateTime
+            .toDate()
+            .toLocaleTimeString(
+                "en-US",
+                {
+                    hour: "numeric",
+                    minute: "2-digit"
+                }
+            );
 
-                <p>
-                    📍
+    if (
+        !event.endTime ||
+        !event.endDateTime
+    ) {
+        return start;
+    }
+
+    const end =
+        event.endDateTime
+            .toDate()
+            .toLocaleTimeString(
+                "en-US",
+                {
+                    hour: "numeric",
+                    minute: "2-digit"
+                }
+            );
+
+    return `${start}–${end}`;
+
+}
+
+
+function getMeetupMapLink(location) {
+
+    if (
+        location ===
+        "Pembroke Historical Society Museum"
+    ) {
+
+        return "https://www.google.com/maps/search/?api=1&query=Pembroke+Historical+Society+Museum+147+Center+Street+Pembroke+MA";
+
+    }
+
+    return (
+        "https://www.google.com/maps/search/?api=1&query=" +
+        encodeURIComponent(location)
+    );
+
+}
+
+
+// ==========================
+// NEXT MEET UP
+// ==========================
+
+const eventCard =
+    document.getElementById("event-card");
+
+
+if (events.length === 0) {
+
+    eventCard.innerHTML = `
+        <div class="event-card">
+            <p>
+                No upcoming meetups scheduled.
+            </p>
+        </div>
+    `;
+
+} else {
+
+    const nextEvent = events[0];
+
+    const nextMapLink =
+        getMeetupMapLink(
+            nextEvent.location
+        );
+
+    const nextDate =
+        formatMeetupDate(
+            nextEvent.startDateTime
+        );
+
+    const nextTime =
+        formatMeetupTime(
+            nextEvent
+        );
+
+
+    eventCard.innerHTML = `
+
+        <div class="event-card">
+
+            <h3>
+                ${nextEvent.title}
+            </h3>
+
+            <p>
+                📅 ${nextDate}
+            </p>
+
+            <p>
+                🕕 ${nextTime}
+            </p>
+
+            <p>
+                📍
+                <a
+                    href="${nextMapLink}"
+                    target="_blank"
+                    class="event-link">
+
+                    ${nextEvent.location}
+
+                </a>
+            </p>
+
+            ${
+                nextEvent.attendance
+                    ? `<p>👥 ${nextEvent.attendance}</p>`
+                    : ""
+            }
+
+            ${
+                nextEvent.description
+                    ? `<p>${nextEvent.description}</p>`
+                    : ""
+            }
+
+            <img
+                src="assets/images/today.png"
+                class="today-counters"
+                alt="Today's Featured Graphic"
+                onerror="this.style.display='none';">
+
+            ${
+                nextEvent.link
+                    ? `
+                    <br>
+
                     <a
-                        href="${nextMapLink}"
+                        href="${nextEvent.link}"
                         target="_blank"
-                        class="event-link">
+                        class="hero-button">
 
-                        ${nextEvent.location}
+                        Join Campfire Meet Up
 
                     </a>
-                </p>
-<p>👥 ${nextEvent.attendance}</p>
+                    `
+                    : ""
+            }
 
-<p>${nextEvent.description}</p>
+        </div>
 
-<div id="today-feature">
+    `;
 
-    <img
-        src="assets/images/today.png"
-        class="today-counters"
-        alt="Today's Featured Graphic"
-        onerror="this.parentElement.style.display='none';">
+}
 
-</div>
 
-<br>
+// ==========================
+// UPCOMING MEET UPS
+// ==========================
 
-<a
-    href="${nextEvent.link}"
-    target="_blank"
-    class="hero-button">
+const upcomingContainer =
+    document.getElementById(
+        "upcoming-events-list"
+    );
 
-    Join Campfire Meet Up
 
-</a>
+if (upcomingContainer) {
 
-            </div>
+    upcomingContainer.innerHTML = "";
 
+    const upcomingEvents =
+        events.slice(1);
+
+
+    if (upcomingEvents.length === 0) {
+
+        upcomingContainer.innerHTML = `
+            <p style="text-align:center;">
+                No additional meetups scheduled.
+            </p>
         `;
 
-        // ==========================
-        // UPCOMING MEET UPS
-        // ==========================
+    } else {
 
-        const upcomingContainer =
-            document.getElementById("upcoming-events-list");
+        upcomingEvents.forEach(event => {
 
-        if (upcomingContainer) {
+            const mapLink =
+                getMeetupMapLink(
+                    event.location
+                );
 
-            upcomingContainer.innerHTML = "";
+            const eventDate =
+                formatMeetupDate(
+                    event.startDateTime
+                );
 
-            events.slice(1).forEach(event => {
+            const eventTime =
+                formatMeetupTime(
+                    event
+                );
 
-                let mapLink;
 
-                if (event.location === "Pembroke Historical Society Museum") {
+            upcomingContainer.innerHTML += `
 
-                    mapLink =
-                        "https://www.google.com/maps/search/?api=1&query=Pembroke+Historical+Society+Museum+147+Center+Street+Pembroke+MA";
+                <div class="event-card">
 
-                } else {
+                    <h3>
+                        ${event.title}
+                    </h3>
 
-                    mapLink =
-                        "https://www.google.com/maps/search/?api=1&query=" +
-                        encodeURIComponent(event.location);
+                    <p>
+                        📅 ${eventDate}
+                    </p>
 
-                }
+                    <p>
+                        🕕 ${eventTime}
+                    </p>
 
-                upcomingContainer.innerHTML += `
-
-                    <div class="event-card">
-
-                        <h3>${event.title}</h3>
-
-                        <p>📅 ${event.date}</p>
-
-                        <p>🕕 ${event.time}</p>
-
-                        <p>
-                            📍
-                            <a
-                                href="${mapLink}"
-                                target="_blank"
-                                class="event-link">
-
-                                ${event.location}
-
-                            </a>
-                        </p>
-
-                        <p>👥 ${event.attendance}</p>
-
-                        <p>${event.description}</p>
-
-                        <br>
-
+                    <p>
+                        📍
                         <a
-                            href="${event.link}"
+                            href="${mapLink}"
                             target="_blank"
-                            class="hero-button">
+                            class="event-link">
 
-                            Join Campfire Meet Up
+                            ${event.location}
 
                         </a>
+                    </p>
 
-                    </div>
+                    ${
+                        event.attendance
+                            ? `<p>👥 ${event.attendance}</p>`
+                            : ""
+                    }
 
-                `;
+                    ${
+                        event.description
+                            ? `<p>${event.description}</p>`
+                            : ""
+                    }
 
-            });
+                    ${
+                        event.link
+                            ? `
+                            <br>
 
-        }
+                            <a
+                                href="${event.link}"
+                                target="_blank"
+                                class="hero-button">
+
+                                Join Campfire Meet Up
+
+                            </a>
+                            `
+                            : ""
+                    }
+
+                </div>
+
+            `;
+
+        });
+
+    }
+
+}
 
         // ==========================
         // RAIDS
