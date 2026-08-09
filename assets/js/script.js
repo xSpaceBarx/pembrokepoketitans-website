@@ -9,414 +9,722 @@ import {
 
 console.log("Script loaded");
 
-document.addEventListener("DOMContentLoaded", async () => {
+let todayGraphics = [];
+let todayTransitionTimer = null;
 
-    try {
+function timestampToDate(value) {
 
-// ==========================
-// MEET UPS
-// ==========================
+    if (!value) return null;
 
-const meetupQuery = query(
-    collection(db, "meetups"),
-    orderBy("startDateTime", "asc")
-);
-
-const meetupSnapshot = await getDocs(meetupQuery);
-
-const now = new Date();
-
-const events = [];
-
-meetupSnapshot.forEach(docSnapshot => {
-
-    const event = docSnapshot.data();
-
-    // Hide meetup after its end time
     if (
-        event.endDateTime &&
-        event.endDateTime.toDate() < now
+        typeof value.toDate ===
+        "function"
     ) {
+        return value.toDate();
+    }
+
+    const converted =
+        new Date(value);
+
+    return Number.isNaN(
+        converted.getTime()
+    )
+        ? null
+        : converted;
+}
+
+function getActiveTodayGraphic(
+    now = new Date()
+) {
+
+    return todayGraphics
+        .filter(asset => {
+
+            const goLive =
+                timestampToDate(
+                    asset.goLiveAt
+                );
+
+            const hideAfter =
+                timestampToDate(
+                    asset.hideAfterAt
+                );
+
+            return (
+                asset.type === "today" &&
+                goLive &&
+                goLive <= now &&
+                (
+                    !hideAfter ||
+                    hideAfter > now
+                ) &&
+                (
+                    asset.imageUrl ||
+                    asset.imagePath
+                )
+            );
+        })
+        .sort((a, b) => {
+
+            const aTime =
+                timestampToDate(
+                    a.goLiveAt
+                )?.getTime() || 0;
+
+            const bTime =
+                timestampToDate(
+                    b.goLiveAt
+                )?.getTime() || 0;
+
+            return bTime - aTime;
+        })[0] || null;
+}
+
+function getTodayGraphicHtml() {
+
+    const activeToday =
+        getActiveTodayGraphic();
+
+    if (!activeToday) {
+        return "";
+    }
+
+    const imageSource =
+        activeToday.imageUrl ||
+        activeToday.imagePath;
+
+    return `
+        <img
+            src="${imageSource}"
+            class="today-counters"
+            alt="Today's Featured Graphic"
+            onerror="this.style.display='none';">
+    `;
+}
+
+function scheduleTodayTransition(
+    renderNextMeetup
+) {
+
+    if (todayTransitionTimer) {
+
+        clearTimeout(
+            todayTransitionTimer
+        );
+
+        todayTransitionTimer = null;
+    }
+
+    const now =
+        new Date();
+
+    const futureTimes = [];
+
+    todayGraphics.forEach(asset => {
+
+        if (
+            asset.type !== "today"
+        ) {
+            return;
+        }
+
+        const goLive =
+            timestampToDate(
+                asset.goLiveAt
+            );
+
+        const hideAfter =
+            timestampToDate(
+                asset.hideAfterAt
+            );
+
+        if (
+            goLive &&
+            goLive > now
+        ) {
+            futureTimes.push(
+                goLive.getTime()
+            );
+        }
+
+        if (
+            hideAfter &&
+            hideAfter > now
+        ) {
+            futureTimes.push(
+                hideAfter.getTime()
+            );
+        }
+    });
+
+    if (!futureTimes.length) {
         return;
     }
 
-    events.push({
-        id: docSnapshot.id,
-        ...event
-    });
-
-});
-
-
-function formatMeetupDate(timestamp) {
-
-    return timestamp
-        .toDate()
-        .toLocaleDateString(
-            "en-US",
-            {
-                weekday: "long",
-                month: "long",
-                day: "numeric"
-            }
-        );
-
-}
-
-
-function formatMeetupTime(event) {
-
-    const start =
-        event.startDateTime
-            .toDate()
-            .toLocaleTimeString(
-                "en-US",
-                {
-                    hour: "numeric",
-                    minute: "2-digit"
-                }
-            );
-
-    if (
-        !event.endTime ||
-        !event.endDateTime
-    ) {
-        return start;
-    }
-
-    const end =
-        event.endDateTime
-            .toDate()
-            .toLocaleTimeString(
-                "en-US",
-                {
-                    hour: "numeric",
-                    minute: "2-digit"
-                }
-            );
-
-    return `${start}–${end}`;
-
-}
-
-
-function getMeetupMapLink(location) {
-
-    if (
-        location ===
-        "Pembroke Historical Society Museum"
-    ) {
-
-        return "https://www.google.com/maps/search/?api=1&query=Pembroke+Historical+Society+Museum+147+Center+Street+Pembroke+MA";
-
-    }
-
-    return (
-        "https://www.google.com/maps/search/?api=1&query=" +
-        encodeURIComponent(location)
-    );
-
-}
-
-
-// ==========================
-// NEXT MEET UP
-// ==========================
-
-const eventCard =
-    document.getElementById("event-card");
-
-
-if (events.length === 0) {
-
-    eventCard.innerHTML = `
-        <div class="event-card">
-            <p>
-                No upcoming meetups scheduled.
-            </p>
-        </div>
-    `;
-
-} else {
-
-    const nextEvent = events[0];
-
-    const nextMapLink =
-        getMeetupMapLink(
-            nextEvent.location
-        );
-
-    const nextDate =
-        formatMeetupDate(
-            nextEvent.startDateTime
-        );
-
     const nextTime =
-        formatMeetupTime(
-            nextEvent
+        Math.min(
+            ...futureTimes
         );
 
+    const delay =
+        Math.max(
+            1000,
+            nextTime -
+            now.getTime() +
+            1000
+        );
 
-    eventCard.innerHTML = `
+    const MAX_TIMEOUT =
+        2147483647;
 
-        <div class="event-card">
+    todayTransitionTimer =
+        setTimeout(
+            () => {
 
-            <h3>
-                ${nextEvent.title}
-            </h3>
+                renderNextMeetup();
 
-            <p>
-                📅 ${nextDate}
-            </p>
-
-            <p>
-                🕕 ${nextTime}
-            </p>
-
-            <p>
-                📍
-                <a
-                    href="${nextMapLink}"
-                    target="_blank"
-                    class="event-link">
-
-                    ${nextEvent.location}
-
-                </a>
-            </p>
-
-            ${
-                nextEvent.attendance
-                    ? `<p>👥 ${nextEvent.attendance}</p>`
-                    : ""
-            }
-
-            ${
-                nextEvent.description
-                    ? `<p>${nextEvent.description}</p>`
-                    : ""
-            }
-
-            <img
-                src="assets/images/today.png"
-                class="today-counters"
-                alt="Today's Featured Graphic"
-                onerror="this.style.display='none';">
-
-            ${
-                nextEvent.link
-                    ? `
-                    <br>
-
-                    <a
-                        href="${nextEvent.link}"
-                        target="_blank"
-                        class="hero-button">
-
-                        Join Campfire Meet Up
-
-                    </a>
-                    `
-                    : ""
-            }
-
-        </div>
-
-    `;
-
+                scheduleTodayTransition(
+                    renderNextMeetup
+                );
+            },
+            Math.min(
+                delay,
+                MAX_TIMEOUT
+            )
+        );
 }
 
+document.addEventListener(
+    "DOMContentLoaded",
+    async () => {
 
-// ==========================
-// UPCOMING MEET UPS
-// ==========================
+        try {
 
-const upcomingContainer =
-    document.getElementById(
-        "upcoming-events-list"
-    );
+            // ==========================
+            // MEET UPS + TODAY GRAPHIC
+            // ==========================
 
+            const [
+                meetupSnapshot,
+                graphicsSnapshot
+            ] =
+                await Promise.all([
+                    getDocs(
+                        query(
+                            collection(
+                                db,
+                                "meetups"
+                            ),
+                            orderBy(
+                                "startDateTime",
+                                "asc"
+                            )
+                        )
+                    ),
+                    getDocs(
+                        collection(
+                            db,
+                            "graphicAssets"
+                        )
+                    )
+                ]);
 
-if (upcomingContainer) {
+            const now =
+                new Date();
 
-    upcomingContainer.innerHTML = "";
+            const events = [];
 
-    const upcomingEvents =
-        events.slice(1);
+            meetupSnapshot.forEach(
+                docSnapshot => {
 
+                    const event =
+                        docSnapshot.data();
 
-    if (upcomingEvents.length === 0) {
+                    // Hide meetup after its end time
+                    if (
+                        event.endDateTime &&
+                        event.endDateTime.toDate() <
+                            now
+                    ) {
+                        return;
+                    }
 
-        upcomingContainer.innerHTML = `
-            <p style="text-align:center;">
-                No additional meetups scheduled.
-            </p>
-        `;
+                    events.push({
+                        id:
+                            docSnapshot.id,
+                        ...event
+                    });
+                }
+            );
 
-    } else {
+            todayGraphics = [];
 
-        upcomingEvents.forEach(event => {
+            graphicsSnapshot.forEach(
+                docSnapshot => {
 
-            const mapLink =
-                getMeetupMapLink(
-                    event.location
-                );
+                    const asset =
+                        docSnapshot.data();
 
-            const eventDate =
-                formatMeetupDate(
-                    event.startDateTime
-                );
+                    if (
+                        asset.type ===
+                        "today"
+                    ) {
+                        todayGraphics.push({
+                            id:
+                                docSnapshot.id,
+                            ...asset
+                        });
+                    }
+                }
+            );
 
-            const eventTime =
-                formatMeetupTime(
+            function formatMeetupDate(
+                timestamp
+            ) {
+
+                return timestamp
+                    .toDate()
+                    .toLocaleDateString(
+                        "en-US",
+                        {
+                            weekday:
+                                "long",
+                            month:
+                                "long",
+                            day:
+                                "numeric"
+                        }
+                    );
+            }
+
+            function formatMeetupTime(
+                event
+            ) {
+
+                const start =
                     event
+                        .startDateTime
+                        .toDate()
+                        .toLocaleTimeString(
+                            "en-US",
+                            {
+                                hour:
+                                    "numeric",
+                                minute:
+                                    "2-digit"
+                            }
+                        );
+
+                if (
+                    !event.endTime ||
+                    !event.endDateTime
+                ) {
+                    return start;
+                }
+
+                const end =
+                    event
+                        .endDateTime
+                        .toDate()
+                        .toLocaleTimeString(
+                            "en-US",
+                            {
+                                hour:
+                                    "numeric",
+                                minute:
+                                    "2-digit"
+                            }
+                        );
+
+                return `${start}–${end}`;
+            }
+
+            function getMeetupMapLink(
+                location
+            ) {
+
+                if (
+                    location ===
+                    "Pembroke Historical Society Museum"
+                ) {
+                    return "https://www.google.com/maps/search/?api=1&query=Pembroke+Historical+Society+Museum+147+Center+Street+Pembroke+MA";
+                }
+
+                return (
+                    "https://www.google.com/maps/search/?api=1&query=" +
+                    encodeURIComponent(
+                        location
+                    )
+                );
+            }
+
+            // ==========================
+            // NEXT MEET UP
+            // ==========================
+
+            const eventCard =
+                document.getElementById(
+                    "event-card"
                 );
 
+            function renderNextMeetup() {
 
-            upcomingContainer.innerHTML += `
+                if (!eventCard) {
+                    return;
+                }
 
-                <div class="event-card">
+                if (
+                    events.length === 0
+                ) {
 
-                    <h3>
-                        ${event.title}
-                    </h3>
+                    eventCard.innerHTML = `
+                        <div class="event-card">
+                            <p>
+                                No upcoming meetups scheduled.
+                            </p>
+                        </div>
+                    `;
 
-                    <p>
-                        📅 ${eventDate}
-                    </p>
+                    return;
+                }
 
-                    <p>
-                        🕕 ${eventTime}
-                    </p>
+                const nextEvent =
+                    events[0];
 
-                    <p>
-                        📍
-                        <a
-                            href="${mapLink}"
-                            target="_blank"
-                            class="event-link">
+                const nextMapLink =
+                    getMeetupMapLink(
+                        nextEvent.location
+                    );
 
-                            ${event.location}
+                const nextDate =
+                    formatMeetupDate(
+                        nextEvent.startDateTime
+                    );
 
-                        </a>
-                    </p>
+                const nextTime =
+                    formatMeetupTime(
+                        nextEvent
+                    );
 
-                    ${
-                        event.attendance
-                            ? `<p>👥 ${event.attendance}</p>`
-                            : ""
-                    }
+                const todayGraphic =
+                    getTodayGraphicHtml();
 
-                    ${
-                        event.description
-                            ? `<p>${event.description}</p>`
-                            : ""
-                    }
+                eventCard.innerHTML = `
 
-                    ${
-                        event.link
-                            ? `
-                            <br>
+                    <div class="event-card">
 
+                        <h3>
+                            ${nextEvent.title}
+                        </h3>
+
+                        <p>
+                            📅 ${nextDate}
+                        </p>
+
+                        <p>
+                            🕕 ${nextTime}
+                        </p>
+
+                        <p>
+                            📍
                             <a
-                                href="${event.link}"
+                                href="${nextMapLink}"
                                 target="_blank"
-                                class="hero-button">
+                                class="event-link">
 
-                                Join Campfire Meet Up
+                                ${nextEvent.location}
 
                             </a>
-                            `
-                            : ""
-                    }
+                        </p>
 
-                </div>
+                        ${
+                            nextEvent.attendance
+                                ? `<p>👥 ${nextEvent.attendance}</p>`
+                                : ""
+                        }
 
-            `;
+                        ${
+                            nextEvent.description
+                                ? `<p>${nextEvent.description}</p>`
+                                : ""
+                        }
 
-        });
+                        ${todayGraphic}
 
-    }
+                        ${
+                            nextEvent.link
+                                ? `
+                                <br>
 
-}
+                                <a
+                                    href="${nextEvent.link}"
+                                    target="_blank"
+                                    class="hero-button">
 
-        // ==========================
-        // RAIDS
-        // ==========================
+                                    Join Campfire Meet Up
 
-        const raidResponse = await fetch("./data/raids.json");
-
-        if (!raidResponse.ok) {
-            throw new Error("Unable to load raids.json");
-        }
-
-        const raidData = await raidResponse.json();
-
-        const raidContainer =
-            document.getElementById("raid-container");
-
-        if (raidContainer) {
-
-            raidContainer.innerHTML = "";
-
-            raidData.raids.forEach(raid => {
-
-                raidContainer.innerHTML += `
-
-                    <div class="raid-card">
-
-                        <h3>${raid.type}</h3>
-
-                        <p class="raid-date">${raid.date}</p>
-
-                        <img
-                            src="${raid.image}"
-                            alt="${raid.type}"
-                            class="raid-image">
+                                </a>
+                                `
+                                : ""
+                        }
 
                     </div>
 
                 `;
+            }
 
-            });
+            renderNextMeetup();
 
+            scheduleTodayTransition(
+                renderNextMeetup
+            );
+
+            // ==========================
+            // UPCOMING MEET UPS
+            // ==========================
+
+            const upcomingContainer =
+                document.getElementById(
+                    "upcoming-events-list"
+                );
+
+            if (upcomingContainer) {
+
+                upcomingContainer.innerHTML =
+                    "";
+
+                const upcomingEvents =
+                    events.slice(1);
+
+                if (
+                    upcomingEvents.length ===
+                    0
+                ) {
+
+                    upcomingContainer.innerHTML = `
+                        <p style="text-align:center;">
+                            No additional meetups scheduled.
+                        </p>
+                    `;
+
+                } else {
+
+                    upcomingEvents.forEach(
+                        event => {
+
+                            const mapLink =
+                                getMeetupMapLink(
+                                    event.location
+                                );
+
+                            const eventDate =
+                                formatMeetupDate(
+                                    event.startDateTime
+                                );
+
+                            const eventTime =
+                                formatMeetupTime(
+                                    event
+                                );
+
+                            upcomingContainer.innerHTML += `
+
+                                <div class="event-card">
+
+                                    <h3>
+                                        ${event.title}
+                                    </h3>
+
+                                    <p>
+                                        📅 ${eventDate}
+                                    </p>
+
+                                    <p>
+                                        🕕 ${eventTime}
+                                    </p>
+
+                                    <p>
+                                        📍
+                                        <a
+                                            href="${mapLink}"
+                                            target="_blank"
+                                            class="event-link">
+
+                                            ${event.location}
+
+                                        </a>
+                                    </p>
+
+                                    ${
+                                        event.attendance
+                                            ? `<p>👥 ${event.attendance}</p>`
+                                            : ""
+                                    }
+
+                                    ${
+                                        event.description
+                                            ? `<p>${event.description}</p>`
+                                            : ""
+                                    }
+
+                                    ${
+                                        event.link
+                                            ? `
+                                            <br>
+
+                                            <a
+                                                href="${event.link}"
+                                                target="_blank"
+                                                class="hero-button">
+
+                                                Join Campfire Meet Up
+
+                                            </a>
+                                            `
+                                            : ""
+                                    }
+
+                                </div>
+
+                            `;
+                        }
+                    );
+                }
+            }
+
+            // ==========================
+            // RAIDS
+            // ==========================
+
+            const raidResponse =
+                await fetch(
+                    "./data/raids.json"
+                );
+
+            if (!raidResponse.ok) {
+                throw new Error(
+                    "Unable to load raids.json"
+                );
+            }
+
+            const raidData =
+                await raidResponse.json();
+
+            const raidContainer =
+                document.getElementById(
+                    "raid-container"
+                );
+
+            if (raidContainer) {
+
+                raidContainer.innerHTML =
+                    "";
+
+                raidData.raids.forEach(
+                    raid => {
+
+                        raidContainer.innerHTML += `
+
+                            <div class="raid-card">
+
+                                <h3>
+                                    ${raid.type}
+                                </h3>
+
+                                <p class="raid-date">
+                                    ${raid.date}
+                                </p>
+
+                                <img
+                                    src="${raid.image}"
+                                    alt="${raid.type}"
+                                    class="raid-image">
+
+                            </div>
+
+                        `;
+                    }
+                );
+            }
+
+        } catch (err) {
+
+            console.error(err);
+
+            const eventCard =
+                document.getElementById(
+                    "event-card"
+                );
+
+            if (eventCard) {
+                eventCard.innerHTML =
+                    "<p>Unable to load meet ups.</p>";
+            }
+
+            const raidContainer =
+                document.getElementById(
+                    "raid-container"
+                );
+
+            if (raidContainer) {
+                raidContainer.innerHTML =
+                    "<p>Unable to load raid information.</p>";
+            }
         }
-
-    } catch (err) {
-
-        console.error(err);
-
-        document.getElementById("event-card").innerHTML =
-            "<p>Unable to load meet ups.</p>";
-
-        const raidContainer =
-            document.getElementById("raid-container");
-
-        if (raidContainer) {
-
-            raidContainer.innerHTML =
-                "<p>Unable to load raid information.</p>";
-
-        }
-
     }
+);
 
-});
 fetch("./data/announcement.json")
-.then(response => response.json())
-.then(data => {
+    .then(response =>
+        response.json()
+    )
+    .then(data => {
 
-    if(!data.enabled) return;
+        if (!data.enabled) return;
 
-    document.getElementById("announcement-section").style.display="block";
+        const section =
+            document.getElementById(
+                "announcement-section"
+            );
 
-    document.getElementById("announcement-title").textContent =
-        "📢 " + data.title;
+        const title =
+            document.getElementById(
+                "announcement-title"
+            );
 
-    document.getElementById("announcement-message").textContent =
-        data.message;
+        const message =
+            document.getElementById(
+                "announcement-message"
+            );
 
-    document.getElementById("announcement-date").textContent =
-        "Posted " + data.date;
+        const date =
+            document.getElementById(
+                "announcement-date"
+            );
 
-});
+        if (section) {
+            section.style.display =
+                "block";
+        }
+
+        if (title) {
+            title.textContent =
+                "📢 " + data.title;
+        }
+
+        if (message) {
+            message.textContent =
+                data.message;
+        }
+
+        if (date) {
+            date.textContent =
+                "Posted " + data.date;
+        }
+    })
+    .catch(error => {
+        console.error(
+            "Unable to load announcement:",
+            error
+        );
+    });
