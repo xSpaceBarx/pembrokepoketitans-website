@@ -17,6 +17,9 @@ import {
 
 const TIME_ZONE = "America/New_York";
 
+const CLEANUP_GRACE_MS =
+    24 * 60 * 60 * 1000;
+
 const WORKER_URL =
     "https://poketitan-notifications.xspacebarx.workers.dev/";
 
@@ -830,6 +833,9 @@ function clearGraphicEditor() {
     getElement("graphic-editor-title").textContent =
         "Select a graphic card above";
 
+    getElement("saveGraphic").textContent =
+        "💾 Save Schedule";
+
     getElement("graphic-current-preview").textContent =
         "No active graphic loaded.";
 
@@ -900,6 +906,11 @@ function openGraphicEditor(type, asset = null) {
         asset
             ? `✏ Edit ${config.label}`
             : config.label;
+
+    getElement("saveGraphic").textContent =
+        asset
+            ? "💾 Save Changes"
+            : "💾 Save Schedule";
 
     getElement("graphic-placement").value =
         config.placement;
@@ -1179,12 +1190,15 @@ async function saveGraphic({ publishNow = false } = {}) {
 
         clearGraphicEditor();
 
+        const successMessage =
+            id
+                ? "✅ Graphic updated successfully."
+                : publishNow
+                    ? "✅ Graphic published successfully."
+                    : "✅ Graphic scheduled successfully.";
+
         alert(
-            (
-                publishNow
-                    ? "✅ Graphic published and uploaded successfully."
-                    : "✅ Graphic scheduled and uploaded successfully."
-            ) +
+            successMessage +
             (
                 cleanupWarning
                     ? "\n\nThe new graphic is saved, but an older managed image could not be cleaned up automatically."
@@ -1794,14 +1808,62 @@ function renderFeaturedQueue() {
 }
 
 /* ============================
-   SCHEDULED GRAPHICS PIPELINE
+   LIVE + SCHEDULED GRAPHICS
 ============================ */
 
-async function deleteScheduledGraphic(asset) {
+function getGraphicPipelineState(
+    asset,
+    now = new Date()
+) {
+
+    const goLive =
+        timestampToDate(
+            asset.goLiveAt
+        );
+
+    const hideAfter =
+        timestampToDate(
+            asset.hideAfterAt
+        );
+
+    if (
+        goLive &&
+        goLive <= now &&
+        (
+            !hideAfter ||
+            hideAfter > now
+        )
+    ) {
+        return "live";
+    }
+
+    if (
+        goLive &&
+        goLive > now
+    ) {
+        return "scheduled";
+    }
+
+    return "expired";
+}
+
+async function deleteGraphicAsset(
+    asset
+) {
+
+    const state =
+        getGraphicPipelineState(
+            asset
+        );
+
+    const isLive =
+        state === "live";
 
     const confirmed =
         confirm(
-            `Cancel the scheduled ${asset.label || "graphic"}?`
+            isLive
+                ? `Delete the LIVE ${asset.label || "graphic"}?\n\nThis removes the managed image and its Firestore record immediately.`
+                : `Cancel the scheduled ${asset.label || "graphic"}?`
         );
 
     if (!confirmed) return;
@@ -1809,9 +1871,9 @@ async function deleteScheduledGraphic(asset) {
     try {
 
         /*
-         * Delete the managed GitHub file first.
-         * Firestore is removed only after GitHub
-         * cleanup succeeds.
+         * Always delete the GitHub image first.
+         * Firestore is removed only after GitHub cleanup
+         * succeeds (or the file is already missing).
          */
         if (asset.imagePath) {
 
@@ -1835,92 +1897,335 @@ async function deleteScheduledGraphic(asset) {
     } catch (error) {
 
         console.error(
-            "Unable to cancel scheduled graphic:",
+            "Unable to delete graphic:",
             error
         );
 
         alert(
             error.message ||
-            "Unable to cancel the scheduled graphic. The Firestore record was kept so the graphic remains traceable."
+            "Unable to delete the graphic. The Firestore record was kept so the graphic remains traceable."
         );
     }
+}
+
+function renderGraphicPipelineCard(
+    asset,
+    state
+) {
+
+    const card =
+        document.createElement(
+            "div"
+        );
+
+    card.className =
+        "admin-card scheduled-graphic-card";
+
+    const imageUrl =
+        asset.imageUrl || "";
+
+    const statusText =
+        state === "live"
+            ? "🟢 Live"
+            : "🕒 Scheduled";
+
+    const actionText =
+        state === "live"
+            ? "🗑 Delete"
+            : "🗑 Cancel";
+
+    card.innerHTML = `
+        <h3>${escapeHtml(asset.label || asset.type)}</h3>
+        <p><strong>${statusText}</strong></p>
+        ${
+            imageUrl
+                ? `
+                    <img
+                        src="${escapeHtml(imageUrl)}"
+                        alt="${escapeHtml(asset.label || "Managed graphic") }"
+                        style="display:block;max-width:100%;max-height:180px;object-fit:contain;margin:0 auto 15px;">
+                  `
+                : ""
+        }
+        <p>Go Live: ${escapeHtml(formatDateTime(asset.goLiveAt))}</p>
+        ${
+            asset.hideAfterAt
+                ? `<p>Hide After: ${escapeHtml(formatDateTime(asset.hideAfterAt))}</p>`
+                : ""
+        }
+        ${
+            asset.eventDate
+                ? `<p>Event Date: ${escapeHtml(asset.eventDate)}</p>`
+                : ""
+        }
+        <p>${escapeHtml(asset.placement || "")}</p>
+        <button class="btn-orange graphic-edit">✏ Edit</button>
+        <button class="btn-orange graphic-delete">${actionText}</button>
+    `;
+
+    card
+        .querySelector(
+            ".graphic-edit"
+        )
+        .addEventListener(
+            "click",
+            () => {
+                openGraphicEditor(
+                    asset.type,
+                    asset
+                );
+            }
+        );
+
+    card
+        .querySelector(
+            ".graphic-delete"
+        )
+        .addEventListener(
+            "click",
+            () => {
+                deleteGraphicAsset(
+                    asset
+                );
+            }
+        );
+
+    return card;
 }
 
 function renderGraphicsPipeline() {
 
     const container =
-        getElement("graphicsQueue");
+        getElement(
+            "graphicsQueue"
+        );
 
     const counts =
-        getElement("graphicsCounts");
+        getElement(
+            "graphicsCounts"
+        );
 
-    const now = new Date();
+    const now =
+        new Date();
+
+    const live =
+        graphicAssets
+            .filter(asset =>
+                getGraphicPipelineState(
+                    asset,
+                    now
+                ) === "live"
+            )
+            .sort((a, b) =>
+                String(
+                    a.label || a.type
+                ).localeCompare(
+                    String(
+                        b.label || b.type
+                    )
+                )
+            );
 
     const scheduled =
         graphicAssets
-            .filter(asset => {
-
-                const goLive =
-                    timestampToDate(asset.goLiveAt);
-
-                return goLive && goLive > now;
-
-            })
+            .filter(asset =>
+                getGraphicPipelineState(
+                    asset,
+                    now
+                ) === "scheduled"
+            )
             .sort((a, b) => {
 
                 const aDate =
-                    timestampToDate(a.goLiveAt)?.getTime() || 0;
+                    timestampToDate(
+                        a.goLiveAt
+                    )?.getTime() || 0;
 
                 const bDate =
-                    timestampToDate(b.goLiveAt)?.getTime() || 0;
+                    timestampToDate(
+                        b.goLiveAt
+                    )?.getTime() || 0;
 
                 return aDate - bDate;
-
             });
 
     counts.textContent =
-        `${scheduled.length} scheduled graphic${scheduled.length === 1 ? "" : "s"}`;
-
-    if (!scheduled.length) {
-        container.textContent =
-            "No scheduled graphics.";
-        return;
-    }
+        `${live.length} live • ${scheduled.length} scheduled`;
 
     container.innerHTML = "";
 
-    scheduled.forEach(asset => {
+    if (
+        !live.length &&
+        !scheduled.length
+    ) {
+        container.textContent =
+            "No live or scheduled graphics.";
+        return;
+    }
 
-        const card =
-            document.createElement("div");
+    if (live.length) {
 
-        card.className =
-            "admin-card scheduled-graphic-card";
+        const heading =
+            document.createElement(
+                "h3"
+            );
 
-        card.innerHTML = `
-            <h3>${escapeHtml(asset.label || asset.type)}</h3>
-            <p>${escapeHtml(formatDateTime(asset.goLiveAt))}</p>
-            <p>${escapeHtml(asset.placement || "")}</p>
-            <button class="btn-orange graphic-edit">✏ Edit</button>
-            <button class="btn-orange graphic-cancel">🗑 Cancel</button>
-        `;
+        heading.textContent =
+            "🟢 Live Graphics";
 
-        card
-            .querySelector(".graphic-edit")
-            .addEventListener("click", () => {
-                openGraphicEditor(asset.type, asset);
-            });
+        container.appendChild(
+            heading
+        );
 
-        card
-            .querySelector(".graphic-cancel")
-            .addEventListener("click", () => {
-                deleteScheduledGraphic(asset);
-            });
+        live.forEach(asset => {
+            container.appendChild(
+                renderGraphicPipelineCard(
+                    asset,
+                    "live"
+                )
+            );
+        });
+    }
 
-        container.appendChild(card);
+    if (scheduled.length) {
 
-    });
+        const heading =
+            document.createElement(
+                "h3"
+            );
 
+        heading.textContent =
+            "🕒 Scheduled Graphics";
+
+        if (live.length) {
+            heading.style.marginTop =
+                "28px";
+        }
+
+        container.appendChild(
+            heading
+        );
+
+        scheduled.forEach(asset => {
+            container.appendChild(
+                renderGraphicPipelineCard(
+                    asset,
+                    "scheduled"
+                )
+            );
+        });
+    }
+}
+
+/* ============================
+   EXPIRED METADATA CLEANUP
+============================ */
+
+function isExpiredBeyondCleanupGrace(
+    value,
+    now = new Date()
+) {
+
+    const expiresAt =
+        timestampToDate(
+            value
+        );
+
+    if (!expiresAt) {
+        return false;
+    }
+
+    return (
+        expiresAt.getTime() <=
+        now.getTime() -
+            CLEANUP_GRACE_MS
+    );
+}
+
+async function cleanupExpiredMetadataOnAdminLoad() {
+
+    const now =
+        new Date();
+
+    const expiredGraphics =
+        graphicAssets.filter(asset =>
+            isExpiredBeyondCleanupGrace(
+                asset.hideAfterAt,
+                now
+            )
+        );
+
+    const expiredFeatured =
+        featuredEvents.filter(event =>
+            isExpiredBeyondCleanupGrace(
+                event.endAt,
+                now
+            )
+        );
+
+    let cleaned = 0;
+
+    for (const asset of expiredGraphics) {
+
+        try {
+
+            if (asset.imagePath) {
+                await deleteManagedGraphic(
+                    asset.imagePath
+                );
+            }
+
+            await deleteDoc(
+                doc(
+                    db,
+                    "graphicAssets",
+                    asset.id
+                )
+            );
+
+            cleaned += 1;
+
+        } catch (error) {
+
+            console.warn(
+                "Expired graphic cleanup was deferred:",
+                asset.id,
+                error
+            );
+        }
+    }
+
+    for (const event of expiredFeatured) {
+
+        try {
+
+            if (event.imagePath) {
+                await deleteManagedGraphic(
+                    event.imagePath
+                );
+            }
+
+            await deleteDoc(
+                doc(
+                    db,
+                    "featuredEvents",
+                    event.id
+                )
+            );
+
+            cleaned += 1;
+
+        } catch (error) {
+
+            console.warn(
+                "Expired featured-event cleanup was deferred:",
+                event.id,
+                error
+            );
+        }
+    }
+
+    return cleaned;
 }
 
 /* ============================
@@ -2061,5 +2366,12 @@ export async function initGraphicsManager() {
         );
 
     await loadAllGraphicsData();
+
+    const cleaned =
+        await cleanupExpiredMetadataOnAdminLoad();
+
+    if (cleaned > 0) {
+        await loadAllGraphicsData();
+    }
 
 }
