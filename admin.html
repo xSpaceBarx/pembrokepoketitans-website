@@ -9,11 +9,11 @@
     <title>PokéTitans Command Center</title>
 
     <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/admin.css">
+    <link rel="stylesheet" href="assets/css/admin.css?v=2">
 
 </head>
 
-<body>
+<body id="admin-top">
 <div id="admin-auth-overlay">
 
     <div class="admin-login-card">
@@ -67,9 +67,73 @@
 
 <div class="container">
 
+<!-- Admin Quick Navigation -->
+
+<nav
+    class="admin-section-nav"
+    aria-label="Admin section shortcuts">
+
+    <h2>⚡ Jump to Section</h2>
+
+    <div class="admin-section-nav-grid">
+
+        <a class="admin-jump-link" href="#weekly-checklist">
+            📅 Weekly Checklist
+        </a>
+
+        <a class="admin-jump-link" href="#event-special-notifications">
+            🎉 Event &amp; Special Notifications
+        </a>
+
+        <a class="admin-jump-link" href="#notification-center">
+            📢 Notification Center
+        </a>
+
+        <a class="admin-jump-link" href="#announcement-manager">
+            🏠 Homepage Announcement
+        </a>
+
+        <a class="admin-jump-link" href="#meetup-manager">
+            📍 Meetup Manager
+        </a>
+
+        <a class="admin-jump-link" href="#graphics-manager">
+            🖼️ Event Graphics Manager
+        </a>
+
+        <a class="admin-jump-link" href="#monthly-special-graphics">
+            🎉 Monthly &amp; Special Graphics
+        </a>
+
+        <a class="admin-jump-link" href="#graphics-editor">
+            ✏ Graphic Editor
+        </a>
+
+        <a class="admin-jump-link" href="#featured-event-manager">
+            🔥 Featured Event Queue
+        </a>
+
+        <a class="admin-jump-link" href="#graphics-pipeline">
+            🕒 Live &amp; Scheduled Graphics
+        </a>
+
+        <a class="admin-jump-link" href="#trainer-manager">
+            👥 Trainer Management
+        </a>
+
+        <a class="admin-jump-link" href="#analytics">
+            📊 Analytics
+        </a>
+
+    </div>
+
+</nav>
+
+<br>
+
    <!-- Weekly Planner -->
 
-<div class="weekly-planner">
+<div class="weekly-planner" id="weekly-checklist">
 
     <h2>📅 Weekly Checklist</h2>
 
@@ -125,7 +189,7 @@
 
     <hr>
 
-    <h2>🎉 Event & Special Notifications</h2>
+    <h2 id="event-special-notifications">🎉 Event & Special Notifications</h2>
 
     <p class="section-description">
         Notifications used only when special events occur.
@@ -196,7 +260,7 @@
 
     <!-- Notification Center -->
 
-    <div class="notification-center">
+    <div class="notification-center" id="notification-center">
 
         <h2>📢 Notification Center</h2>
 
@@ -418,7 +482,7 @@
 
 <!-- Notification Pipeline -->
 
-<div class="draft-section">
+<div class="draft-section" id="notification-pipeline">
 
     <h2>📋 Notification Pipeline</h2>
 
@@ -593,7 +657,7 @@
 
 <!-- Meetup Manager -->
 
-<div class="notification-center meetup-manager">
+<div class="notification-center meetup-manager" id="meetup-manager">
 
     <h2>📅 Meetup Manager</h2>
 
@@ -872,7 +936,7 @@
 
     <hr>
 
-    <h2>🎉 Monthly &amp; Special Event Graphics</h2>
+    <h2 id="monthly-special-graphics">🎉 Monthly &amp; Special Event Graphics</h2>
 
     <p class="section-description">
         Monthly graphics and event graphics that are only displayed when applicable.
@@ -1326,7 +1390,7 @@
 
 <!-- Live + Scheduled Graphics Pipeline -->
 
-<div class="draft-section graphics-pipeline">
+<div class="draft-section graphics-pipeline" id="graphics-pipeline">
 
     <h2>🖼️ Live &amp; Scheduled Graphics</h2>
 
@@ -1460,15 +1524,6 @@
 
     <h3>📋 Registered Trainers</h3>
 
-    <label for="trainer-admin-search">
-        Search Trainers
-    </label>
-
-    <input
-        type="search"
-        id="trainer-admin-search"
-        placeholder="Search by Trainer Name, Friend Code or Location">
-
     <p
         id="trainer-admin-count"
         class="draft-counts">
@@ -1477,9 +1532,30 @@
 
     </p>
 
-    <div id="trainer-admin-list">
-        Loading trainers...
-    </div>
+    <details class="admin-collapsible trainer-list-collapsible">
+
+        <summary>
+            👥 Show / Hide Trainer Directory
+        </summary>
+
+        <div class="admin-collapsible-content">
+
+            <label for="trainer-admin-search">
+                Search Trainers
+            </label>
+
+            <input
+                type="search"
+                id="trainer-admin-search"
+                placeholder="Search by Trainer Name, Friend Code or Location">
+
+            <div id="trainer-admin-list">
+                Loading trainers...
+            </div>
+
+        </div>
+
+    </details>
 
 </div>
 
@@ -1489,7 +1565,7 @@
 
 <div class="admin-grid">
 
-    <div class="admin-card">
+    <div class="admin-card" id="analytics">
 
         <h2>📊 Analytics</h2>
 
@@ -1511,9 +1587,16 @@
 
 </section>
 
+<a
+    href="#admin-top"
+    class="admin-back-to-top"
+    aria-label="Back to top">
+    ↑ Top
+</a>
+
 <script
     type="module"
-    src="assets/js/admin-auth.js?v=4">
+    src="assets/js/admin-auth.js?v=5">
 </script>
 
 </body>
