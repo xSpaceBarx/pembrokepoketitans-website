@@ -2,8 +2,8 @@ import { loadDrafts } from "./draftQueue.js?v=2";
 import { saveNotification } from "./notifications-admin.js";
 import { updatePlannerStatus } from "./plannerStatus.js";
 import { publishNotification } from "./publishNotification.js?v=3";
-import { initMeetupManager } from "./meetupManager.js";
-import { initGraphicsManager } from "./graphicsManager.js?v=4";
+import { initMeetupManager } from "./meetupManager.js?v=2";
+import { initGraphicsManager } from "./graphicsManager.js?v=5";
 import { initTrainerManager } from "./trainerManager.js?v=1";
 import { initAnnouncementManager } from "./announcementManager.js?v=1";
 
@@ -111,6 +111,99 @@ function updatePreview() {
 
 }
 
+function startNewNotification(
+    {
+        title = "",
+        message = "",
+        audience = "news"
+    } = {}
+) {
+
+    document.getElementById(
+        "notification-id"
+    ).value = "";
+
+    document.getElementById(
+        "editingBanner"
+    ).style.display =
+        "none";
+
+    document.getElementById(
+        "sendNotification"
+    ).innerHTML =
+        "💾 Save Draft";
+
+    document.getElementById(
+        "notification-title"
+    ).value =
+        title;
+
+    document.getElementById(
+        "notification-message"
+    ).value =
+        message;
+
+    const audienceSelect =
+        document.getElementById(
+            "notification-audience"
+        );
+
+    const audienceExists =
+        Array.from(
+            audienceSelect.options
+        ).some(
+            option =>
+                option.value === audience
+        );
+
+    audienceSelect.value =
+        audienceExists
+            ? audience
+            : "news";
+
+    document.getElementById(
+        "notification-delivery"
+    ).value =
+        "now";
+
+    document.getElementById(
+        "notification-date"
+    ).value = "";
+
+    document.getElementById(
+        "notification-time"
+    ).value = "";
+
+    updatePreview();
+
+    document.getElementById(
+        "notification-center"
+    )?.scrollIntoView({
+        behavior:
+            "smooth",
+        block:
+            "start"
+    });
+}
+
+window.addEventListener(
+    "poketitans:notification-draft",
+    event => {
+
+        const detail =
+            event.detail || {};
+
+        startNewNotification({
+            title:
+                detail.title || "",
+            message:
+                detail.message || "",
+            audience:
+                detail.audience || "news"
+        });
+    }
+);
+
 document
     .getElementById("notification-title")
     .addEventListener("input", updatePreview);
@@ -134,36 +227,13 @@ document
 
             if (!template) return;
 
-            // Start a brand new notification.
-            document.getElementById("notification-id").value = "";
-
-            document.getElementById("editingBanner").style.display =
-                "none";
-
-            document.getElementById("sendNotification").innerHTML =
-                "💾 Save Draft";
-
-            document.getElementById("notification-title").value =
-                template.title;
-
-            document.getElementById("notification-message").value =
-                template.message;
-
-            document.getElementById("notification-audience").value =
-                template.audience;
-
-            document.getElementById("notification-delivery").value =
-                "now";
-
-            document.getElementById("notification-date").value = "";
-            document.getElementById("notification-time").value = "";
-
-            updatePreview();
-
-            window.scrollTo({
-                top:
-                    document.querySelector(".notification-center").offsetTop - 20,
-                behavior: "smooth"
+            startNewNotification({
+                title:
+                    template.title,
+                message:
+                    template.message,
+                audience:
+                    template.audience
             });
 
         });
