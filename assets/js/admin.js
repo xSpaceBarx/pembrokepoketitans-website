@@ -7,6 +7,7 @@ import { initGraphicsManager } from "./graphicsManager.js?v=5";
 import { initTrainerManager } from "./trainerManager.js?v=1";
 import { initAnnouncementManager } from "./announcementManager.js?v=1";
 import { initSiteStatusDashboard } from "./siteStatusDashboard.js?v=2";
+import { initResourcesManager } from "./resourcesManager.js?v=1";
 
 const templates = {
 
@@ -370,4 +371,5 @@ await initAnnouncementManager();
 await initMeetupManager();
 await initGraphicsManager();
 await initTrainerManager();
+await initResourcesManager();
 await initSiteStatusDashboard();
