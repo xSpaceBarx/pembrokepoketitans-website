@@ -9,10 +9,7 @@ import {
     collection,
     getDocs,
     orderBy,
-    query,
-    doc,
-    updateDoc,
-    serverTimestamp
+    query
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 const audienceNames = {
@@ -43,99 +40,9 @@ const statusPriority = {
 
 };
 
-async function finalizeScheduledNotifications() {
-
-    const snapshot =
-        await getDocs(
-            collection(db, "notifications")
-        );
-
-    const now =
-        Date.now();
-
-    const updates = [];
-
-
-    snapshot.forEach(snapshotDoc => {
-
-        const notification =
-            snapshotDoc.data();
-
-
-        // Only check notifications that are still scheduled
-        if (
-            notification.status !== "schedule" ||
-            !notification.scheduledFor
-        ) {
-            return;
-        }
-
-
-        const scheduledTime =
-            new Date(
-                notification.scheduledFor
-            ).getTime();
-
-
-        if (
-            Number.isNaN(scheduledTime)
-        ) {
-            return;
-        }
-
-
-        /*
-         * If the scheduled delivery time has passed,
-         * move it into Published.
-         */
-        if (
-            scheduledTime <= now
-        ) {
-
-            updates.push(
-
-                updateDoc(
-                    doc(
-                        db,
-                        "notifications",
-                        snapshotDoc.id
-                    ),
-                    {
-                        status: "published",
-
-                        publishedAt:
-                            serverTimestamp(),
-
-                        updated:
-                            serverTimestamp()
-                    }
-                )
-
-            );
-
-        }
-
-    });
-
-
-    if (updates.length > 0) {
-
-        await Promise.all(updates);
-
-        console.log(
-            `${updates.length} scheduled notification(s) moved to Published.`
-        );
-
-    }
-
-}
-
 export async function loadDrafts() {
 
-    await finalizeScheduledNotifications();
-
-    const draftContainer =
-        document.getElementById("draftQueue");
+    const draftContainer = document.getElementById("draftQueue");
 
     if (!draftContainer) return;
 
@@ -275,7 +182,8 @@ export async function loadDrafts() {
         renderSection(
             "🚀 Published",
             "Most recently published first",
-            published
+            published,
+            true
         );
 
         wireButtons();
@@ -293,49 +201,18 @@ export async function loadDrafts() {
 
 }
 
-function renderSection(title, subtitle, list) {
+function notificationCardHtml(notification) {
 
-    const container = document.getElementById("draftQueue");
-
-    container.innerHTML += `
-        <div class="pipeline-section-header">
-            <h3>${title} (${list.length})</h3>
-            <p>${subtitle}</p>
-        </div>
-    `;
-
-    if (list.length === 0) {
-
-        container.innerHTML += `
-            <p class="empty-section">
-                No notifications.
-            </p>
-        `;
-
-        return;
-
-    }
-
-    list.forEach(notification => {
-
-        container.innerHTML += `
+    return `
 
         <div class="draft-card">
 
             <h3>${notification.title}</h3>
 
-<div class="draft-header">
-
-    <p>
-        <strong>Audience:</strong>
-        ${audienceNames[notification.audience] || notification.audience}
-    </p>
-
-    <span class="status-badge status-${notification.status}">
-        ${notification.status.toUpperCase()}
-    </span>
-
-</div>
+            <p>
+                <strong>Audience:</strong>
+                ${audienceNames[notification.audience] || notification.audience}
+            </p>
 
             <p>
                 <strong>Date:</strong>
@@ -346,21 +223,6 @@ function renderSection(title, subtitle, list) {
                 <strong>Time:</strong>
                 ${notification.time || "--"}
             </p>
-<p class="last-updated">
-    <strong>Last Updated:</strong>
-    ${
-        notification.updated
-            ? new Date(
-                  notification.updated.seconds * 1000
-              ).toLocaleString()
-            : notification.created
-            ? new Date(
-                  notification.created.seconds * 1000
-              ).toLocaleString()
-            : "--"
-    }
-</p>
-
 
             <div class="button-row">
 
@@ -386,8 +248,82 @@ function renderSection(title, subtitle, list) {
 
         </div>
 
+    `;
+
+}
+
+function renderSection(
+    title,
+    subtitle,
+    list,
+    collapsed = false
+) {
+
+    const container =
+        document.getElementById(
+            "draftQueue"
+        );
+
+    if (collapsed) {
+
+        const cards =
+            list.length
+                ? list
+                    .map(
+                        notification =>
+                            notificationCardHtml(
+                                notification
+                            )
+                    )
+                    .join("")
+                : `
+                    <p class="empty-section">
+                        No notifications.
+                    </p>
+                `;
+
+        container.innerHTML += `
+            <details class="pipeline-collapsible">
+                <summary>
+                    <div class="pipeline-collapsible-summary">
+                        <strong>${title} (${list.length})</strong>
+                        <span>${subtitle} • Click to expand</span>
+                    </div>
+                </summary>
+
+                <div class="pipeline-collapsible-content">
+                    ${cards}
+                </div>
+            </details>
         `;
 
+        return;
+    }
+
+    container.innerHTML += `
+        <div class="pipeline-section-header">
+            <h3>${title} (${list.length})</h3>
+            <p>${subtitle}</p>
+        </div>
+    `;
+
+    if (list.length === 0) {
+
+        container.innerHTML += `
+            <p class="empty-section">
+                No notifications.
+            </p>
+        `;
+
+        return;
+    }
+
+    list.forEach(notification => {
+
+        container.innerHTML +=
+            notificationCardHtml(
+                notification
+            );
     });
 
 }
