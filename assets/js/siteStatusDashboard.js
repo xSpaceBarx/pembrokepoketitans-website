@@ -42,6 +42,36 @@ const REQUIRED_RECURRING_GRAPHICS = [
     }
 ];
 
+const REQUIRED_WEEKLY_NOTIFICATIONS = [
+    {
+        audience: "maxmonday",
+        label: "Max Monday"
+    },
+    {
+        audience: "spotlight",
+        label: "Spotlight Hour"
+    },
+    {
+        audience: "raidhour",
+        label: "Raid Hour"
+    },
+    {
+        audience: "raidrotation",
+        label: "Raid Boss Rotation"
+    }
+];
+
+/*
+ * Daily Bonuses / GO Pass is intentionally NOT included above.
+ * It is optional and should never create a weekly dashboard warning.
+ */
+
+const GRAPHIC_EXPIRY_WARNING_MS =
+    48 * 60 * 60 * 1000;
+
+const TIME_ZONE =
+    "America/New_York";
+
 let refreshInProgress = false;
 let refreshQueued = false;
 let observerRefreshTimer = null;
@@ -71,6 +101,320 @@ function timestampToDate(value) {
     )
         ? null
         : date;
+}
+
+function easternDateParts(
+    value = new Date()
+) {
+
+    const date =
+        timestampToDate(value) ||
+        new Date();
+
+    const parts =
+        new Intl.DateTimeFormat(
+            "en-US",
+            {
+                timeZone:
+                    TIME_ZONE,
+                year:
+                    "numeric",
+                month:
+                    "2-digit",
+                day:
+                    "2-digit"
+            }
+        ).formatToParts(
+            date
+        );
+
+    const lookup = {};
+
+    parts.forEach(part => {
+
+        if (
+            part.type !==
+            "literal"
+        ) {
+            lookup[
+                part.type
+            ] =
+                part.value;
+        }
+    });
+
+    return {
+        year:
+            Number(
+                lookup.year
+            ),
+        month:
+            Number(
+                lookup.month
+            ),
+        day:
+            Number(
+                lookup.day
+            )
+    };
+}
+
+function dateKeyFromParts(
+    year,
+    month,
+    day
+) {
+
+    return [
+        String(year)
+            .padStart(4, "0"),
+        String(month)
+            .padStart(2, "0"),
+        String(day)
+            .padStart(2, "0")
+    ].join("-");
+}
+
+function easternDateKey(
+    value = new Date()
+) {
+
+    const parts =
+        easternDateParts(
+            value
+        );
+
+    return dateKeyFromParts(
+        parts.year,
+        parts.month,
+        parts.day
+    );
+}
+
+function shiftDateKey(
+    dateKey,
+    days
+) {
+
+    const match =
+        /^(\d{4})-(\d{2})-(\d{2})$/
+            .exec(
+                dateKey
+            );
+
+    if (!match) {
+        return "";
+    }
+
+    const date =
+        new Date(
+            Date.UTC(
+                Number(match[1]),
+                Number(match[2]) - 1,
+                Number(match[3]) + days,
+                12
+            )
+        );
+
+    return dateKeyFromParts(
+        date.getUTCFullYear(),
+        date.getUTCMonth() + 1,
+        date.getUTCDate()
+    );
+}
+
+function getEasternWeekRange(
+    now = new Date()
+) {
+
+    const todayKey =
+        easternDateKey(
+            now
+        );
+
+    const [
+        year,
+        month,
+        day
+    ] =
+        todayKey
+            .split("-")
+            .map(Number);
+
+    const dayOfWeek =
+        new Date(
+            Date.UTC(
+                year,
+                month - 1,
+                day,
+                12
+            )
+        ).getUTCDay();
+
+    const daysSinceMonday =
+        (
+            dayOfWeek + 6
+        ) % 7;
+
+    const start =
+        shiftDateKey(
+            todayKey,
+            -daysSinceMonday
+        );
+
+    const end =
+        shiftDateKey(
+            start,
+            6
+        );
+
+    return {
+        start,
+        end
+    };
+}
+
+function notificationDateKey(
+    notification
+) {
+
+    if (
+        typeof notification.date ===
+            "string" &&
+        /^\d{4}-\d{2}-\d{2}$/
+            .test(
+                notification.date
+            )
+    ) {
+        return notification.date;
+    }
+
+    const timestamp =
+        notification.publishedAt ||
+        notification.updated ||
+        notification.created ||
+        null;
+
+    return timestamp
+        ? easternDateKey(
+            timestamp
+        )
+        : "";
+}
+
+function notificationCountsForWeek(
+    notifications,
+    now = new Date()
+) {
+
+    const range =
+        getEasternWeekRange(
+            now
+        );
+
+    const result = {};
+
+    REQUIRED_WEEKLY_NOTIFICATIONS
+        .forEach(config => {
+
+            result[
+                config.audience
+            ] = {
+                ...config,
+                records: []
+            };
+        });
+
+    notifications.forEach(
+        notification => {
+
+            const bucket =
+                result[
+                    notification.audience
+                ];
+
+            if (!bucket) {
+                return;
+            }
+
+            const dateKey =
+                notificationDateKey(
+                    notification
+                );
+
+            if (
+                dateKey &&
+                dateKey >= range.start &&
+                dateKey <= range.end
+            ) {
+                bucket.records.push(
+                    notification
+                );
+            }
+        }
+    );
+
+    return {
+        range,
+        result
+    };
+}
+
+function hasScheduledReplacement(
+    graphics,
+    asset,
+    now = new Date()
+) {
+
+    const hideAfter =
+        timestampToDate(
+            asset.hideAfterAt
+        );
+
+    return graphics.some(
+        candidate => {
+
+            if (
+                candidate.id === asset.id ||
+                candidate.type !== asset.type
+            ) {
+                return false;
+            }
+
+            const goLive =
+                timestampToDate(
+                    candidate.goLiveAt
+                );
+
+            if (
+                !goLive ||
+                goLive <= now
+            ) {
+                return false;
+            }
+
+            /*
+             * Count it as a replacement when the next version is scheduled
+             * before the current graphic expires, or within 12 hours after.
+             * This avoids treating a much-later graphic as adequate coverage.
+             */
+            const latestAcceptableStart =
+                hideAfter
+                    ? hideAfter.getTime() +
+                        (
+                            12 *
+                            60 *
+                            60 *
+                            1000
+                        )
+                    : Number.POSITIVE_INFINITY;
+
+            return (
+                goLive.getTime() <=
+                latestAcceptableStart
+            );
+        }
+    );
 }
 
 function formatDate(value) {
@@ -966,6 +1310,170 @@ function renderDashboard(
                 }
             );
         }
+
+
+        /*
+         * Required weekly notification checks.
+         * GO Pass / Daily Bonuses is intentionally optional and excluded.
+         */
+        const weeklyNotifications =
+            notificationCountsForWeek(
+                data.notifications,
+                now
+            );
+
+        Object.values(
+            weeklyNotifications.result
+        ).forEach(
+            item => {
+
+                if (
+                    item.records.length >
+                    0
+                ) {
+                    return;
+                }
+
+                attentionCount += 1;
+
+                appendAttentionItem(
+                    attentionContainer,
+                    {
+                        tone:
+                            "warning",
+                        icon:
+                            "🟡",
+                        text:
+                            `${item.label} notification has not been prepared this week.`,
+                        href:
+                            "#weekly-checklist"
+                    }
+                );
+            }
+        );
+
+        /*
+         * Advance warning: a live recurring graphic expires within
+         * 48 hours and there is not yet another graphic of the same
+         * type scheduled to replace it.
+         */
+        REQUIRED_RECURRING_GRAPHICS
+            .forEach(
+                config => {
+
+                    const active =
+                        data.graphics
+                            .filter(
+                                asset =>
+                                    asset.type ===
+                                        config.type &&
+                                    graphicState(
+                                        asset,
+                                        now
+                                    ) ===
+                                        "live"
+                            )
+                            .sort(
+                                (
+                                    a,
+                                    b
+                                ) => {
+
+                                    const aTime =
+                                        timestampToDate(
+                                            a.goLiveAt
+                                        )?.getTime() ||
+                                        0;
+
+                                    const bTime =
+                                        timestampToDate(
+                                            b.goLiveAt
+                                        )?.getTime() ||
+                                        0;
+
+                                    return (
+                                        bTime -
+                                        aTime
+                                    );
+                                }
+                            )[0] ||
+                        null;
+
+                    if (!active) {
+                        return;
+                    }
+
+                    const hideAfter =
+                        timestampToDate(
+                            active.hideAfterAt
+                        );
+
+                    if (!hideAfter) {
+                        return;
+                    }
+
+                    const remaining =
+                        hideAfter.getTime() -
+                        now.getTime();
+
+                    if (
+                        remaining <= 0 ||
+                        remaining >
+                            GRAPHIC_EXPIRY_WARNING_MS
+                    ) {
+                        return;
+                    }
+
+                    if (
+                        hasScheduledReplacement(
+                            data.graphics,
+                            active,
+                            now
+                        )
+                    ) {
+                        return;
+                    }
+
+                    attentionCount +=
+                        1;
+
+                    const hoursLeft =
+                        Math.max(
+                            1,
+                            Math.ceil(
+                                remaining /
+                                (
+                                    60 *
+                                    60 *
+                                    1000
+                                )
+                            )
+                        );
+
+                    const timingText =
+                        hoursLeft <= 24
+                            ? (
+                                hoursLeft === 1
+                                    ? "about 1 hour"
+                                    : `about ${hoursLeft} hours`
+                              )
+                            : "within 48 hours";
+
+                    appendAttentionItem(
+                        attentionContainer,
+                        {
+                            tone:
+                                "warning",
+                            icon:
+                                "🟡",
+                            text:
+                                `${config.label} graphic expires ${timingText} and has no replacement scheduled.`,
+                            href:
+                                "#graphics-manager"
+                        }
+                    );
+                }
+            );
 
         if (
             attentionCount === 0
