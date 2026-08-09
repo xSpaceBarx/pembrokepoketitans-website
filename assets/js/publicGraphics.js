@@ -6,19 +6,30 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 const GRAPHIC_SLOTS = {
+    goweekly: {
+        scope: "document",
+        keywords: [
+            "goweekly",
+            "go weekly"
+        ]
+    },
+
     legendary: {
+        scope: "raids",
         keywords: [
             "legendary"
         ]
     },
 
     mega: {
+        scope: "raids",
         keywords: [
             "mega"
         ]
     },
 
     shadowraids: {
+        scope: "raids",
         keywords: [
             "shadow"
         ]
@@ -131,15 +142,6 @@ function imageMatchesSlot(
 
 function findSlotImage(type) {
 
-    const raidContainer =
-        document.getElementById(
-            "raid-container"
-        );
-
-    if (!raidContainer) {
-        return null;
-    }
-
     const slot =
         GRAPHIC_SLOTS[type];
 
@@ -147,9 +149,25 @@ function findSlotImage(type) {
         return null;
     }
 
+    let root =
+        document;
+
+    if (
+        slot.scope === "raids"
+    ) {
+
+        root =
+            document.getElementById(
+                "raid-container"
+            );
+
+        if (!root) {
+            return null;
+        }
+    }
+
     return Array.from(
-        raidContainer
-            .querySelectorAll("img")
+        root.querySelectorAll("img")
     )
         .find(image =>
             imageMatchesSlot(
@@ -189,7 +207,7 @@ function restoreStaticImage(
     delete image.dataset.managedGraphicType;
 
     console.info(
-        `Using static ${type} raid graphic fallback.`
+        `Using static ${type} graphic fallback.`
     );
 }
 
@@ -402,7 +420,7 @@ function scheduleNextTransition() {
         );
 }
 
-async function loadManagedRaidGraphics() {
+async function loadManagedPublicGraphics() {
 
     try {
 
@@ -443,7 +461,7 @@ async function loadManagedRaidGraphics() {
     } catch (error) {
 
         console.error(
-            "Unable to load managed raid graphics. Static fallbacks remain active:",
+            "Unable to load managed public graphics. Static fallbacks remain active:",
             error
         );
     }
@@ -455,7 +473,7 @@ function initializePublicGraphics() {
 
     applyAllRaidGraphics();
 
-    loadManagedRaidGraphics();
+    loadManagedPublicGraphics();
 }
 
 if (
