@@ -9,6 +9,7 @@ import {
 
 console.log("Script loaded");
 
+let allGraphicAssets = [];
 let todayGraphics = [];
 let todayTransitionTimer = null;
 
@@ -78,6 +79,89 @@ function getActiveTodayGraphic(
 
             return bTime - aTime;
         })[0] || null;
+}
+
+
+function getActiveGraphicByType(
+    type,
+    now = new Date()
+) {
+
+    return allGraphicAssets
+        .filter(asset => {
+
+            const goLive =
+                timestampToDate(
+                    asset.goLiveAt
+                );
+
+            const hideAfter =
+                timestampToDate(
+                    asset.hideAfterAt
+                );
+
+            return (
+                asset.type === type &&
+                goLive &&
+                goLive <= now &&
+                (
+                    !hideAfter ||
+                    hideAfter > now
+                ) &&
+                (
+                    asset.imageUrl ||
+                    asset.imagePath
+                )
+            );
+        })
+        .sort((a, b) => {
+
+            const aTime =
+                timestampToDate(
+                    a.goLiveAt
+                )?.getTime() || 0;
+
+            const bTime =
+                timestampToDate(
+                    b.goLiveAt
+                )?.getTime() || 0;
+
+            return bTime - aTime;
+        })[0] || null;
+}
+
+function formatGraphicEventDate(
+    value
+) {
+
+    if (
+        typeof value !== "string" ||
+        !/^\d{4}-\d{2}-\d{2}$/.test(value)
+    ) {
+        return "";
+    }
+
+    const date =
+        new Date(
+            `${value}T12:00:00`
+        );
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+        return "";
+    }
+
+    return date.toLocaleDateString(
+        "en-US",
+        {
+            month: "long",
+            day: "numeric",
+            year: "numeric"
+        }
+    );
 }
 
 function getTodayGraphicHtml() {
@@ -257,23 +341,29 @@ document.addEventListener(
                 }
             );
 
+            allGraphicAssets = [];
             todayGraphics = [];
 
             graphicsSnapshot.forEach(
                 docSnapshot => {
 
-                    const asset =
-                        docSnapshot.data();
+                    const asset = {
+                        id:
+                            docSnapshot.id,
+                        ...docSnapshot.data()
+                    };
+
+                    allGraphicAssets.push(
+                        asset
+                    );
 
                     if (
                         asset.type ===
                         "today"
                     ) {
-                        todayGraphics.push({
-                            id:
-                                docSnapshot.id,
-                            ...asset
-                        });
+                        todayGraphics.push(
+                            asset
+                        );
                     }
                 }
             );
@@ -596,20 +686,6 @@ document.addEventListener(
             // RAIDS
             // ==========================
 
-            const raidResponse =
-                await fetch(
-                    "./data/raids.json"
-                );
-
-            if (!raidResponse.ok) {
-                throw new Error(
-                    "Unable to load raids.json"
-                );
-            }
-
-            const raidData =
-                await raidResponse.json();
-
             const raidContainer =
                 document.getElementById(
                     "raid-container"
@@ -620,31 +696,73 @@ document.addEventListener(
                 raidContainer.innerHTML =
                     "";
 
-                raidData.raids.forEach(
-                    raid => {
+                const raidTypes = [
+                    "legendary",
+                    "mega",
+                    "shadowraids"
+                ];
 
-                        raidContainer.innerHTML += `
+                const activeRaids =
+                    raidTypes
+                        .map(type =>
+                            getActiveGraphicByType(
+                                type
+                            )
+                        )
+                        .filter(Boolean);
 
-                            <div class="raid-card">
+                if (
+                    activeRaids.length ===
+                    0
+                ) {
 
-                                <h3>
-                                    ${raid.type}
-                                </h3>
+                    raidContainer.innerHTML =
+                        "<p>No current raid graphics are available.</p>";
 
-                                <p class="raid-date">
-                                    ${raid.date}
-                                </p>
+                } else {
 
-                                <img
-                                    src="${raid.image}"
-                                    alt="${raid.type}"
-                                    class="raid-image">
+                    activeRaids.forEach(
+                        raid => {
 
-                            </div>
+                            const imageSource =
+                                raid.imageUrl ||
+                                raid.imagePath;
 
-                        `;
-                    }
-                );
+                            const eventDate =
+                                formatGraphicEventDate(
+                                    raid.eventDate
+                                );
+
+                            raidContainer.innerHTML += `
+
+                                <div class="raid-card">
+
+                                    <h3>
+                                        ${raid.label || "Current Raid"}
+                                    </h3>
+
+                                    ${
+                                        eventDate
+                                            ? `
+                                            <p class="raid-date">
+                                                ${eventDate}
+                                            </p>
+                                            `
+                                            : ""
+                                    }
+
+                                    <img
+                                        src="${imageSource}"
+                                        alt="${raid.label || raid.type}"
+                                        class="raid-image"
+                                        onerror="this.style.display='none';">
+
+                                </div>
+
+                            `;
+                        }
+                    );
+                }
             }
 
         } catch (err) {
