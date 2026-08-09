@@ -3,192 +3,92 @@ import { saveNotification } from "./notifications-admin.js";
 import { updatePlannerStatus } from "./plannerStatus.js";
 import { publishNotification } from "./publishNotification.js?v=3";
 import { initMeetupManager } from "./meetupManager.js";
+import { initGraphicsManager } from "./graphicsManager.js?v=1";
 
 const templates = {
 
     meetup: {
-
         title: "📍 Campfire Meetup Reminder",
-
-        message:
-`Don't forget tonight's PokéTitans meetup!
-
-📍 Pembroke Historical Society
-🕠 Meetup begins at 6:00 PM
-
-We hope to see you there!`,
-
+        message: `Don't forget tonight's PokéTitans meetup!\n\n📍 Pembroke Historical Society\n🕠 Meetup begins at 6:00 PM\n\nWe hope to see you there!`,
         audience: "meetup"
-
     },
 
     raidhour: {
-
         title: "⚡ Raid Hour Tonight!",
-
-        message:
-`Raid Hour starts tonight!
-
-⏰ 6:00–7:00 PM
-
-Let's raid together!`,
-
+        message: `Raid Hour starts tonight!\n\n⏰ 6:00–7:00 PM\n\nLet's raid together!`,
         audience: "raidhour"
-
     },
 
     spotlight: {
-
         title: "✨ Spotlight Hour Tonight!",
-
-        message:
-`Spotlight Hour begins tonight!
-
-⏰ 6:00–7:00 PM
-
-Good luck, Trainers!`,
-
+        message: `Spotlight Hour begins tonight!\n\n⏰ 6:00–7:00 PM\n\nGood luck, Trainers!`,
         audience: "spotlight"
-
     },
 
     maxmonday: {
-
         title: "💎 Max Monday Tonight!",
-
-        message:
-`Max Monday begins tonight!
-
-Take on Max Battles with the community and earn those Max Particles!`,
-
+        message: `Max Monday begins tonight!\n\nTake on Max Battles with the community and earn those Max Particles!`,
         audience: "maxmonday"
-
     },
 
     raidrotation: {
-
         title: "🆕 New Raid Boss Rotation!",
-
-        message:
-`A brand new Raid Boss rotation is now live!
-
-Check out what's appearing in Gyms!`,
-
+        message: `A brand new Raid Boss rotation is now live!\n\nCheck out what's appearing in Gyms!`,
         audience: "raidrotation"
-
     },
 
     raidday: {
-
         title: "⚔ Raid Day Today!",
-
-        message:
-`Raid Day is here!
-
-Good luck, Trainers!`,
-
+        message: `Raid Day is here!\n\nGood luck, Trainers!`,
         audience: "raidday"
-
     },
 
     hatchday: {
-
         title: "🥚 Hatch Day Today!",
-
-        message:
-`It's Hatch Day!
-
-Don't forget your Egg Incubators and enjoy the bonuses while the event is active.`,
-
+        message: `It's Hatch Day!\n\nDon't forget your Egg Incubators and enjoy the bonuses while the event is active.`,
         audience: "hatchday"
-
     },
 
     communityday: {
-
         title: "🎉 Community Day Today!",
-
-        message:
-`Community Day has begun!
-
-Good luck catching today's featured Pokémon and enjoy all of the event bonuses!`,
-
+        message: `Community Day has begun!\n\nGood luck catching today's featured Pokémon and enjoy all of the event bonuses!`,
         audience: "communityday"
-
     },
 
     globalevent: {
-
         title: "🌎 Global Event Begins!",
-
-        message:
-`Today's global Pokémon GO event is now live!
-
-Check the Today View for bonuses, featured Pokémon and event tasks.
-
-Have fun, Trainers!`,
-
+        message: `Today's global Pokémon GO event is now live!\n\nCheck the Today View for bonuses, featured Pokémon and event tasks.\n\nHave fun, Trainers!`,
         audience: "globalevent"
-
     },
 
     gopass: {
-
         title: "🎟 Daily Bonuses & GO Pass",
-
-        message:
-`Don't forget to collect today's Daily Bonuses and GO Pass rewards before they expire!`,
-
+        message: `Don't forget to collect today's Daily Bonuses and GO Pass rewards before they expire!`,
         audience: "gopass"
-
     },
 
     trinket: {
-
         title: "🍀 Lucky Trinket Reminder",
-
-        message:
-`Remember to use your Lucky Trinket before 8:00 PM tonight!`,
-
+        message: `Remember to use your Lucky Trinket before 8:00 PM tonight!`,
         audience: "trinket"
-
     },
 
     research: {
-
         title: "📦 New Special Research",
-
-        message:
-`New Special or Timed Research is now available!
-
-Open Pokémon GO and start working through the new tasks.`,
-
+        message: `New Special or Timed Research is now available!\n\nOpen Pokémon GO and start working through the new tasks.`,
         audience: "research"
-
     },
 
     codes: {
-
         title: "🎁 New Redemption Code",
-
-        message:
-`A new Pokémon GO redemption code is available!
-
-Claim it before it expires.`,
-
+        message: `A new Pokémon GO redemption code is available!\n\nClaim it before it expires.`,
         audience: "codes"
-
     },
 
     news: {
-
         title: "🚨 Pokémon GO Breaking News",
-
-        message:
-`Important Pokémon GO news will appear here.`,
-
+        message: `Important Pokémon GO news will appear here.`,
         audience: "news"
-
     }
 
 };
@@ -210,162 +110,181 @@ function updatePreview() {
 }
 
 document
-.getElementById("notification-title")
-.addEventListener("input", updatePreview);
+    .getElementById("notification-title")
+    .addEventListener("input", updatePreview);
 
 document
-.getElementById("notification-message")
-.addEventListener("input", updatePreview);
+    .getElementById("notification-message")
+    .addEventListener("input", updatePreview);
 
 /* ============================
-   WEEKLY PLANNER
+   NOTIFICATION PLANNER
 ============================ */
-document.querySelectorAll(".planner-item").forEach(card => {
 
-    card.addEventListener("click", () => {
+document
+    .querySelectorAll(".planner-item[data-template]")
+    .forEach(card => {
 
-        const template = templates[card.dataset.template];
+        card.addEventListener("click", () => {
 
-        if (!template) return;
+            const template =
+                templates[card.dataset.template];
 
-        // Start a brand new notification
-        document.getElementById("notification-id").value = "";
+            if (!template) return;
 
-        document.getElementById("editingBanner").style.display = "none";
+            // Start a brand new notification.
+            document.getElementById("notification-id").value = "";
 
-        document.getElementById("sendNotification").innerHTML =
-            "💾 Save Draft";
+            document.getElementById("editingBanner").style.display =
+                "none";
 
-        document.getElementById("notification-title").value =
-            template.title;
+            document.getElementById("sendNotification").innerHTML =
+                "💾 Save Draft";
 
-        document.getElementById("notification-message").value =
-            template.message;
+            document.getElementById("notification-title").value =
+                template.title;
 
-        document.getElementById("notification-audience").value =
-            template.audience;
+            document.getElementById("notification-message").value =
+                template.message;
 
-        document.getElementById("notification-delivery").value =
-            "now";
+            document.getElementById("notification-audience").value =
+                template.audience;
 
-        document.getElementById("notification-date").value = "";
+            document.getElementById("notification-delivery").value =
+                "now";
 
-        document.getElementById("notification-time").value = "";
+            document.getElementById("notification-date").value = "";
+            document.getElementById("notification-time").value = "";
 
-        updatePreview();
+            updatePreview();
 
-        window.scrollTo({
-
-            top:
-                document.querySelector(".notification-center").offsetTop - 20,
-
-            behavior: "smooth"
+            window.scrollTo({
+                top:
+                    document.querySelector(".notification-center").offsetTop - 20,
+                behavior: "smooth"
+            });
 
         });
 
     });
 
-});
-
 /* ============================
    SAVE DRAFT
 ============================ */
+
 document
-.getElementById("sendNotification")
-.addEventListener("click", async () => {
+    .getElementById("sendNotification")
+    .addEventListener("click", async () => {
 
-    const notification = {
+        const notification = {
 
-        title:
-            document.getElementById("notification-title").value,
+            title:
+                document.getElementById("notification-title").value,
 
-        message:
-            document.getElementById("notification-message").value,
+            message:
+                document.getElementById("notification-message").value,
 
-        audience:
-            document.getElementById("notification-audience").value,
+            audience:
+                document.getElementById("notification-audience").value,
 
-        delivery:
-            document.getElementById("notification-delivery").value,
+            delivery:
+                document.getElementById("notification-delivery").value,
 
-        date:
-            document.getElementById("notification-date").value,
+            date:
+                document.getElementById("notification-date").value,
 
-        time:
-            document.getElementById("notification-time").value
+            time:
+                document.getElementById("notification-time").value
 
-    };
+        };
 
-    const id =
-        document.getElementById("notification-id").value;
+        const id =
+            document.getElementById("notification-id").value;
 
-    const savedId =
-        await saveNotification(notification, id);
+        const savedId =
+            await saveNotification(notification, id);
 
-    if (savedId) {
+        if (savedId) {
+            document.getElementById("notification-id").value =
+                savedId;
+        }
 
-        document.getElementById("notification-id").value =
-            savedId;
+        await loadDrafts();
+        await updatePlannerStatus();
 
-    }
+    });
 
-    await loadDrafts();
-
-    await updatePlannerStatus();
-
-});
 /* ============================
    PUBLISH
 ============================ */
 
 document
-.getElementById("publishNotification")
-.addEventListener("click", async () => {
+    .getElementById("publishNotification")
+    .addEventListener("click", async () => {
 
-    const id =
-        document.getElementById("notification-id").value;
+        const id =
+            document.getElementById("notification-id").value;
 
+        if (!id) {
 
-    if (!id) {
+            alert(
+                "Please save this notification as a draft first."
+            );
 
-        alert(
-            "Please save this notification as a draft first."
-        );
+            return;
 
-        return;
+        }
 
-    }
+        const result =
+            await publishNotification(id);
 
+        if (!result) {
+            return;
+        }
 
-    const result =
-        await publishNotification(id);
+        await loadDrafts();
+        await updatePlannerStatus();
 
+        if (result === "scheduled") {
 
-    if (!result) {
-        return;
-    }
+            alert(
+                "✅ Notification scheduled successfully."
+            );
 
+        } else {
 
-    await loadDrafts();
+            alert(
+                "✅ Notification sent and published successfully."
+            );
 
-    await updatePlannerStatus();
+        }
 
+    });
 
-    if (result === "scheduled") {
+/* ============================
+   CLEAR NOTIFICATION EDITOR
+============================ */
 
-        alert(
-            "✅ Notification scheduled successfully."
-        );
+document
+    .getElementById("clearNotification")
+    .addEventListener("click", () => {
 
-    } else {
+        document.getElementById("notification-id").value = "";
+        document.getElementById("notification-title").value = "";
+        document.getElementById("notification-message").value = "";
+        document.getElementById("notification-date").value = "";
+        document.getElementById("notification-time").value = "";
 
-        alert(
-            "✅ Notification sent and published successfully."
-        );
+        document.getElementById("sendNotification").innerHTML =
+            "💾 Save Draft";
 
-    }
+        document.getElementById("editingBanner").style.display =
+            "none";
 
-});
+        updatePreview();
+
+    });
+
 /* ============================
    INITIALIZE
 ============================ */
@@ -373,30 +292,6 @@ document
 updatePreview();
 
 await loadDrafts();
-
 await updatePlannerStatus();
-
 await initMeetupManager();
-document
-.getElementById("clearNotification")
-.addEventListener("click",()=>{
-
-    document.getElementById("notification-id").value="";
-
-    document.getElementById("notification-title").value="";
-
-    document.getElementById("notification-message").value="";
-
-    document.getElementById("notification-date").value="";
-
-    document.getElementById("notification-time").value="";
-
-    document.getElementById("sendNotification").innerHTML=
-        "💾 Save Draft";
-
-    document.getElementById("editingBanner").style.display="none";
-
-    updatePreview();
-
-});
- 
+await initGraphicsManager();
