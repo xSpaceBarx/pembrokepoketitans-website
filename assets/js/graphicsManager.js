@@ -167,6 +167,140 @@ function getElement(id) {
     return document.getElementById(id);
 }
 
+function inferFeaturedNotificationAudience(
+    name = ""
+) {
+
+    const normalized =
+        String(name)
+            .toLowerCase();
+
+    if (
+        normalized.includes(
+            "community day"
+        )
+    ) {
+        return "communityday";
+    }
+
+    if (
+        normalized.includes(
+            "hatch day"
+        )
+    ) {
+        return "hatchday";
+    }
+
+    if (
+        normalized.includes(
+            "raid day"
+        )
+    ) {
+        return "raidday";
+    }
+
+    if (
+        normalized.includes(
+            "research"
+        )
+    ) {
+        return "research";
+    }
+
+    if (
+        normalized.includes(
+            "go fest"
+        ) ||
+        normalized.includes(
+            "go tour"
+        ) ||
+        normalized.includes(
+            "wild area"
+        ) ||
+        normalized.includes(
+            "global"
+        ) ||
+        normalized.includes(
+            "safari"
+        )
+    ) {
+        return "globalevent";
+    }
+
+    return "news";
+}
+
+function requestFeaturedNotificationDraft(
+    event
+) {
+
+    const now =
+        new Date();
+
+    const start =
+        timestampToDate(
+            event.startAt
+        );
+
+    const end =
+        timestampToDate(
+            event.endAt
+        );
+
+    const isLive =
+        Boolean(
+            start &&
+            end &&
+            start <= now &&
+            end >= now
+        );
+
+    const eventName =
+        event.name ||
+        "Pokémon GO Event";
+
+    const statusLine =
+        isLive
+            ? `${eventName} is live now!`
+            : `${eventName} is coming up!`;
+
+    let message =
+        `${statusLine}\n\n` +
+        `📅 Starts: ${formatDateTime(
+            event.startAt
+        )}\n` +
+        `🏁 Ends: ${formatDateTime(
+            event.endAt
+        )}`;
+
+    if (event.link) {
+        message +=
+            "\n\nCheck the PokéTitans Events page for full details.";
+    } else {
+        message +=
+            "\n\nCheck the PokéTitans Events page for details and bonuses.";
+    }
+
+    window.dispatchEvent(
+        new CustomEvent(
+            "poketitans:notification-draft",
+            {
+                detail: {
+                    source:
+                        "featured-event",
+                    title:
+                        `🎉 ${eventName}`,
+                    message,
+                    audience:
+                        inferFeaturedNotificationAudience(
+                            eventName
+                        )
+                }
+            }
+        )
+    );
+}
+
 function timestampToDate(value) {
 
     if (!value) return null;
@@ -1785,9 +1919,16 @@ function renderFeaturedQueue() {
             <p><strong>${escapeHtml(roleForEvent(event))}</strong></p>
             <p>Starts: ${escapeHtml(formatDateTime(event.startAt))}</p>
             <p>Ends: ${escapeHtml(formatDateTime(event.endAt))}</p>
+            <button class="btn-orange featured-notification">🔔 Create Notification Draft</button>
             <button class="btn-orange featured-edit">✏ Edit</button>
             <button class="btn-orange featured-delete">🗑 Delete</button>
         `;
+
+        card
+            .querySelector(".featured-notification")
+            .addEventListener("click", () => {
+                requestFeaturedNotificationDraft(event);
+            });
 
         card
             .querySelector(".featured-edit")
