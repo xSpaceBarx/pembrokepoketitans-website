@@ -1,166 +1,269 @@
 import { db } from "./firebase.js";
-import { loadTrainers } from "./trainers.js";
+import { loadTrainers } from "./trainers.js?v=2";
 
 import {
     collection,
     addDoc
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
-const form = document.getElementById("trainer-form");
+const form =
+    document.getElementById(
+        "trainer-form"
+    );
 
-// Friend Code input
-const friendCodeInput = document.getElementById("friendCode");
+const friendCodeInput =
+    document.getElementById(
+        "friendCode"
+    );
 
-// Location fields
-const locationSelect = document.getElementById("location");
-const otherLocation = document.getElementById("otherLocation");
+const locationSelect =
+    document.getElementById(
+        "location"
+    );
 
-// -----------------------------
-// Show/Hide Other Location Box
-// -----------------------------
+const otherLocation =
+    document.getElementById(
+        "otherLocation"
+    );
 
-if (locationSelect && otherLocation) {
+function formatFriendCodeInput(
+    value
+) {
 
-    locationSelect.addEventListener("change", () => {
+    const digits =
+        String(value || "")
+            .replace(/\D/g, "")
+            .slice(0, 12);
 
-        if (locationSelect.value === "Other") {
+    if (digits.length > 8) {
 
-            otherLocation.style.display = "block";
-            otherLocation.required = true;
+        return (
+            digits.slice(0, 4) +
+            " " +
+            digits.slice(4, 8) +
+            " " +
+            digits.slice(8)
+        );
+    }
 
-        } else {
+    if (digits.length > 4) {
 
-            otherLocation.style.display = "none";
-            otherLocation.required = false;
-            otherLocation.value = "";
+        return (
+            digits.slice(0, 4) +
+            " " +
+            digits.slice(4)
+        );
+    }
 
-        }
-
-    });
-
+    return digits;
 }
 
-// -----------------------------
-// Auto-format Friend Code
-// -----------------------------
+if (
+    locationSelect &&
+    otherLocation
+) {
+
+    locationSelect.addEventListener(
+        "change",
+        () => {
+
+            const isOther =
+                locationSelect.value ===
+                "Other";
+
+            otherLocation.style.display =
+                isOther
+                    ? "block"
+                    : "none";
+
+            otherLocation.required =
+                isOther;
+
+            if (!isOther) {
+                otherLocation.value =
+                    "";
+            }
+        }
+    );
+}
 
 if (friendCodeInput) {
 
-    friendCodeInput.addEventListener("input", (e) => {
+    friendCodeInput.addEventListener(
+        "input",
+        event => {
 
-        let value = e.target.value.replace(/\D/g, "");
-
-        value = value.substring(0, 12);
-
-        if (value.length > 8) {
-
-            value =
-                value.substring(0,4) + " " +
-                value.substring(4,8) + " " +
-                value.substring(8);
-
+            event.target.value =
+                formatFriendCodeInput(
+                    event.target.value
+                );
         }
-        else if (value.length > 4) {
-
-            value =
-                value.substring(0,4) + " " +
-                value.substring(4);
-
-        }
-
-        e.target.value = value;
-
-    });
-
+    );
 }
-
-console.log("submit.js loaded");
 
 if (form) {
 
-    console.log("Found trainer form");
+    form.addEventListener(
+        "submit",
+        async event => {
 
-    form.addEventListener("submit", async (e) => {
+            event.preventDefault();
 
-        e.preventDefault();
+            const submitButton =
+                form.querySelector(
+                    'button[type="submit"]'
+                );
 
-        console.log("Submit button clicked");
+            const submitMessage =
+                document.getElementById(
+                    "submit-message"
+                );
 
-        const trainerName =
-            document.getElementById("trainerName").value.trim();
+            const trainerName =
+                document
+                    .getElementById(
+                        "trainerName"
+                    )
+                    .value
+                    .trim();
 
-        let friendCode =
-            document.getElementById("friendCode").value.replace(/\D/g, "");
+            const friendCodeDigits =
+                document
+                    .getElementById(
+                        "friendCode"
+                    )
+                    .value
+                    .replace(/\D/g, "");
 
-        let location = locationSelect.value;
+            let location =
+                locationSelect.value;
 
-        if (location === "Other") {
+            if (
+                location ===
+                "Other"
+            ) {
 
-            location = otherLocation.value.trim();
+                location =
+                    otherLocation.value.trim();
+            }
 
+            if (
+                trainerName.length <
+                    3 ||
+                trainerName.length >
+                    30
+            ) {
+
+                alert(
+                    "Trainer Name must be between 3 and 30 characters."
+                );
+
+                return;
+            }
+
+            if (
+                friendCodeDigits.length !==
+                12
+            ) {
+
+                alert(
+                    "Friend Code must contain exactly 12 digits."
+                );
+
+                return;
+            }
+
+            if (
+                !location ||
+                location.length > 60
+            ) {
+
+                alert(
+                    "Please enter a valid main play location."
+                );
+
+                return;
+            }
+
+            const formattedFriendCode =
+                friendCodeDigits.slice(
+                    0,
+                    4
+                ) +
+                " " +
+                friendCodeDigits.slice(
+                    4,
+                    8
+                ) +
+                " " +
+                friendCodeDigits.slice(
+                    8,
+                    12
+                );
+
+            try {
+
+                if (submitButton) {
+
+                    submitButton.disabled =
+                        true;
+
+                    submitButton.textContent =
+                        "Submitting...";
+                }
+
+                await addDoc(
+                    collection(
+                        db,
+                        "trainers"
+                    ),
+                    {
+                        trainerName,
+                        friendCode:
+                            formattedFriendCode,
+                        location
+                    }
+                );
+
+                if (submitMessage) {
+
+                    submitMessage.textContent =
+                        "✅ Trainer added successfully!";
+                }
+
+                form.reset();
+
+                otherLocation.style.display =
+                    "none";
+
+                otherLocation.required =
+                    false;
+
+                await loadTrainers();
+
+            } catch (error) {
+
+                console.error(
+                    "Unable to submit trainer:",
+                    error
+                );
+
+                alert(
+                    error.message ||
+                    "Unable to submit trainer."
+                );
+
+            } finally {
+
+                if (submitButton) {
+
+                    submitButton.disabled =
+                        false;
+
+                    submitButton.textContent =
+                        "Submit Trainer";
+                }
+            }
         }
-
-        // Validation
-
-        if (trainerName.length < 3) {
-
-            alert("Please enter a valid Trainer Name.");
-            return;
-
-        }
-
-        if (friendCode.length !== 12) {
-
-            alert("Friend Code must contain exactly 12 digits.");
-            return;
-
-        }
-
-        if (location === "") {
-
-            alert("Please enter your main play location.");
-            return;
-
-        }
-
-        // Format Friend Code
-
-        const formattedFriendCode =
-            friendCode.substring(0,4) + " " +
-            friendCode.substring(4,8) + " " +
-            friendCode.substring(8,12);
-
-        try {
-
-            const docRef = await addDoc(collection(db, "trainers"), {
-
-                trainerName,
-                friendCode: formattedFriendCode,
-                location
-
-            });
-
-            console.log("SUCCESS!", docRef.id);
-
-            document.getElementById("submit-message").innerHTML =
-                "✅ Trainer added successfully!";
-
-            form.reset();
-
-            otherLocation.style.display = "none";
-
-            await loadTrainers();
-
-        }
-
-        catch (error) {
-
-            console.error("FIREBASE ERROR:", error);
-
-            alert(error.message);
-
-        }
-
-    });
-
+    );
 }
