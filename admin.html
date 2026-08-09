@@ -615,11 +615,582 @@
 </div>
 
 <br><br>
+
+<!-- Event Graphics Manager -->
+
+<div class="weekly-planner graphics-manager" id="graphics-manager">
+
+    <h2>🖼️ Event Graphics Manager</h2>
+
+    <p class="section-description">
+        Upload, schedule and manage the graphics displayed across the PokéTitans website.
+    </p>
+
+    <hr>
+
+    <h2>📅 Weekly Graphics</h2>
+
+    <p class="section-description">
+        Graphics you'll normally update or schedule every week.
+    </p>
+
+    <div class="planner-grid graphics-planner-grid">
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="goweekly">
+            <h3>📅 GO Weekly</h3>
+            <div class="planner-status" id="graphic-status-goweekly">
+                ⚪ Missing
+            </div>
+        </div>
+
+        <div
+            class="planner-item graphic-planner-item featured-queue-card"
+            data-featured-position="current">
+            <h3>🔥 Current Event</h3>
+            <div class="planner-status" id="graphic-status-currentevent">
+                ⚪ Missing
+            </div>
+        </div>
+
+        <div
+            class="planner-item graphic-planner-item featured-queue-card"
+            data-featured-position="upcoming">
+            <h3>⏭️ Upcoming Event</h3>
+            <div class="planner-status" id="graphic-status-upcomingevent">
+                ⚪ Missing
+            </div>
+        </div>
+
+        <div
+            class="planner-item graphic-planner-item featured-queue-card"
+            data-featured-position="future">
+            <h3>🔭 Future Event</h3>
+            <div class="planner-status" id="graphic-status-futureevent">
+                ⚪ Missing
+            </div>
+        </div>
+
+        <div
+            class="planner-item graphic-planner-item featured-queue-card"
+            data-featured-position="future2">
+            <h3>🔭 Future Event 2</h3>
+            <div class="planner-status" id="graphic-status-futureevent2">
+                ⚪ Missing
+            </div>
+        </div>
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="legendary">
+            <h3>👑 Legendary Raids</h3>
+            <div class="planner-status" id="graphic-status-legendary">
+                ⚪ Missing
+            </div>
+        </div>
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="mega">
+            <h3>🧬 Mega Raids</h3>
+            <div class="planner-status" id="graphic-status-mega">
+                ⚪ Missing
+            </div>
+        </div>
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="maxmonday">
+            <h3>💎 Max Monday</h3>
+            <div class="planner-status" id="graphic-status-maxmonday">
+                ⚪ Missing
+            </div>
+        </div>
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="spotlighthour">
+            <h3>✨ Spotlight Hour</h3>
+            <div class="planner-status" id="graphic-status-spotlighthour">
+                ⚪ Missing
+            </div>
+        </div>
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="today">
+            <h3>🎯 Today Image</h3>
+            <div class="planner-status" id="graphic-status-today">
+                ⚪ Optional
+            </div>
+        </div>
+
+    </div>
+
+    <hr>
+
+    <h2>🎉 Monthly &amp; Special Event Graphics</h2>
+
+    <p class="section-description">
+        Monthly graphics and event graphics that are only displayed when applicable.
+    </p>
+
+    <div class="planner-grid graphics-planner-grid">
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="monthly">
+            <h3>📆 Monthly Calendar</h3>
+            <div class="planner-status" id="graphic-status-monthly">
+                ⚪ Missing
+            </div>
+        </div>
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="seasonaldetails">
+            <h3>🌎 Seasonal Details</h3>
+            <div class="planner-status" id="graphic-status-seasonaldetails">
+                ⚪ Missing
+            </div>
+        </div>
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="shadowraids">
+            <h3>🌑 Shadow Raids</h3>
+            <div class="planner-status" id="graphic-status-shadowraids">
+                ⚪ Missing
+            </div>
+        </div>
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="communityday">
+            <h3>🎉 Community Day</h3>
+            <div class="planner-status" id="graphic-status-communityday">
+                ⚪ Inactive
+            </div>
+        </div>
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="communitydayclassic">
+            <h3>🔁 Community Day Classic</h3>
+            <div class="planner-status" id="graphic-status-communitydayclassic">
+                ⚪ Inactive
+            </div>
+        </div>
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="hatchday">
+            <h3>🥚 Hatch Day</h3>
+            <div class="planner-status" id="graphic-status-hatchday">
+                ⚪ Inactive
+            </div>
+        </div>
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="raidday">
+            <h3>⚔️ Raid Day</h3>
+            <div class="planner-status" id="graphic-status-raidday">
+                ⚪ Inactive
+            </div>
+        </div>
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="megaraidday">
+            <h3>🧬 Mega Raid Day</h3>
+            <div class="planner-status" id="graphic-status-megaraidday">
+                ⚪ Inactive
+            </div>
+        </div>
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="shadowraidday">
+            <h3>🌑 Shadow Raid Day</h3>
+            <div class="planner-status" id="graphic-status-shadowraidday">
+                ⚪ Inactive
+            </div>
+        </div>
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="maxbattleday">
+            <h3>💎 Max Battle Day</h3>
+            <div class="planner-status" id="graphic-status-maxbattleday">
+                ⚪ Inactive
+            </div>
+        </div>
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="catchmasteryday">
+            <h3>🎯 Catch Mastery Day</h3>
+            <div class="planner-status" id="graphic-status-catchmasteryday">
+                ⚪ Inactive
+            </div>
+        </div>
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="researchday">
+            <h3>🔬 Research Day</h3>
+            <div class="planner-status" id="graphic-status-researchday">
+                ⚪ Inactive
+            </div>
+        </div>
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="globalevent">
+            <h3>🌐 Global Event</h3>
+            <div class="planner-status" id="graphic-status-globalevent">
+                ⚪ Inactive
+            </div>
+        </div>
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="ticketedevent">
+            <h3>🎟️ Ticketed Event</h3>
+            <div class="planner-status" id="graphic-status-ticketedevent">
+                ⚪ Inactive
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<br><br>
+
+<!-- Standard Graphic Editor -->
+
+<div class="notification-center graphics-editor" id="graphics-editor">
+
+    <h2>🖼️ Graphic Editor</h2>
+
+    <p class="section-description">
+        Select a non-featured graphic card above to upload, publish or schedule its next image.
+    </p>
+
+    <input type="hidden" id="graphic-id">
+    <input type="hidden" id="graphic-type">
+
+    <hr>
+
+    <h3 id="graphic-editor-title">
+        Select a graphic card above
+    </h3>
+
+    <div class="editor-grid graphic-preview-grid">
+
+        <div>
+            <h3>Current Graphic</h3>
+            <div id="graphic-current-preview">
+                No active graphic loaded.
+            </div>
+        </div>
+
+        <div>
+            <h3>Next Scheduled</h3>
+            <div id="graphic-next-preview">
+                Nothing scheduled.
+            </div>
+        </div>
+
+    </div>
+
+    <br>
+
+    <label for="graphic-image">
+        Upload Graphic
+    </label>
+
+    <input
+        type="file"
+        id="graphic-image"
+        accept="image/png,image/jpeg,image/webp">
+
+    <div class="editor-grid">
+
+        <div>
+
+            <label for="graphic-event-date">
+                Event Date
+            </label>
+
+            <input
+                type="date"
+                id="graphic-event-date">
+
+        </div>
+
+        <div>
+
+            <label for="graphic-placement">
+                Website Placement
+            </label>
+
+            <input
+                type="text"
+                id="graphic-placement"
+                readonly
+                placeholder="Automatically assigned">
+
+        </div>
+
+    </div>
+
+    <h3>🕒 Publishing Schedule</h3>
+
+    <p class="section-description">
+        All graphic publishing times use Eastern Time.
+    </p>
+
+    <div class="editor-grid">
+
+        <div>
+
+            <label for="graphic-go-live-date">
+                Go Live Date
+            </label>
+
+            <input
+                type="date"
+                id="graphic-go-live-date">
+
+        </div>
+
+        <div>
+
+            <label for="graphic-go-live-time">
+                Go Live Time
+            </label>
+
+            <input
+                type="time"
+                id="graphic-go-live-time">
+
+        </div>
+
+    </div>
+
+    <div class="editor-grid">
+
+        <div>
+
+            <label for="graphic-hide-date">
+                Hide After Date
+            </label>
+
+            <input
+                type="date"
+                id="graphic-hide-date">
+
+        </div>
+
+        <div>
+
+            <label for="graphic-hide-time">
+                Hide After Time
+            </label>
+
+            <input
+                type="time"
+                id="graphic-hide-time">
+
+        </div>
+
+    </div>
+
+    <label for="graphic-link">
+        Optional Link
+    </label>
+
+    <input
+        type="url"
+        id="graphic-link"
+        placeholder="https://...">
+
+    <div id="graphic-ticket-field" style="display:none;">
+
+        <label for="graphic-ticket-url">
+            Ticket Purchase URL
+        </label>
+
+        <input
+            type="url"
+            id="graphic-ticket-url"
+            placeholder="https://...">
+
+    </div>
+
+    <div class="button-row">
+
+        <button
+            type="button"
+            id="saveGraphic"
+            class="btn-orange">
+
+            💾 Save Schedule
+
+        </button>
+
+        <button
+            type="button"
+            id="publishGraphicNow"
+            class="btn-orange">
+
+            🚀 Publish Now
+
+        </button>
+
+        <button
+            type="button"
+            id="clearGraphic"
+            class="btn-orange">
+
+            🗑 Clear Editor
+
+        </button>
+
+    </div>
+
+</div>
+
+<br><br>
+
+<!-- Featured Event Queue -->
+
+<div class="notification-center featured-event-manager" id="featured-event-manager">
+
+    <h2>🔥 Featured Event Queue</h2>
+
+    <p class="section-description">
+        Upload each featured event once. Event dates automatically determine Current Event, Upcoming Event, Future Event and Future Event 2. On the Events page, featured events still sort chronologically with every other event.
+    </p>
+
+    <input
+        type="hidden"
+        id="featured-event-id">
+
+    <hr>
+
+    <h3 id="featured-event-editor-title">
+        ➕ Add Featured Event
+    </h3>
+
+    <label for="featured-event-name">
+        Event Name
+    </label>
+
+    <input
+        type="text"
+        id="featured-event-name"
+        placeholder="Pokémon GO featured event">
+
+    <label for="featured-event-image">
+        Event Graphic
+    </label>
+
+    <input
+        type="file"
+        id="featured-event-image"
+        accept="image/png,image/jpeg,image/webp">
+
+    <p class="section-description">
+        Event start and end times use Eastern Time.
+    </p>
+
+    <div class="editor-grid">
+
+        <div>
+
+            <label for="featured-event-start-date">
+                Event Start Date
+            </label>
+
+            <input
+                type="date"
+                id="featured-event-start-date">
+
+        </div>
+
+        <div>
+
+            <label for="featured-event-start-time">
+                Event Start Time
+            </label>
+
+            <input
+                type="time"
+                id="featured-event-start-time">
+
+        </div>
+
+    </div>
+
+    <div class="editor-grid">
+
+        <div>
+
+            <label for="featured-event-end-date">
+                Event End Date
+            </label>
+
+            <input
+                type="date"
+                id="featured-event-end-date">
+
+        </div>
+
+        <div>
+
+            <label for="featured-event-end-time">
+                Event End Time
+            </label>
+
+            <input
+                type="time"
+                id="featured-event-end-time">
+
+        </div>
+
+    </div>
+
+    <label for="featured-event-link">
+        Optional Link
+    </label>
+
+    <input
+        type="url"
+        id="featured-event-link"
+        placeholder="https://...">
+
+    <div class="button-row">
+
+        <button
+            type="button"
+            id="saveFeaturedEvent"
+            class="btn-orange">
+
+            💾 Save Featured Event
+
+        </button>
+
+        <button
+            type="button"
+            id="clearFeaturedEvent"
+            class="btn-orange">
+
+            🗑 Clear Editor
+
+        </button>
+
+    </div>
+
+    <br>
+
+    <hr>
+
+    <h3>📋 Featured Event Queue</h3>
+
+    <div id="featured-event-queue">
+        No featured events loaded yet.
+    </div>
+
+</div>
+
+<br><br>
+
+<!-- Scheduled Graphics Pipeline -->
+
+<div class="draft-section graphics-pipeline">
+
+    <h2>🕒 Scheduled Graphics</h2>
+
+    <p id="graphicsCounts" class="draft-counts">
+        Scheduled graphics will appear here.
+    </p>
+
+    <div id="graphicsQueue">
+        No scheduled graphics loaded yet.
+    </div>
+
+</div>
+
+<br><br>
+
     <!-- Future Modules -->
 
     <div class="admin-grid">
-
-        <div class="admin-card">
 
         <div class="admin-card">
 
