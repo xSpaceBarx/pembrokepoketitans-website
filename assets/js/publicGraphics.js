@@ -5,10 +5,27 @@ import {
     getDocs
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
-const GRAPHIC_TYPE = "legendary";
-const STATIC_LEGENDARY_PATH = "assets/images/legendary.png";
+const GRAPHIC_SLOTS = {
+    legendary: {
+        keywords: [
+            "legendary"
+        ]
+    },
 
-let legendaryAssets = [];
+    mega: {
+        keywords: [
+            "mega"
+        ]
+    },
+
+    shadowraids: {
+        keywords: [
+            "shadow"
+        ]
+    }
+};
+
+let graphicAssets = [];
 let transitionTimer = null;
 let raidObserver = null;
 
@@ -16,98 +33,151 @@ function timestampToDate(value) {
 
     if (!value) return null;
 
-    if (typeof value.toDate === "function") {
+    if (
+        typeof value.toDate ===
+        "function"
+    ) {
         return value.toDate();
     }
 
     const converted =
         new Date(value);
 
-    return Number.isNaN(converted.getTime())
+    return Number.isNaN(
+        converted.getTime()
+    )
         ? null
         : converted;
 }
 
-function getActiveLegendaryAsset(now = new Date()) {
+function getAssetsForType(type) {
 
-    return legendaryAssets
+    return graphicAssets
+        .filter(asset =>
+            asset.type === type
+        );
+}
+
+function getActiveAsset(
+    type,
+    now = new Date()
+) {
+
+    return getAssetsForType(type)
         .filter(asset => {
 
-            if (asset.type !== GRAPHIC_TYPE) {
-                return false;
-            }
-
             const goLive =
-                timestampToDate(asset.goLiveAt);
+                timestampToDate(
+                    asset.goLiveAt
+                );
 
             const hideAfter =
-                timestampToDate(asset.hideAfterAt);
+                timestampToDate(
+                    asset.hideAfterAt
+                );
 
             return (
                 goLive &&
                 goLive <= now &&
-                (!hideAfter || hideAfter > now) &&
-                (asset.imageUrl || asset.imagePath)
+                (
+                    !hideAfter ||
+                    hideAfter > now
+                ) &&
+                (
+                    asset.imageUrl ||
+                    asset.imagePath
+                )
             );
         })
         .sort((a, b) => {
 
             const aTime =
-                timestampToDate(a.goLiveAt)?.getTime() || 0;
+                timestampToDate(
+                    a.goLiveAt
+                )?.getTime() || 0;
 
             const bTime =
-                timestampToDate(b.goLiveAt)?.getTime() || 0;
+                timestampToDate(
+                    b.goLiveAt
+                )?.getTime() || 0;
 
             return bTime - aTime;
         })[0] || null;
 }
 
-function isLegendaryImage(image) {
+function imageMatchesSlot(
+    image,
+    slot
+) {
 
     if (!image) return false;
 
-    const src =
-        image.getAttribute("src") || "";
+    const searchable =
+        [
+            image.getAttribute("src") || "",
+            image.dataset.staticGraphicSrc || "",
+            image.getAttribute("alt") || ""
+        ]
+            .join(" ")
+            .toLowerCase();
 
-    const originalSrc =
-        image.dataset.staticGraphicSrc || "";
-
-    const alt =
-        image.getAttribute("alt") || "";
-
-    return (
-        src.toLowerCase().includes("legendary") ||
-        originalSrc.toLowerCase().includes("legendary") ||
-        alt.toLowerCase().includes("legendary")
-    );
+    return slot.keywords
+        .some(keyword =>
+            searchable.includes(
+                keyword.toLowerCase()
+            )
+        );
 }
 
-function findLegendaryImage() {
+function findSlotImage(type) {
 
     const raidContainer =
-        document.getElementById("raid-container");
+        document.getElementById(
+            "raid-container"
+        );
 
     if (!raidContainer) {
         return null;
     }
 
+    const slot =
+        GRAPHIC_SLOTS[type];
+
+    if (!slot) {
+        return null;
+    }
+
     return Array.from(
-        raidContainer.querySelectorAll("img")
-    ).find(isLegendaryImage) || null;
+        raidContainer
+            .querySelectorAll("img")
+    )
+        .find(image =>
+            imageMatchesSlot(
+                image,
+                slot
+            )
+        ) || null;
 }
 
-function restoreStaticLegendary(image) {
+function restoreStaticImage(
+    image,
+    type
+) {
 
     if (!image) return;
 
     const fallback =
-        image.dataset.staticGraphicSrc ||
-        STATIC_LEGENDARY_PATH;
+        image.dataset.staticGraphicSrc;
+
+    if (!fallback) {
+        return;
+    }
 
     image.onerror = null;
 
     if (
-        image.getAttribute("src") !== fallback
+        image.getAttribute("src") !==
+        fallback
     ) {
         image.setAttribute(
             "src",
@@ -116,28 +186,43 @@ function restoreStaticLegendary(image) {
     }
 
     delete image.dataset.managedGraphic;
+    delete image.dataset.managedGraphicType;
+
+    console.info(
+        `Using static ${type} raid graphic fallback.`
+    );
 }
 
-function applyActiveLegendaryGraphic() {
+function applySlot(type) {
 
     const image =
-        findLegendaryImage();
+        findSlotImage(type);
 
     if (!image) {
         return false;
     }
 
-    if (!image.dataset.staticGraphicSrc) {
+    /*
+     * Capture the original script.js-rendered
+     * static image before replacing it.
+     */
+    if (
+        !image.dataset.staticGraphicSrc
+    ) {
         image.dataset.staticGraphicSrc =
-            image.getAttribute("src") ||
-            STATIC_LEGENDARY_PATH;
+            image.getAttribute("src") || "";
     }
 
     const active =
-        getActiveLegendaryAsset();
+        getActiveAsset(type);
 
     if (!active) {
-        restoreStaticLegendary(image);
+
+        restoreStaticImage(
+            image,
+            type
+        );
+
         return true;
     }
 
@@ -146,12 +231,20 @@ function applyActiveLegendaryGraphic() {
         active.imagePath;
 
     if (!dynamicSrc) {
-        restoreStaticLegendary(image);
+
+        restoreStaticImage(
+            image,
+            type
+        );
+
         return true;
     }
 
     image.dataset.managedGraphic =
-        active.id || GRAPHIC_TYPE;
+        active.id || type;
+
+    image.dataset.managedGraphicType =
+        type;
 
     image.onerror = () => {
 
@@ -159,15 +252,19 @@ function applyActiveLegendaryGraphic() {
             image.getAttribute("src");
 
         console.warn(
-            "Managed Legendary graphic failed to load; restoring static fallback:",
+            `Managed ${type} graphic failed to load; restoring static fallback:`,
             failedSrc
         );
 
-        restoreStaticLegendary(image);
+        restoreStaticImage(
+            image,
+            type
+        );
     };
 
     if (
-        image.getAttribute("src") !== dynamicSrc
+        image.getAttribute("src") !==
+        dynamicSrc
     ) {
         image.setAttribute(
             "src",
@@ -178,18 +275,33 @@ function applyActiveLegendaryGraphic() {
     return true;
 }
 
+function applyAllRaidGraphics() {
+
+    Object.keys(
+        GRAPHIC_SLOTS
+    )
+        .forEach(type => {
+            applySlot(type);
+        });
+}
+
 function watchRaidContainer() {
 
     const raidContainer =
-        document.getElementById("raid-container");
+        document.getElementById(
+            "raid-container"
+        );
 
-    if (!raidContainer || raidObserver) {
+    if (
+        !raidContainer ||
+        raidObserver
+    ) {
         return;
     }
 
     raidObserver =
         new MutationObserver(() => {
-            applyActiveLegendaryGraphic();
+            applyAllRaidGraphics();
         });
 
     raidObserver.observe(
@@ -201,10 +313,14 @@ function watchRaidContainer() {
     );
 }
 
-function scheduleNextLegendaryTransition() {
+function scheduleNextTransition() {
 
     if (transitionTimer) {
-        clearTimeout(transitionTimer);
+
+        clearTimeout(
+            transitionTimer
+        );
+
         transitionTimer = null;
     }
 
@@ -213,48 +329,61 @@ function scheduleNextLegendaryTransition() {
 
     const futureTimes = [];
 
-    legendaryAssets.forEach(asset => {
+    graphicAssets
+        .forEach(asset => {
 
-        if (asset.type !== GRAPHIC_TYPE) {
-            return;
-        }
+            if (
+                !GRAPHIC_SLOTS[
+                    asset.type
+                ]
+            ) {
+                return;
+            }
 
-        const goLive =
-            timestampToDate(asset.goLiveAt);
+            const goLive =
+                timestampToDate(
+                    asset.goLiveAt
+                );
 
-        const hideAfter =
-            timestampToDate(asset.hideAfterAt);
+            const hideAfter =
+                timestampToDate(
+                    asset.hideAfterAt
+                );
 
-        if (
-            goLive &&
-            goLive > now
-        ) {
-            futureTimes.push(
-                goLive.getTime()
-            );
-        }
+            if (
+                goLive &&
+                goLive > now
+            ) {
+                futureTimes.push(
+                    goLive.getTime()
+                );
+            }
 
-        if (
-            hideAfter &&
-            hideAfter > now
-        ) {
-            futureTimes.push(
-                hideAfter.getTime()
-            );
-        }
-    });
+            if (
+                hideAfter &&
+                hideAfter > now
+            ) {
+                futureTimes.push(
+                    hideAfter.getTime()
+                );
+            }
+        });
 
     if (!futureTimes.length) {
         return;
     }
 
     const nextTime =
-        Math.min(...futureTimes);
+        Math.min(
+            ...futureTimes
+        );
 
     const delay =
         Math.max(
             1000,
-            nextTime - now.getTime() + 1000
+            nextTime -
+            now.getTime() +
+            1000
         );
 
     const MAX_TIMEOUT =
@@ -263,14 +392,17 @@ function scheduleNextLegendaryTransition() {
     transitionTimer =
         setTimeout(
             () => {
-                applyActiveLegendaryGraphic();
-                scheduleNextLegendaryTransition();
+                applyAllRaidGraphics();
+                scheduleNextTransition();
             },
-            Math.min(delay, MAX_TIMEOUT)
+            Math.min(
+                delay,
+                MAX_TIMEOUT
+            )
         );
 }
 
-async function loadLegendaryGraphics() {
+async function loadManagedRaidGraphics() {
 
     try {
 
@@ -282,53 +414,64 @@ async function loadLegendaryGraphics() {
                 )
             );
 
-        legendaryAssets = [];
+        graphicAssets = [];
 
-        snapshot.forEach(documentSnapshot => {
+        snapshot.forEach(
+            documentSnapshot => {
 
-            const data =
-                documentSnapshot.data();
+                const data =
+                    documentSnapshot.data();
 
-            if (
-                data.type === GRAPHIC_TYPE
-            ) {
-                legendaryAssets.push({
-                    id:
-                        documentSnapshot.id,
-                    ...data
-                });
+                if (
+                    GRAPHIC_SLOTS[
+                        data.type
+                    ]
+                ) {
+                    graphicAssets.push({
+                        id:
+                            documentSnapshot.id,
+                        ...data
+                    });
+                }
             }
-        });
+        );
 
-        applyActiveLegendaryGraphic();
-        scheduleNextLegendaryTransition();
+        applyAllRaidGraphics();
+
+        scheduleNextTransition();
 
     } catch (error) {
 
         console.error(
-            "Unable to load managed Legendary graphics. Static fallback remains active:",
+            "Unable to load managed raid graphics. Static fallbacks remain active:",
             error
         );
     }
 }
 
-function initializeLegendaryGraphic() {
+function initializePublicGraphics() {
 
     watchRaidContainer();
 
-    applyActiveLegendaryGraphic();
+    applyAllRaidGraphics();
 
-    loadLegendaryGraphics();
+    loadManagedRaidGraphics();
 }
 
 if (
-    document.readyState === "loading"
+    document.readyState ===
+    "loading"
 ) {
+
     document.addEventListener(
         "DOMContentLoaded",
-        initializeLegendaryGraphic,
-        { once: true }
+        initializePublicGraphics,
+        {
+            once: true
+        }
     );
+
 } else {
-    initializeLegendaryGraphic();
+
+    initializePublicGraphics();
 }
