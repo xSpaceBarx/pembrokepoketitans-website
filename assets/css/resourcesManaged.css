@@ -1,0 +1,165 @@
+/* ==========================================
+   PokéTitans Managed Resources
+========================================== */
+
+.resources-managed-section {
+    scroll-margin-top: 110px;
+}
+
+.poketitans-tools-grid,
+.managed-resource-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 22px;
+    margin-top: 32px;
+}
+
+.poketitans-tool-card,
+.managed-resource-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 8px 20px rgba(0,0,0,.08);
+}
+
+.poketitans-tool-card {
+    display: flex;
+    flex-direction: column;
+    color: #1f2937;
+    text-decoration: none;
+    transition: .2s ease;
+}
+
+.poketitans-tool-card:hover,
+.poketitans-tool-card:focus {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 26px rgba(0,0,0,.13);
+}
+
+.poketitans-tool-icon {
+    font-size: 2rem;
+    margin-bottom: 12px;
+}
+
+.poketitans-tool-card h3,
+.managed-resource-card h3 {
+    color: #153A5B;
+    margin-bottom: 10px;
+}
+
+.poketitans-tool-card p,
+.managed-resource-card p {
+    color: #555;
+    line-height: 1.65;
+}
+
+.poketitans-tool-action {
+    margin-top: auto;
+    padding-top: 16px;
+    color: #F57C00;
+    font-weight: 700;
+}
+
+.managed-resource-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.managed-resource-card p {
+    margin-bottom: 20px;
+}
+
+.managed-resource-button {
+    align-self: flex-start;
+    margin-top: auto;
+}
+
+.managed-guide-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+    margin-top: 32px;
+    align-items: start;
+}
+
+.managed-guide-card {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #ffffff;
+    box-shadow: 0 10px 30px rgba(0,0,0,.09);
+    cursor: zoom-in;
+    transition: .2s ease;
+}
+
+.managed-guide-card:hover,
+.managed-guide-card:focus {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 35px rgba(0,0,0,.15);
+}
+
+.managed-guide-image {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.resource-guide-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 5000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 24px 24px;
+    background: rgba(0,0,0,.86);
+}
+
+.resource-guide-lightbox.is-open {
+    display: flex;
+}
+
+.resource-guide-lightbox-image {
+    display: block;
+    max-width: min(1200px, 96vw);
+    max-height: 88vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 10px;
+    box-shadow: 0 12px 40px rgba(0,0,0,.4);
+}
+
+.resource-guide-lightbox-close {
+    position: absolute;
+    top: 14px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 50%;
+    background: #ffffff;
+    color: #153A5B;
+    font-size: 2rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.resource-lightbox-open {
+    overflow: hidden;
+}
+
+@media (max-width: 700px) {
+    .poketitans-tools-grid,
+    .managed-resource-grid,
+    .managed-guide-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .resource-guide-lightbox {
+        padding: 64px 12px 18px;
+    }
+}
