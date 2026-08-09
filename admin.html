@@ -1188,43 +1188,170 @@
 
 <br><br>
 
-    <!-- Future Modules -->
+<!-- Trainer Management -->
 
-    <div class="admin-grid">
+<div
+    class="notification-center trainer-manager"
+    id="trainer-manager">
 
-        <div class="admin-card">
+    <h2>👥 Trainer Management</h2>
 
-            <h2>👥 Trainer Management</h2>
+    <p class="section-description">
+        Search, edit and remove Trainers currently listed in the public Trainer Directory.
+    </p>
 
-            <p>
-                Search, manage and approve trainer submissions.
-            </p>
+    <hr>
 
-            <button class="btn-orange" disabled>
+    <h3 id="trainer-admin-editor-title">
+        Select a trainer below to edit
+    </h3>
 
-                Coming Soon
+    <input
+        type="hidden"
+        id="trainer-admin-id">
 
-            </button>
+    <div class="editor-grid">
+
+        <div>
+
+            <label for="trainer-admin-name">
+                Trainer Name
+            </label>
+
+            <input
+                type="text"
+                id="trainer-admin-name"
+                placeholder="Trainer Name">
 
         </div>
 
-        <div class="admin-card">
+        <div>
 
-            <h2>📊 Analytics</h2>
+            <label for="trainer-admin-code">
+                Friend Code
+            </label>
 
-            <p>
-                Website traffic and notification statistics.
-            </p>
-
-            <button class="btn-orange" disabled>
-
-                Coming Soon
-
-            </button>
+            <input
+                type="text"
+                id="trainer-admin-code"
+                placeholder="2428 9779 6456"
+                maxlength="14"
+                inputmode="numeric"
+                autocomplete="off">
 
         </div>
 
     </div>
+
+    <label for="trainer-admin-location">
+        Main Play Location
+    </label>
+
+    <select id="trainer-admin-location">
+
+        <option value="">
+            Select Location
+        </option>
+
+        <option>Pembroke</option>
+        <option>Hanover</option>
+        <option>Hanson</option>
+        <option>Halifax</option>
+        <option>Kingston</option>
+        <option>Marshfield</option>
+        <option>Rockland</option>
+        <option>Scituate</option>
+        <option>Quincy</option>
+        <option>Plymouth</option>
+        <option>Abington</option>
+        <option>Whitman</option>
+        <option>Plympton</option>
+        <option>Carver</option>
+        <option>Other</option>
+
+    </select>
+
+    <input
+        type="text"
+        id="trainer-admin-other-location"
+        placeholder="Enter main play location"
+        style="display:none; margin-top:12px;">
+
+    <div class="button-row">
+
+        <button
+            type="button"
+            id="saveTrainerAdmin"
+            class="btn-orange"
+            disabled>
+
+            💾 Save Changes
+
+        </button>
+
+        <button
+            type="button"
+            id="clearTrainerAdmin"
+            class="btn-orange">
+
+            🗑 Clear Editor
+
+        </button>
+
+    </div>
+
+    <br>
+
+    <hr>
+
+    <h3>📋 Registered Trainers</h3>
+
+    <label for="trainer-admin-search">
+        Search Trainers
+    </label>
+
+    <input
+        type="search"
+        id="trainer-admin-search"
+        placeholder="Search by Trainer Name, Friend Code or Location">
+
+    <p
+        id="trainer-admin-count"
+        class="draft-counts">
+
+        Loading trainers...
+
+    </p>
+
+    <div id="trainer-admin-list">
+        Loading trainers...
+    </div>
+
+</div>
+
+<br><br>
+
+<!-- Future Modules -->
+
+<div class="admin-grid">
+
+    <div class="admin-card">
+
+        <h2>📊 Analytics</h2>
+
+        <p>
+            Website traffic and notification statistics.
+        </p>
+
+        <button class="btn-orange" disabled>
+
+            Coming Soon
+
+        </button>
+
+    </div>
+
+</div>
 
 </div>
 
@@ -1232,7 +1359,7 @@
 
 <script
     type="module"
-    src="assets/js/admin-auth.js?v=2">
+    src="assets/js/admin-auth.js?v=3">
 </script>
 
 </body>
