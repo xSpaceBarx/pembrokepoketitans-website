@@ -1,4 +1,4 @@
-import { db } from "./firebase.js";
+import { app, db } from "./firebase.js";
 
 import {
     collection,
@@ -11,7 +11,14 @@ import {
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
+import {
+    getAuth
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
 const TIME_ZONE = "America/New_York";
+
+const WORKER_URL =
+    "https://poketitan-notifications.xspacebarx.workers.dev/";
 
 const graphicAssetsCollection =
     collection(db, "graphicAssets");
@@ -365,6 +372,201 @@ function scrollToElement(selector) {
 
 }
 
+
+/* ============================
+   MANAGED IMAGE UPLOAD HELPERS
+============================ */
+
+function fileToBase64(file) {
+
+    return new Promise(
+        (resolve, reject) => {
+
+            const reader =
+                new FileReader();
+
+            reader.onload = () => {
+
+                const result =
+                    String(reader.result || "");
+
+                const commaIndex =
+                    result.indexOf(",");
+
+                resolve(
+                    commaIndex >= 0
+                        ? result.slice(commaIndex + 1)
+                        : result
+                );
+            };
+
+            reader.onerror = () => {
+                reject(
+                    new Error(
+                        "Unable to read the selected graphic."
+                    )
+                );
+            };
+
+            reader.readAsDataURL(file);
+        }
+    );
+}
+
+async function getAdminIdToken() {
+
+    const user =
+        getAuth(app).currentUser;
+
+    if (!user) {
+        throw new Error(
+            "Your Admin login has expired. Please refresh the page and sign in again."
+        );
+    }
+
+    return user.getIdToken();
+}
+
+async function readWorkerJson(response) {
+
+    const text =
+        await response.text();
+
+    if (!text) {
+        return {};
+    }
+
+    try {
+        return JSON.parse(text);
+    } catch {
+        return {
+            success: false,
+            error: text
+        };
+    }
+}
+
+async function uploadManagedGraphic(
+    file,
+    graphicType
+) {
+
+    if (!file) {
+        throw new Error(
+            "Please choose a graphic image."
+        );
+    }
+
+    const contentBase64 =
+        await fileToBase64(file);
+
+    const idToken =
+        await getAdminIdToken();
+
+    const response =
+        await fetch(
+            WORKER_URL,
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json",
+
+                    "Authorization":
+                        `Bearer ${idToken}`
+                },
+
+                body:
+                    JSON.stringify({
+                        action:
+                            "uploadGraphic",
+
+                        graphicType,
+
+                        originalFileName:
+                            file.name,
+
+                        mimeType:
+                            file.type,
+
+                        contentBase64
+                    })
+            }
+        );
+
+    const result =
+        await readWorkerJson(response);
+
+    if (
+        !response.ok ||
+        result.success !== true ||
+        !result.imagePath ||
+        !result.imageUrl
+    ) {
+        throw new Error(
+            result.error ||
+            "Unable to upload the graphic to GitHub."
+        );
+    }
+
+    return result;
+}
+
+async function deleteManagedGraphic(
+    imagePath
+) {
+
+    if (!imagePath) {
+        return {
+            success: true,
+            skipped: true
+        };
+    }
+
+    const idToken =
+        await getAdminIdToken();
+
+    const response =
+        await fetch(
+            WORKER_URL,
+            {
+                method: "DELETE",
+
+                headers: {
+                    "Content-Type":
+                        "application/json",
+
+                    "Authorization":
+                        `Bearer ${idToken}`
+                },
+
+                body:
+                    JSON.stringify({
+                        action:
+                            "deleteGraphic",
+
+                        imagePath
+                    })
+            }
+        );
+
+    const result =
+        await readWorkerJson(response);
+
+    if (
+        !response.ok ||
+        result.success !== true
+    ) {
+        throw new Error(
+            result.error ||
+            "Unable to delete the managed graphic from GitHub."
+        );
+    }
+
+    return result;
+}
+
 /* ============================
    GRAPHIC STATE
 ============================ */
@@ -609,21 +811,37 @@ function renderGraphicPreview(asset, containerId, emptyText) {
         return;
     }
 
-    const imageText =
-        asset.imagePath ||
-        asset.imageUrl ||
-        "Image upload not connected yet";
+    const imageUrl =
+        asset.imageUrl || "";
 
     container.innerHTML = `
-        <p><strong>${escapeHtml(imageText)}</strong></p>
-        <p>Go Live: ${escapeHtml(formatDateTime(asset.goLiveAt))}</p>
+        ${
+            imageUrl
+                ? `
+                    <img
+                        src="${escapeHtml(imageUrl)}"
+                        alt="${escapeHtml(asset.label || "Scheduled graphic")}"
+                        style="display:block;max-width:100%;max-height:320px;object-fit:contain;margin:0 auto 15px;">
+                  `
+                : `<p><strong>No uploaded image found.</strong></p>`
+        }
+
+        <p>
+            Go Live:
+            ${escapeHtml(formatDateTime(asset.goLiveAt))}
+        </p>
+
         ${
             asset.eventDate
-                ? `<p>Event Date: ${escapeHtml(asset.eventDate)}</p>`
+                ? `
+                    <p>
+                        Event Date:
+                        ${escapeHtml(asset.eventDate)}
+                    </p>
+                  `
                 : ""
         }
     `;
-
 }
 
 function openGraphicEditor(type, asset = null) {
@@ -719,7 +937,8 @@ async function saveGraphic({ publishNow = false } = {}) {
 
     if (publishNow) {
 
-        goLiveDate = new Date();
+        goLiveDate =
+            new Date();
 
     } else {
 
@@ -730,10 +949,11 @@ async function saveGraphic({ publishNow = false } = {}) {
             );
 
         if (!goLiveDate) {
-            alert("Please enter a valid Go Live date and time.");
+            alert(
+                "Please enter a valid Go Live date and time."
+            );
             return;
         }
-
     }
 
     const hideDateValue =
@@ -744,10 +964,18 @@ async function saveGraphic({ publishNow = false } = {}) {
 
     let hideAfterDate = null;
 
-    if (hideDateValue || hideTimeValue) {
+    if (
+        hideDateValue ||
+        hideTimeValue
+    ) {
 
-        if (!hideDateValue || !hideTimeValue) {
-            alert("Please enter both a Hide After date and time, or leave both blank.");
+        if (
+            !hideDateValue ||
+            !hideTimeValue
+        ) {
+            alert(
+                "Please enter both a Hide After date and time, or leave both blank."
+            );
             return;
         }
 
@@ -758,64 +986,118 @@ async function saveGraphic({ publishNow = false } = {}) {
             );
 
         if (!hideAfterDate) {
-            alert("Please enter a valid Hide After date and time.");
+            alert(
+                "Please enter a valid Hide After date and time."
+            );
             return;
         }
 
-        if (hideAfterDate <= goLiveDate) {
-            alert("Hide After must be later than Go Live.");
+        if (
+            hideAfterDate <=
+            goLiveDate
+        ) {
+            alert(
+                "Hide After must be later than Go Live."
+            );
             return;
         }
-
     }
 
     const selectedFile =
         getElement("graphic-image").files[0] || null;
 
-    const payload = {
-        type,
-        label: config.label,
-        placement: config.placement,
-        eventDate:
-            getElement("graphic-event-date").value || "",
-        goLiveAt:
-            Timestamp.fromDate(goLiveDate),
-        hideAfterAt:
-            hideAfterDate
-                ? Timestamp.fromDate(hideAfterDate)
-                : null,
-        link:
-            getElement("graphic-link").value.trim(),
-        ticketUrl:
-            config.supportsTicket
-                ? getElement("graphic-ticket-url").value.trim()
-                : "",
-        originalFileName:
-            selectedFile?.name ||
-            editingGraphic?.originalFileName ||
-            "",
-        updatedAt:
-            serverTimestamp()
-    };
-
-    // Preserve future image fields when editing metadata.
-    if (editingGraphic?.imagePath) {
-        payload.imagePath = editingGraphic.imagePath;
+    if (
+        !selectedFile &&
+        !editingGraphic?.imagePath
+    ) {
+        alert(
+            "Please choose a graphic image."
+        );
+        return;
     }
 
-    if (editingGraphic?.imageUrl) {
-        payload.imageUrl = editingGraphic.imageUrl;
-    }
+    const id =
+        getElement("graphic-id").value;
+
+    const oldImagePath =
+        editingGraphic?.imagePath || "";
+
+    let uploadedImage = null;
 
     try {
 
-        const id =
-            getElement("graphic-id").value;
+        if (selectedFile) {
+
+            uploadedImage =
+                await uploadManagedGraphic(
+                    selectedFile,
+                    type
+                );
+        }
+
+        const payload = {
+            type,
+            label:
+                config.label,
+            placement:
+                config.placement,
+            eventDate:
+                getElement("graphic-event-date").value || "",
+            goLiveAt:
+                Timestamp.fromDate(
+                    goLiveDate
+                ),
+            hideAfterAt:
+                hideAfterDate
+                    ? Timestamp.fromDate(
+                        hideAfterDate
+                      )
+                    : null,
+            link:
+                getElement("graphic-link").value.trim(),
+            ticketUrl:
+                config.supportsTicket
+                    ? getElement("graphic-ticket-url").value.trim()
+                    : "",
+            originalFileName:
+                selectedFile?.name ||
+                editingGraphic?.originalFileName ||
+                "",
+            updatedAt:
+                serverTimestamp()
+        };
+
+        if (uploadedImage) {
+
+            payload.imagePath =
+                uploadedImage.imagePath;
+
+            payload.imageUrl =
+                uploadedImage.imageUrl;
+
+            payload.githubSha =
+                uploadedImage.githubSha || "";
+
+        } else {
+
+            payload.imagePath =
+                editingGraphic.imagePath;
+
+            payload.imageUrl =
+                editingGraphic.imageUrl || "";
+
+            payload.githubSha =
+                editingGraphic.githubSha || "";
+        }
 
         if (id) {
 
             await updateDoc(
-                doc(db, "graphicAssets", id),
+                doc(
+                    db,
+                    "graphicAssets",
+                    id
+                ),
                 payload
             );
 
@@ -828,29 +1110,82 @@ async function saveGraphic({ publishNow = false } = {}) {
                 graphicAssetsCollection,
                 payload
             );
+        }
 
+        let cleanupWarning = false;
+
+        if (
+            uploadedImage &&
+            oldImagePath &&
+            oldImagePath !==
+                uploadedImage.imagePath
+        ) {
+
+            try {
+
+                await deleteManagedGraphic(
+                    oldImagePath
+                );
+
+            } catch (cleanupError) {
+
+                cleanupWarning = true;
+
+                console.warn(
+                    "New graphic saved, but the replaced GitHub image could not be removed:",
+                    cleanupError
+                );
+            }
         }
 
         await loadAllGraphicsData();
+
         clearGraphicEditor();
 
         alert(
-            publishNow
-                ? "✅ Graphic metadata published. Image uploading will be connected in the next step."
-                : "✅ Graphic schedule saved. Image uploading will be connected in the next step."
+            (
+                publishNow
+                    ? "✅ Graphic published and uploaded successfully."
+                    : "✅ Graphic scheduled and uploaded successfully."
+            ) +
+            (
+                cleanupWarning
+                    ? "\n\nThe new graphic is saved, but an older managed image could not be cleaned up automatically."
+                    : ""
+            )
         );
 
     } catch (error) {
+
+        /*
+         * If GitHub upload succeeded but Firestore save
+         * failed, remove the newly uploaded orphan file.
+         */
+        if (
+            uploadedImage?.imagePath
+        ) {
+            try {
+                await deleteManagedGraphic(
+                    uploadedImage.imagePath
+                );
+            } catch (rollbackError) {
+                console.warn(
+                    "Unable to roll back newly uploaded graphic:",
+                    rollbackError
+                );
+            }
+        }
 
         console.error(
             "Unable to save graphic:",
             error
         );
 
-        alert("Unable to save graphic.");
-
+        alert(
+            error.message ||
+            "Unable to save graphic."
+        );
     }
-
 }
 
 /* ============================
@@ -1081,62 +1416,119 @@ async function saveFeaturedEvent() {
         );
 
     if (!name) {
-        alert("Please enter an event name.");
+        alert(
+            "Please enter an event name."
+        );
         return;
     }
 
-    if (!startDate || !endDate) {
-        alert("Please enter valid event start and end dates/times.");
+    if (
+        !startDate ||
+        !endDate
+    ) {
+        alert(
+            "Please enter valid event start and end dates/times."
+        );
         return;
     }
 
-    if (endDate <= startDate) {
-        alert("The event end must be later than the event start.");
+    if (
+        endDate <=
+        startDate
+    ) {
+        alert(
+            "The event end must be later than the event start."
+        );
         return;
     }
 
     const selectedFile =
         getElement("featured-event-image").files[0] || null;
 
-    const payload = {
-        name,
-        startAt:
-            Timestamp.fromDate(startDate),
-        endAt:
-            Timestamp.fromDate(endDate),
-        eventDate:
-            getElement("featured-event-start-date").value,
-        link:
-            getElement("featured-event-link").value.trim(),
-        placement:
-            "Homepage when Current + Events page in chronological order",
-        originalFileName:
-            selectedFile?.name ||
-            editingFeaturedEvent?.originalFileName ||
-            "",
-        updatedAt:
-            serverTimestamp()
-    };
-
-    if (editingFeaturedEvent?.imagePath) {
-        payload.imagePath =
-            editingFeaturedEvent.imagePath;
+    if (
+        !selectedFile &&
+        !editingFeaturedEvent?.imagePath
+    ) {
+        alert(
+            "Please choose an event graphic."
+        );
+        return;
     }
 
-    if (editingFeaturedEvent?.imageUrl) {
-        payload.imageUrl =
-            editingFeaturedEvent.imageUrl;
-    }
+    const id =
+        getElement("featured-event-id").value;
+
+    const oldImagePath =
+        editingFeaturedEvent?.imagePath || "";
+
+    let uploadedImage = null;
 
     try {
 
-        const id =
-            getElement("featured-event-id").value;
+        if (selectedFile) {
+
+            uploadedImage =
+                await uploadManagedGraphic(
+                    selectedFile,
+                    "featured"
+                );
+        }
+
+        const payload = {
+            name,
+            startAt:
+                Timestamp.fromDate(
+                    startDate
+                ),
+            endAt:
+                Timestamp.fromDate(
+                    endDate
+                ),
+            eventDate:
+                getElement("featured-event-start-date").value,
+            link:
+                getElement("featured-event-link").value.trim(),
+            placement:
+                "Homepage when Current + Events page in chronological order",
+            originalFileName:
+                selectedFile?.name ||
+                editingFeaturedEvent?.originalFileName ||
+                "",
+            updatedAt:
+                serverTimestamp()
+        };
+
+        if (uploadedImage) {
+
+            payload.imagePath =
+                uploadedImage.imagePath;
+
+            payload.imageUrl =
+                uploadedImage.imageUrl;
+
+            payload.githubSha =
+                uploadedImage.githubSha || "";
+
+        } else {
+
+            payload.imagePath =
+                editingFeaturedEvent.imagePath;
+
+            payload.imageUrl =
+                editingFeaturedEvent.imageUrl || "";
+
+            payload.githubSha =
+                editingFeaturedEvent.githubSha || "";
+        }
 
         if (id) {
 
             await updateDoc(
-                doc(db, "featuredEvents", id),
+                doc(
+                    db,
+                    "featuredEvents",
+                    id
+                ),
                 payload
             );
 
@@ -1149,43 +1541,109 @@ async function saveFeaturedEvent() {
                 featuredEventsCollection,
                 payload
             );
+        }
 
+        let cleanupWarning = false;
+
+        if (
+            uploadedImage &&
+            oldImagePath &&
+            oldImagePath !==
+                uploadedImage.imagePath
+        ) {
+
+            try {
+
+                await deleteManagedGraphic(
+                    oldImagePath
+                );
+
+            } catch (cleanupError) {
+
+                cleanupWarning = true;
+
+                console.warn(
+                    "Featured event saved, but the replaced GitHub image could not be removed:",
+                    cleanupError
+                );
+            }
         }
 
         await loadAllGraphicsData();
+
         clearFeaturedEventEditor();
 
         alert(
-            "✅ Featured event saved. Image uploading will be connected in the next step."
+            "✅ Featured event and graphic saved successfully." +
+            (
+                cleanupWarning
+                    ? "\n\nThe new event is saved, but an older managed image could not be cleaned up automatically."
+                    : ""
+            )
         );
 
     } catch (error) {
+
+        if (
+            uploadedImage?.imagePath
+        ) {
+            try {
+                await deleteManagedGraphic(
+                    uploadedImage.imagePath
+                );
+            } catch (rollbackError) {
+                console.warn(
+                    "Unable to roll back newly uploaded featured-event graphic:",
+                    rollbackError
+                );
+            }
+        }
 
         console.error(
             "Unable to save featured event:",
             error
         );
 
-        alert("Unable to save featured event.");
-
+        alert(
+            error.message ||
+            "Unable to save featured event."
+        );
     }
-
 }
 
-async function deleteFeaturedEvent(id, name) {
+async function deleteFeaturedEvent(event) {
 
     const confirmed =
-        confirm(`Delete featured event "${name}"?`);
+        confirm(
+            `Delete featured event "${event.name}"?`
+        );
 
     if (!confirmed) return;
 
     try {
 
+        /*
+         * Delete the managed GitHub file first.
+         * Firestore is removed only after GitHub
+         * cleanup succeeds.
+         */
+        if (event.imagePath) {
+
+            await deleteManagedGraphic(
+                event.imagePath
+            );
+        }
+
         await deleteDoc(
-            doc(db, "featuredEvents", id)
+            doc(
+                db,
+                "featuredEvents",
+                event.id
+            )
         );
 
         await loadAllGraphicsData();
+
         clearFeaturedEventEditor();
 
     } catch (error) {
@@ -1195,10 +1653,11 @@ async function deleteFeaturedEvent(id, name) {
             error
         );
 
-        alert("Unable to delete featured event.");
-
+        alert(
+            error.message ||
+            "Unable to delete featured event. The Firestore record was kept so the graphic remains traceable."
+        );
     }
-
 }
 
 function renderFeaturedQueue() {
@@ -1288,7 +1747,7 @@ function renderFeaturedQueue() {
         card
             .querySelector(".featured-delete")
             .addEventListener("click", () => {
-                deleteFeaturedEvent(event.id, event.name);
+                deleteFeaturedEvent(event);
             });
 
         container.appendChild(card);
@@ -1312,11 +1771,28 @@ async function deleteScheduledGraphic(asset) {
 
     try {
 
+        /*
+         * Delete the managed GitHub file first.
+         * Firestore is removed only after GitHub
+         * cleanup succeeds.
+         */
+        if (asset.imagePath) {
+
+            await deleteManagedGraphic(
+                asset.imagePath
+            );
+        }
+
         await deleteDoc(
-            doc(db, "graphicAssets", asset.id)
+            doc(
+                db,
+                "graphicAssets",
+                asset.id
+            )
         );
 
         await loadAllGraphicsData();
+
         clearGraphicEditor();
 
     } catch (error) {
@@ -1326,10 +1802,11 @@ async function deleteScheduledGraphic(asset) {
             error
         );
 
-        alert("Unable to cancel scheduled graphic.");
-
+        alert(
+            error.message ||
+            "Unable to cancel the scheduled graphic. The Firestore record was kept so the graphic remains traceable."
+        );
     }
-
 }
 
 function renderGraphicsPipeline() {
@@ -1545,10 +2022,6 @@ export async function initGraphicsManager() {
             "click",
             clearFeaturedEventEditor
         );
-
-    // Image bytes are intentionally not uploaded yet.
-    // The next phase connects these inputs to the authenticated
-    // Cloudflare Worker + GitHub uploader without changing this UI.
 
     await loadAllGraphicsData();
 
