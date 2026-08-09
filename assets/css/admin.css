@@ -575,137 +575,185 @@
     opacity:.75;
 
 }
+
+
 /* ==========================
-Last Updated Timestamp
+   Admin Quick Navigation
 ========================== */
 
-.last-updated{
-
-    margin-top:12px;
-
-    font-size:.85rem;
-
-    color:#777;
-
+html {
+    scroll-behavior: smooth;
 }
 
-.last-updated strong{
-
-    color:#555;
-
+#weekly-checklist,
+#event-special-notifications,
+#notification-center,
+#notification-pipeline,
+#announcement-manager,
+#meetup-manager,
+#graphics-manager,
+#monthly-special-graphics,
+#graphics-editor,
+#featured-event-manager,
+#graphics-pipeline,
+#trainer-manager,
+#analytics {
+    scroll-margin-top: 20px;
 }
+
+.admin-section-nav {
+    background: #fff;
+    border-radius: 18px;
+    padding: 24px;
+    margin-bottom: 10px;
+    box-shadow: 0 6px 18px rgba(0,0,0,.08);
+}
+
+.admin-section-nav h2 {
+    margin-top: 0;
+    margin-bottom: 18px;
+}
+
+.admin-section-nav-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 12px;
+}
+
+.admin-jump-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: #f57c00;
+    color: #fff;
+    text-decoration: none;
+    text-align: center;
+    font-weight: 700;
+    line-height: 1.25;
+    transition: .2s;
+}
+
+.admin-jump-link:hover,
+.admin-jump-link:focus {
+    background: #e36f00;
+    transform: translateY(-2px);
+}
+
 /* ==========================
-Status Badges
+   Collapsible Admin Lists
 ========================== */
 
-.draft-header{
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    gap:15px;
-
-    margin-bottom:15px;
-
+.admin-collapsible,
+.pipeline-collapsible {
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+    background: #fafafa;
 }
 
-.status-badge{
-
-    padding:6px 12px;
-
-    border-radius:999px;
-
-    font-size:.75rem;
-
-    font-weight:700;
-
-    color:white;
-
-    letter-spacing:.5px;
-
-    flex-shrink:0;
-
+.admin-collapsible summary,
+.pipeline-collapsible summary {
+    cursor: pointer;
+    padding: 14px 16px;
+    font-weight: 700;
+    user-select: none;
 }
 
-.status-badge.status-draft{
-    background:#2f9e44;
+.admin-collapsible summary:hover,
+.pipeline-collapsible summary:hover {
+    background: #f3f3f3;
 }
 
-.status-badge.status-schedule{
-    background:#d48806;
+.admin-collapsible-content {
+    padding: 6px 16px 16px;
 }
 
-.status-badge.status-published{
-    background:#1677ff;
-}
-/* ==========================================
-   ADMIN LOGIN
-========================================== */
-
-#admin-auth-overlay{
-    position:fixed;
-    inset:0;
-    z-index:99999;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    background:#f5f7fa;
-
-    padding:25px;
+.trainer-list-collapsible {
+    margin-top: 12px;
 }
 
-.admin-login-card{
-    width:100%;
-    max-width:460px;
-
-    background:#ffffff;
-
-    border-radius:20px;
-    border-top:6px solid #F57C00;
-
-    padding:45px 35px;
-
-    text-align:center;
-
-    box-shadow:
-        0 12px 40px rgba(0,0,0,.15);
+.pipeline-collapsible {
+    grid-column: 1 / -1;
 }
 
-.admin-login-icon{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    width:76px;
-    height:76px;
-
-    margin:0 auto 20px;
-
-    border-radius:50%;
-
-    background:#153A5B;
-
-    font-size:34px;
+.pipeline-collapsible-summary {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px 20px;
+    align-items: center;
 }
 
-.admin-login-card h1{
-    color:#153A5B;
-    margin-bottom:10px;
+.pipeline-collapsible-summary span {
+    color: #666;
+    font-size: .9rem;
+    font-weight: 500;
 }
 
-.admin-login-card p{
-    color:#666;
-    margin-bottom:22px;
+.pipeline-collapsible-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 20px;
+    padding: 6px 16px 16px;
 }
 
-.admin-auth-message{
-    margin-top:22px;
-    margin-bottom:0 !important;
+.pipeline-collapsible-content .empty-section {
+    grid-column: 1 / -1;
+}
 
-    font-size:.9rem;
+/* ==========================
+   Persistent Back To Top
+========================== */
+
+.admin-back-to-top {
+    position: fixed;
+    right: 22px;
+    bottom: 22px;
+    z-index: 1000;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 64px;
+    min-height: 46px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: #f57c00;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 800;
+    box-shadow: 0 6px 18px rgba(0,0,0,.22);
+    transition: .2s;
+}
+
+.admin-back-to-top:hover,
+.admin-back-to-top:focus {
+    background: #e36f00;
+    transform: translateY(-2px);
+}
+
+@media(max-width:768px) {
+
+    .admin-section-nav-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .pipeline-collapsible-content {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-back-to-top {
+        right: 14px;
+        bottom: 14px;
+        min-width: 58px;
+        min-height: 42px;
+    }
+}
+
+@media(max-width:480px) {
+
+    .admin-section-nav-grid {
+        grid-template-columns: 1fr;
+    }
 }
