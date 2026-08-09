@@ -5,41 +5,9 @@ import {
     getDocs
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
-const GRAPHIC_SLOTS = {
-    goweekly: {
-        scope: "document",
-        keywords: [
-            "goweekly",
-            "go weekly"
-        ]
-    },
-
-    legendary: {
-        scope: "raids",
-        keywords: [
-            "legendary"
-        ]
-    },
-
-    mega: {
-        scope: "raids",
-        keywords: [
-            "mega"
-        ]
-    },
-
-    shadowraids: {
-        scope: "raids",
-        keywords: [
-            "shadow"
-        ]
-    }
-};
-
-let graphicAssets = [];
+let goWeeklyAssets = [];
 let featuredEvents = [];
 let transitionTimer = null;
-let raidObserver = null;
 
 function timestampToDate(value) {
 
@@ -62,20 +30,11 @@ function timestampToDate(value) {
         : converted;
 }
 
-function getAssetsForType(type) {
-
-    return graphicAssets
-        .filter(asset =>
-            asset.type === type
-        );
-}
-
-function getActiveAsset(
-    type,
+function getActiveGoWeekly(
     now = new Date()
 ) {
 
-    return getAssetsForType(type)
+    return goWeeklyAssets
         .filter(asset => {
 
             const goLive =
@@ -89,6 +48,8 @@ function getActiveAsset(
                 );
 
             return (
+                asset.type ===
+                    "goweekly" &&
                 goLive &&
                 goLive <= now &&
                 (
@@ -115,193 +76,6 @@ function getActiveAsset(
 
             return bTime - aTime;
         })[0] || null;
-}
-
-function imageMatchesSlot(
-    image,
-    slot
-) {
-
-    if (!image) return false;
-
-    const searchable =
-        [
-            image.getAttribute("src") || "",
-            image.dataset.staticGraphicSrc || "",
-            image.getAttribute("alt") || ""
-        ]
-            .join(" ")
-            .toLowerCase();
-
-    return slot.keywords
-        .some(keyword =>
-            searchable.includes(
-                keyword.toLowerCase()
-            )
-        );
-}
-
-function findSlotImage(type) {
-
-    const slot =
-        GRAPHIC_SLOTS[type];
-
-    if (!slot) {
-        return null;
-    }
-
-    let root =
-        document;
-
-    if (
-        slot.scope === "raids"
-    ) {
-
-        root =
-            document.getElementById(
-                "raid-container"
-            );
-
-        if (!root) {
-            return null;
-        }
-    }
-
-    return Array.from(
-        root.querySelectorAll("img")
-    )
-        .find(image =>
-            imageMatchesSlot(
-                image,
-                slot
-            )
-        ) || null;
-}
-
-function restoreStaticImage(
-    image,
-    type
-) {
-
-    if (!image) return;
-
-    const fallback =
-        image.dataset.staticGraphicSrc;
-
-    if (!fallback) {
-        return;
-    }
-
-    image.onerror = null;
-
-    if (
-        image.getAttribute("src") !==
-        fallback
-    ) {
-        image.setAttribute(
-            "src",
-            fallback
-        );
-    }
-
-    delete image.dataset.managedGraphic;
-    delete image.dataset.managedGraphicType;
-
-    console.info(
-        `Using static ${type} graphic fallback.`
-    );
-}
-
-function applySlot(type) {
-
-    const image =
-        findSlotImage(type);
-
-    if (!image) {
-        return false;
-    }
-
-    /*
-     * Capture the original script.js-rendered
-     * static image before replacing it.
-     */
-    if (
-        !image.dataset.staticGraphicSrc
-    ) {
-        image.dataset.staticGraphicSrc =
-            image.getAttribute("src") || "";
-    }
-
-    const active =
-        getActiveAsset(type);
-
-    if (!active) {
-
-        restoreStaticImage(
-            image,
-            type
-        );
-
-        return true;
-    }
-
-    const dynamicSrc =
-        active.imageUrl ||
-        active.imagePath;
-
-    if (!dynamicSrc) {
-
-        restoreStaticImage(
-            image,
-            type
-        );
-
-        return true;
-    }
-
-    image.dataset.managedGraphic =
-        active.id || type;
-
-    image.dataset.managedGraphicType =
-        type;
-
-    image.onerror = () => {
-
-        const failedSrc =
-            image.getAttribute("src");
-
-        console.warn(
-            `Managed ${type} graphic failed to load; restoring static fallback:`,
-            failedSrc
-        );
-
-        restoreStaticImage(
-            image,
-            type
-        );
-    };
-
-    if (
-        image.getAttribute("src") !==
-        dynamicSrc
-    ) {
-        image.setAttribute(
-            "src",
-            dynamicSrc
-        );
-    }
-
-    return true;
-}
-
-function applyAllRaidGraphics() {
-
-    Object.keys(
-        GRAPHIC_SLOTS
-    )
-        .forEach(type => {
-            applySlot(type);
-        });
 }
 
 function getCurrentFeaturedEvent(
@@ -348,6 +122,36 @@ function getCurrentFeaturedEvent(
         })[0] || null;
 }
 
+function findGoWeeklyImage() {
+
+    return Array.from(
+        document.querySelectorAll("img")
+    )
+        .find(image => {
+
+            const searchable =
+                [
+                    image.getAttribute(
+                        "src"
+                    ) || "",
+                    image.getAttribute(
+                        "alt"
+                    ) || ""
+                ]
+                    .join(" ")
+                    .toLowerCase();
+
+            return (
+                searchable.includes(
+                    "goweekly"
+                ) ||
+                searchable.includes(
+                    "go weekly"
+                )
+            );
+        }) || null;
+}
+
 function findCurrentEventImage() {
 
     return Array.from(
@@ -357,9 +161,12 @@ function findCurrentEventImage() {
 
             const searchable =
                 [
-                    image.getAttribute("src") || "",
-                    image.dataset.staticGraphicSrc || "",
-                    image.getAttribute("alt") || ""
+                    image.getAttribute(
+                        "src"
+                    ) || "",
+                    image.getAttribute(
+                        "alt"
+                    ) || ""
                 ]
                     .join(" ")
                     .toLowerCase();
@@ -378,29 +185,81 @@ function findCurrentEventImage() {
         }) || null;
 }
 
-function restoreStaticCurrentEvent(
-    image
-) {
+function hideManagedImage(image) {
 
     if (!image) return;
 
-    const fallback =
-        image.dataset.staticGraphicSrc ||
-        "assets/images/currentevent.png";
-
     image.onerror = null;
+    image.style.display = "none";
+}
+
+function showManagedImage(
+    image,
+    source,
+    label
+) {
 
     if (
-        image.getAttribute("src") !==
-        fallback
+        !image ||
+        !source
+    ) {
+        return;
+    }
+
+    image.onerror = () => {
+
+        console.warn(
+            `${label} graphic failed to load:`,
+            source
+        );
+
+        hideManagedImage(
+            image
+        );
+    };
+
+    image.style.display =
+        "block";
+
+    if (
+        image.getAttribute(
+            "src"
+        ) !== source
     ) {
         image.setAttribute(
             "src",
-            fallback
+            source
         );
     }
+}
 
-    delete image.dataset.managedFeaturedEvent;
+function applyGoWeekly() {
+
+    const image =
+        findGoWeeklyImage();
+
+    if (!image) {
+        return;
+    }
+
+    const active =
+        getActiveGoWeekly();
+
+    if (!active) {
+
+        hideManagedImage(
+            image
+        );
+
+        return;
+    }
+
+    showManagedImage(
+        image,
+        active.imageUrl ||
+            active.imagePath,
+        "GO Weekly"
+    );
 }
 
 function applyCurrentFeaturedEvent() {
@@ -409,15 +268,7 @@ function applyCurrentFeaturedEvent() {
         findCurrentEventImage();
 
     if (!image) {
-        return false;
-    }
-
-    if (
-        !image.dataset.staticGraphicSrc
-    ) {
-        image.dataset.staticGraphicSrc =
-            image.getAttribute("src") ||
-            "assets/images/currentevent.png";
+        return;
     }
 
     const current =
@@ -425,90 +276,26 @@ function applyCurrentFeaturedEvent() {
 
     if (!current) {
 
-        restoreStaticCurrentEvent(
+        hideManagedImage(
             image
         );
 
-        return true;
-    }
-
-    const dynamicSrc =
-        current.imageUrl ||
-        current.imagePath;
-
-    if (!dynamicSrc) {
-
-        restoreStaticCurrentEvent(
-            image
-        );
-
-        return true;
-    }
-
-    image.dataset.managedFeaturedEvent =
-        current.id || "current";
-
-    image.onerror = () => {
-
-        const failedSrc =
-            image.getAttribute("src");
-
-        console.warn(
-            "Managed Current Event graphic failed to load; restoring static fallback:",
-            failedSrc
-        );
-
-        restoreStaticCurrentEvent(
-            image
-        );
-    };
-
-    if (
-        image.getAttribute("src") !==
-        dynamicSrc
-    ) {
-        image.setAttribute(
-            "src",
-            dynamicSrc
-        );
-    }
-
-    return true;
-}
-
-function applyAllPublicGraphics() {
-
-    applyAllRaidGraphics();
-
-    applyCurrentFeaturedEvent();
-}
-
-function watchRaidContainer() {
-
-    const raidContainer =
-        document.getElementById(
-            "raid-container"
-        );
-
-    if (
-        !raidContainer ||
-        raidObserver
-    ) {
         return;
     }
 
-    raidObserver =
-        new MutationObserver(() => {
-            applyAllPublicGraphics();
-        });
-
-    raidObserver.observe(
-        raidContainer,
-        {
-            childList: true,
-            subtree: true
-        }
+    showManagedImage(
+        image,
+        current.imageUrl ||
+            current.imagePath,
+        "Current Event"
     );
+}
+
+function applyHomepageGraphics() {
+
+    applyGoWeekly();
+
+    applyCurrentFeaturedEvent();
 }
 
 function scheduleNextTransition() {
@@ -527,77 +314,67 @@ function scheduleNextTransition() {
 
     const futureTimes = [];
 
-    graphicAssets
-        .forEach(asset => {
+    goWeeklyAssets.forEach(asset => {
 
-            if (
-                !GRAPHIC_SLOTS[
-                    asset.type
-                ]
-            ) {
-                return;
-            }
+        const goLive =
+            timestampToDate(
+                asset.goLiveAt
+            );
 
-            const goLive =
-                timestampToDate(
-                    asset.goLiveAt
-                );
+        const hideAfter =
+            timestampToDate(
+                asset.hideAfterAt
+            );
 
-            const hideAfter =
-                timestampToDate(
-                    asset.hideAfterAt
-                );
+        if (
+            goLive &&
+            goLive > now
+        ) {
+            futureTimes.push(
+                goLive.getTime()
+            );
+        }
 
-            if (
-                goLive &&
-                goLive > now
-            ) {
-                futureTimes.push(
-                    goLive.getTime()
-                );
-            }
+        if (
+            hideAfter &&
+            hideAfter > now
+        ) {
+            futureTimes.push(
+                hideAfter.getTime()
+            );
+        }
+    });
 
-            if (
-                hideAfter &&
-                hideAfter > now
-            ) {
-                futureTimes.push(
-                    hideAfter.getTime()
-                );
-            }
-        });
+    featuredEvents.forEach(event => {
 
-    featuredEvents
-        .forEach(event => {
+        const start =
+            timestampToDate(
+                event.startAt
+            );
 
-            const start =
-                timestampToDate(
-                    event.startAt
-                );
+        const end =
+            timestampToDate(
+                event.endAt
+            );
 
-            const end =
-                timestampToDate(
-                    event.endAt
-                );
+        if (
+            start &&
+            start > now
+        ) {
+            futureTimes.push(
+                start.getTime()
+            );
+        }
 
-            if (
-                start &&
-                start > now
-            ) {
-                futureTimes.push(
-                    start.getTime()
-                );
-            }
-
-            if (
-                end &&
-                end > now
-            ) {
-                futureTimes.push(
-                    end.getTime()
-                );
-            }
-        });
+        if (
+            end &&
+            end > now
+        ) {
+            futureTimes.push(
+                end.getTime()
+            );
+        }
+    });
 
     if (!futureTimes.length) {
         return;
@@ -612,8 +389,8 @@ function scheduleNextTransition() {
         Math.max(
             1000,
             nextTime -
-            now.getTime() +
-            1000
+                now.getTime() +
+                1000
         );
 
     const MAX_TIMEOUT =
@@ -622,7 +399,9 @@ function scheduleNextTransition() {
     transitionTimer =
         setTimeout(
             () => {
-                applyAllPublicGraphics();
+
+                applyHomepageGraphics();
+
                 scheduleNextTransition();
             },
             Math.min(
@@ -632,7 +411,7 @@ function scheduleNextTransition() {
         );
 }
 
-async function loadManagedPublicGraphics() {
+async function loadHomepageGraphics() {
 
     try {
 
@@ -647,7 +426,6 @@ async function loadManagedPublicGraphics() {
                         "graphicAssets"
                     )
                 ),
-
                 getDocs(
                     collection(
                         db,
@@ -656,7 +434,7 @@ async function loadManagedPublicGraphics() {
                 )
             ]);
 
-        graphicAssets = [];
+        goWeeklyAssets = [];
         featuredEvents = [];
 
         graphicSnapshot.forEach(
@@ -666,11 +444,10 @@ async function loadManagedPublicGraphics() {
                     documentSnapshot.data();
 
                 if (
-                    GRAPHIC_SLOTS[
-                        data.type
-                    ]
+                    data.type ===
+                    "goweekly"
                 ) {
-                    graphicAssets.push({
+                    goWeeklyAssets.push({
                         id:
                             documentSnapshot.id,
                         ...data
@@ -690,26 +467,44 @@ async function loadManagedPublicGraphics() {
             }
         );
 
-        applyAllPublicGraphics();
+        applyHomepageGraphics();
 
         scheduleNextTransition();
 
     } catch (error) {
 
         console.error(
-            "Unable to load managed public graphics. Static fallbacks remain active:",
+            "Unable to load homepage graphics:",
             error
+        );
+
+        hideManagedImage(
+            findGoWeeklyImage()
+        );
+
+        hideManagedImage(
+            findCurrentEventImage()
         );
     }
 }
 
-function initializePublicGraphics() {
+function initializeHomepageGraphics() {
 
-    watchRaidContainer();
+    /*
+     * Hide the deleted legacy image references immediately.
+     * Active managed graphics are then shown after Firestore
+     * loads. This prevents broken-image placeholders when the
+     * old static files no longer exist.
+     */
+    hideManagedImage(
+        findGoWeeklyImage()
+    );
 
-    applyAllPublicGraphics();
+    hideManagedImage(
+        findCurrentEventImage()
+    );
 
-    loadManagedPublicGraphics();
+    loadHomepageGraphics();
 }
 
 if (
@@ -719,7 +514,7 @@ if (
 
     document.addEventListener(
         "DOMContentLoaded",
-        initializePublicGraphics,
+        initializeHomepageGraphics,
         {
             once: true
         }
@@ -727,5 +522,5 @@ if (
 
 } else {
 
-    initializePublicGraphics();
+    initializeHomepageGraphics();
 }
