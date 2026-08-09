@@ -5,6 +5,7 @@ import { publishNotification } from "./publishNotification.js?v=3";
 import { initMeetupManager } from "./meetupManager.js";
 import { initGraphicsManager } from "./graphicsManager.js?v=4";
 import { initTrainerManager } from "./trainerManager.js?v=1";
+import { initAnnouncementManager } from "./announcementManager.js?v=1";
 
 const templates = {
 
@@ -294,6 +295,7 @@ updatePreview();
 
 await loadDrafts();
 await updatePlannerStatus();
+await initAnnouncementManager();
 await initMeetupManager();
 await initGraphicsManager();
 await initTrainerManager();
