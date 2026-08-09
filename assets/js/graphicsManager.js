@@ -457,15 +457,64 @@ async function uploadManagedGraphic(
         );
     }
 
+    if (
+        ![
+            "image/png",
+            "image/jpeg",
+            "image/webp"
+        ].includes(file.type)
+    ) {
+        throw new Error(
+            "Only PNG, JPEG and WebP graphics are supported."
+        );
+    }
+
+    if (
+        file.size >
+        25 * 1024 * 1024
+    ) {
+        throw new Error(
+            "Graphic must be 25 MB or smaller."
+        );
+    }
+
+    /*
+     * The browser performs the Base64 work.
+     * The Worker will authenticate this request
+     * and stream this already-built GitHub JSON
+     * body directly to GitHub without parsing it.
+     */
     const contentBase64 =
         await fileToBase64(file);
+
+    const githubPayload =
+        JSON.stringify({
+            message:
+                `Add scheduled graphic: ${graphicType}`,
+            content:
+                contentBase64,
+            branch:
+                "main"
+        });
 
     const idToken =
         await getAdminIdToken();
 
+    const params =
+        new URLSearchParams({
+            type:
+                graphicType,
+            mime:
+                file.type,
+            name:
+                file.name,
+            size:
+                String(file.size)
+        });
+
     const response =
         await fetch(
-            WORKER_URL,
+            `${WORKER_URL}graphics/upload?${params.toString()}`,
             {
                 method: "POST",
 
@@ -478,20 +527,7 @@ async function uploadManagedGraphic(
                 },
 
                 body:
-                    JSON.stringify({
-                        action:
-                            "uploadGraphic",
-
-                        graphicType,
-
-                        originalFileName:
-                            file.name,
-
-                        mimeType:
-                            file.type,
-
-                        contentBase64
-                    })
+                    githubPayload
             }
         );
 
@@ -512,6 +548,7 @@ async function uploadManagedGraphic(
 
     return result;
 }
+
 
 async function deleteManagedGraphic(
     imagePath
