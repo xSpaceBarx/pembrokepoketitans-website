@@ -3,7 +3,7 @@ import { saveNotification } from "./notifications-admin.js";
 import { updatePlannerStatus } from "./plannerStatus.js";
 import { publishNotification } from "./publishNotification.js?v=3";
 import { initMeetupManager } from "./meetupManager.js";
-import { initGraphicsManager } from "./graphicsManager.js?v=3";
+import { initGraphicsManager } from "./graphicsManager.js?v=4";
 
 const templates = {
 
