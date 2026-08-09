@@ -105,7 +105,7 @@ async function openAdmin(user) {
          * AFTER authorization succeeds.
          */
         await import(
-            "./admin.js?v=10"
+            "./admin.js?v=11"
         );
 
 
