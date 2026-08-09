@@ -37,6 +37,7 @@ const GRAPHIC_SLOTS = {
 };
 
 let graphicAssets = [];
+let featuredEvents = [];
 let transitionTimer = null;
 let raidObserver = null;
 
@@ -303,6 +304,185 @@ function applyAllRaidGraphics() {
         });
 }
 
+function getCurrentFeaturedEvent(
+    now = new Date()
+) {
+
+    return featuredEvents
+        .filter(event => {
+
+            const start =
+                timestampToDate(
+                    event.startAt
+                );
+
+            const end =
+                timestampToDate(
+                    event.endAt
+                );
+
+            return (
+                start &&
+                end &&
+                start <= now &&
+                end >= now &&
+                (
+                    event.imageUrl ||
+                    event.imagePath
+                )
+            );
+        })
+        .sort((a, b) => {
+
+            const aTime =
+                timestampToDate(
+                    a.startAt
+                )?.getTime() || 0;
+
+            const bTime =
+                timestampToDate(
+                    b.startAt
+                )?.getTime() || 0;
+
+            return bTime - aTime;
+        })[0] || null;
+}
+
+function findCurrentEventImage() {
+
+    return Array.from(
+        document.querySelectorAll("img")
+    )
+        .find(image => {
+
+            const searchable =
+                [
+                    image.getAttribute("src") || "",
+                    image.dataset.staticGraphicSrc || "",
+                    image.getAttribute("alt") || ""
+                ]
+                    .join(" ")
+                    .toLowerCase();
+
+            return (
+                searchable.includes(
+                    "currentevent"
+                ) ||
+                searchable.includes(
+                    "current pokémon go event"
+                ) ||
+                searchable.includes(
+                    "current pokemon go event"
+                )
+            );
+        }) || null;
+}
+
+function restoreStaticCurrentEvent(
+    image
+) {
+
+    if (!image) return;
+
+    const fallback =
+        image.dataset.staticGraphicSrc ||
+        "assets/images/currentevent.png";
+
+    image.onerror = null;
+
+    if (
+        image.getAttribute("src") !==
+        fallback
+    ) {
+        image.setAttribute(
+            "src",
+            fallback
+        );
+    }
+
+    delete image.dataset.managedFeaturedEvent;
+}
+
+function applyCurrentFeaturedEvent() {
+
+    const image =
+        findCurrentEventImage();
+
+    if (!image) {
+        return false;
+    }
+
+    if (
+        !image.dataset.staticGraphicSrc
+    ) {
+        image.dataset.staticGraphicSrc =
+            image.getAttribute("src") ||
+            "assets/images/currentevent.png";
+    }
+
+    const current =
+        getCurrentFeaturedEvent();
+
+    if (!current) {
+
+        restoreStaticCurrentEvent(
+            image
+        );
+
+        return true;
+    }
+
+    const dynamicSrc =
+        current.imageUrl ||
+        current.imagePath;
+
+    if (!dynamicSrc) {
+
+        restoreStaticCurrentEvent(
+            image
+        );
+
+        return true;
+    }
+
+    image.dataset.managedFeaturedEvent =
+        current.id || "current";
+
+    image.onerror = () => {
+
+        const failedSrc =
+            image.getAttribute("src");
+
+        console.warn(
+            "Managed Current Event graphic failed to load; restoring static fallback:",
+            failedSrc
+        );
+
+        restoreStaticCurrentEvent(
+            image
+        );
+    };
+
+    if (
+        image.getAttribute("src") !==
+        dynamicSrc
+    ) {
+        image.setAttribute(
+            "src",
+            dynamicSrc
+        );
+    }
+
+    return true;
+}
+
+function applyAllPublicGraphics() {
+
+    applyAllRaidGraphics();
+
+    applyCurrentFeaturedEvent();
+}
+
 function watchRaidContainer() {
 
     const raidContainer =
@@ -319,7 +499,7 @@ function watchRaidContainer() {
 
     raidObserver =
         new MutationObserver(() => {
-            applyAllRaidGraphics();
+            applyAllPublicGraphics();
         });
 
     raidObserver.observe(
@@ -387,6 +567,38 @@ function scheduleNextTransition() {
             }
         });
 
+    featuredEvents
+        .forEach(event => {
+
+            const start =
+                timestampToDate(
+                    event.startAt
+                );
+
+            const end =
+                timestampToDate(
+                    event.endAt
+                );
+
+            if (
+                start &&
+                start > now
+            ) {
+                futureTimes.push(
+                    start.getTime()
+                );
+            }
+
+            if (
+                end &&
+                end > now
+            ) {
+                futureTimes.push(
+                    end.getTime()
+                );
+            }
+        });
+
     if (!futureTimes.length) {
         return;
     }
@@ -410,7 +622,7 @@ function scheduleNextTransition() {
     transitionTimer =
         setTimeout(
             () => {
-                applyAllRaidGraphics();
+                applyAllPublicGraphics();
                 scheduleNextTransition();
             },
             Math.min(
@@ -424,17 +636,30 @@ async function loadManagedPublicGraphics() {
 
     try {
 
-        const snapshot =
-            await getDocs(
-                collection(
-                    db,
-                    "graphicAssets"
+        const [
+            graphicSnapshot,
+            featuredSnapshot
+        ] =
+            await Promise.all([
+                getDocs(
+                    collection(
+                        db,
+                        "graphicAssets"
+                    )
+                ),
+
+                getDocs(
+                    collection(
+                        db,
+                        "featuredEvents"
+                    )
                 )
-            );
+            ]);
 
         graphicAssets = [];
+        featuredEvents = [];
 
-        snapshot.forEach(
+        graphicSnapshot.forEach(
             documentSnapshot => {
 
                 const data =
@@ -454,7 +679,18 @@ async function loadManagedPublicGraphics() {
             }
         );
 
-        applyAllRaidGraphics();
+        featuredSnapshot.forEach(
+            documentSnapshot => {
+
+                featuredEvents.push({
+                    id:
+                        documentSnapshot.id,
+                    ...documentSnapshot.data()
+                });
+            }
+        );
+
+        applyAllPublicGraphics();
 
         scheduleNextTransition();
 
@@ -471,7 +707,7 @@ function initializePublicGraphics() {
 
     watchRaidContainer();
 
-    applyAllRaidGraphics();
+    applyAllPublicGraphics();
 
     loadManagedPublicGraphics();
 }
