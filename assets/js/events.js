@@ -314,23 +314,39 @@ function createEventCard(card) {
         title
     );
 
-    const image =
-        document.createElement(
-            "img"
+    const imageSource =
+        safeHttpUrl(
+            card.image
         );
 
-    image.src =
-        card.image;
+    if (imageSource) {
 
-    image.alt =
-        card.alt;
+        const image =
+            document.createElement(
+                "img"
+            );
 
-    image.className =
-        "current-event-image";
+        image.src =
+            imageSource;
 
-    wrapper.appendChild(
-        image
-    );
+        image.alt =
+            card.alt;
+
+        image.className =
+            "current-event-image";
+
+        image.addEventListener(
+            "error",
+            () => {
+                image.style.display =
+                    "none";
+            }
+        );
+
+        wrapper.appendChild(
+            image
+        );
+    }
 
     const buttonUrl =
         safeHttpUrl(
