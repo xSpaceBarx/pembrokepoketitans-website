@@ -7,159 +7,300 @@ import {
     orderBy
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
-export async function loadTrainers() {
+function normalizeFriendCode(value) {
+    return String(value || "")
+        .replace(/\D/g, "")
+        .slice(0, 12);
+}
 
-    const trainerList = document.getElementById("trainer-list");
+function formatFriendCode(value) {
 
-    if (!trainerList) return;
+    const digits =
+        normalizeFriendCode(value);
 
-    trainerList.innerHTML = "<p>Loading Trainers...</p>";
+    if (digits.length !== 12) {
+        return String(value || "");
+    }
+
+    return (
+        digits.slice(0, 4) +
+        " " +
+        digits.slice(4, 8) +
+        " " +
+        digits.slice(8, 12)
+    );
+}
+
+async function copyFriendCode(
+    button,
+    code
+) {
 
     try {
 
-        const q = query(
-            collection(db, "trainers"),
-            orderBy("trainerName")
+        if (
+            navigator.clipboard &&
+            window.isSecureContext
+        ) {
+
+            await navigator.clipboard.writeText(
+                code
+            );
+
+        } else {
+
+            const textArea =
+                document.createElement(
+                    "textarea"
+                );
+
+            textArea.value =
+                code;
+
+            textArea.style.position =
+                "fixed";
+
+            textArea.style.top =
+                "-9999px";
+
+            textArea.style.left =
+                "-9999px";
+
+            document.body.appendChild(
+                textArea
+            );
+
+            textArea.focus();
+            textArea.select();
+
+            const successful =
+                document.execCommand(
+                    "copy"
+                );
+
+            textArea.remove();
+
+            if (!successful) {
+                throw new Error(
+                    "Fallback copy failed."
+                );
+            }
+        }
+
+        const originalText =
+            button.textContent;
+
+        button.textContent =
+            "✅ Copied!";
+
+        setTimeout(
+            () => {
+                button.textContent =
+                    originalText;
+            },
+            1500
         );
 
-        const snapshot = await getDocs(q);
+    } catch (error) {
 
-        const trainerCount = document.getElementById("trainer-count");
+        console.error(
+            "Copy failed:",
+            error
+        );
+
+        alert(
+            "Unable to copy friend code. Please copy it manually."
+        );
+    }
+}
+
+function createTrainerCard(
+    trainer
+) {
+
+    const card =
+        document.createElement(
+            "div"
+        );
+
+    card.className =
+        "event-card";
+
+    const name =
+        document.createElement(
+            "h3"
+        );
+
+    name.textContent =
+        trainer.trainerName || "";
+
+    const location =
+        document.createElement(
+            "p"
+        );
+
+    location.textContent =
+        `📍 ${trainer.location || ""}`;
+
+    const friendCode =
+        document.createElement(
+            "p"
+        );
+
+    friendCode.className =
+        "friend-code";
+
+    friendCode.textContent =
+        formatFriendCode(
+            trainer.friendCode
+        );
+
+    const digits =
+        normalizeFriendCode(
+            trainer.friendCode
+        );
+
+    const copyButton =
+        document.createElement(
+            "button"
+        );
+
+    copyButton.type =
+        "button";
+
+    copyButton.className =
+        "hero-button copy-button";
+
+    copyButton.textContent =
+        "Copy Friend Code";
+
+    copyButton.disabled =
+        digits.length !== 12;
+
+    copyButton.addEventListener(
+        "click",
+        async () => {
+
+            await copyFriendCode(
+                copyButton,
+                digits
+            );
+        }
+    );
+
+    card.append(
+        name,
+        location,
+        friendCode,
+        copyButton
+    );
+
+    return card;
+}
+
+export async function loadTrainers() {
+
+    const trainerList =
+        document.getElementById(
+            "trainer-list"
+        );
+
+    if (!trainerList) return;
+
+    trainerList.innerHTML = "";
+
+    const loading =
+        document.createElement(
+            "p"
+        );
+
+    loading.textContent =
+        "Loading Trainers...";
+
+    trainerList.appendChild(
+        loading
+    );
+
+    try {
+
+        const trainerQuery =
+            query(
+                collection(
+                    db,
+                    "trainers"
+                ),
+                orderBy(
+                    "trainerName"
+                )
+            );
+
+        const snapshot =
+            await getDocs(
+                trainerQuery
+            );
+
+        const trainerCount =
+            document.getElementById(
+                "trainer-count"
+            );
 
         if (trainerCount) {
 
-            trainerCount.innerHTML =
+            trainerCount.textContent =
                 `👥 ${snapshot.size} Registered Trainer${snapshot.size === 1 ? "" : "s"}`;
-
         }
 
         trainerList.innerHTML = "";
 
         if (snapshot.empty) {
 
-            trainerList.innerHTML =
-                "<p>No trainers have been added yet.</p>";
+            const empty =
+                document.createElement(
+                    "p"
+                );
+
+            empty.textContent =
+                "No trainers have been added yet.";
+
+            trainerList.appendChild(
+                empty
+            );
 
             return;
-
         }
 
-        snapshot.forEach(doc => {
+        snapshot.forEach(
+            documentSnapshot => {
 
-            const trainer = doc.data();
-
-            let displayCode = trainer.friendCode || "";
-
-            const digits = displayCode.replace(/\D/g, "");
-
-            if (digits.length === 12) {
-
-                displayCode =
-                    digits.substring(0, 4) + " " +
-                    digits.substring(4, 8) + " " +
-                    digits.substring(8, 12);
-
+                trainerList.appendChild(
+                    createTrainerCard(
+                        documentSnapshot.data()
+                    )
+                );
             }
+        );
 
-            trainerList.innerHTML += `
+    } catch (error) {
 
-                <div class="event-card">
+        console.error(
+            "Unable to load trainers:",
+            error
+        );
 
-                    <h3>${trainer.trainerName}</h3>
+        trainerList.innerHTML = "";
 
-                    <p>📍 ${trainer.location}</p>
+        const message =
+            document.createElement(
+                "p"
+            );
 
-                    <p class="friend-code">
-                        ${displayCode}
-                    </p>
+        message.textContent =
+            "Unable to load trainers.";
 
-                    <button
-                        class="hero-button copy-button"
-                        data-code="${digits}">
-                        Copy Friend Code
-                    </button>
-
-                </div>
-
-            `;
-
-        });
-
-        document.querySelectorAll(".copy-button").forEach(button => {
-
-            button.addEventListener("click", async () => {
-
-                const code = button.dataset.code;
-
-                try {
-
-                    // Modern clipboard API
-                    if (navigator.clipboard && window.isSecureContext) {
-
-                        await navigator.clipboard.writeText(code);
-
-                    }
-
-                    // Fallback for browsers that block clipboard API
-                    else {
-
-                        const textArea = document.createElement("textarea");
-
-                        textArea.value = code;
-                        textArea.style.position = "fixed";
-                        textArea.style.top = "-9999px";
-                        textArea.style.left = "-9999px";
-
-                        document.body.appendChild(textArea);
-
-                        textArea.focus();
-                        textArea.select();
-
-                        const successful = document.execCommand("copy");
-
-                        document.body.removeChild(textArea);
-
-                        if (!successful) {
-                            throw new Error("Fallback copy failed.");
-                        }
-
-                    }
-
-                    const originalText = button.innerHTML;
-
-                    button.innerHTML = "✅ Copied!";
-
-                    setTimeout(() => {
-
-                        button.innerHTML = originalText;
-
-                    }, 1500);
-
-                }
-
-                catch (err) {
-
-                    console.error("Copy failed:", err);
-
-                    alert("Unable to copy friend code. Please copy it manually.");
-
-                }
-
-            });
-
-        });
-
+        trainerList.appendChild(
+            message
+        );
     }
-
-    catch (error) {
-
-        console.error(error);
-
-        trainerList.innerHTML =
-            "<p>Unable to load trainers.</p>";
-
-    }
-
 }
 
 loadTrainers();
