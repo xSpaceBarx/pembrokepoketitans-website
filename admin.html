@@ -9,7 +9,7 @@
     <title>PokéTitans Command Center</title>
 
     <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/admin.css?v=3">
+    <link rel="stylesheet" href="assets/css/admin.css?v=4">
 
 </head>
 
@@ -119,6 +119,10 @@
 
         <a class="admin-jump-link" href="#trainer-manager">
             👥 Trainer Management
+        </a>
+
+        <a class="admin-jump-link" href="#resources-manager">
+            📚 Resources Manager
         </a>
 
         <a class="admin-jump-link" href="#analytics">
@@ -1821,6 +1825,195 @@
 
 <br><br>
 
+
+<!-- Resources Manager -->
+
+<div
+    class="notification-center resources-manager"
+    id="resources-manager">
+
+    <h2>📚 Resources Manager</h2>
+
+    <p class="section-description">
+        Manage Quick Guides, Useful Websites, Podcasts and Socials independently. The automatic GOHub news feed is not managed here.
+    </p>
+
+    <div class="editor-grid">
+
+        <div>
+            <label for="resource-admin-section">
+                Section
+            </label>
+
+            <select id="resource-admin-section">
+                <option value="quickguides">📚 Quick Guides</option>
+                <option value="websites">🌐 Useful Websites</option>
+                <option value="podcasts">🎙️ Podcasts</option>
+                <option value="socials">📱 Socials</option>
+            </select>
+        </div>
+
+        <div class="resource-visibility-field">
+            <label for="resource-active">
+                Visibility
+            </label>
+
+            <label class="resource-active-label">
+                <input
+                    type="checkbox"
+                    id="resource-active"
+                    checked>
+                Visible on Resources page
+            </label>
+        </div>
+
+    </div>
+
+    <hr>
+
+    <h3 id="resource-editor-title">
+        ➕ Add Quick Guide
+    </h3>
+
+    <input
+        type="hidden"
+        id="resource-admin-id">
+
+    <div id="resource-quickguide-fields">
+
+        <div class="editor-grid">
+
+            <div>
+                <label for="resource-internal-name">
+                    Internal Name
+                </label>
+
+                <input
+                    type="text"
+                    id="resource-internal-name"
+                    maxlength="100"
+                    placeholder="Type Effectiveness Guide">
+            </div>
+
+            <div>
+                <label for="resource-alt-text">
+                    Alt Text
+                </label>
+
+                <input
+                    type="text"
+                    id="resource-alt-text"
+                    maxlength="180"
+                    placeholder="Pokémon GO type effectiveness quick guide">
+            </div>
+
+        </div>
+
+        <label for="resource-image">
+            Quick Guide Image
+        </label>
+
+        <input
+            type="file"
+            id="resource-image"
+            accept="image/png,image/jpeg,image/webp">
+
+        <p class="resource-field-help">
+            PNG, JPEG or WebP up to 25 MB. The Internal Name is only for Admin; the public page displays the image only.
+        </p>
+
+        <div
+            id="resource-current-image-wrap"
+            class="resource-current-image-wrap"
+            style="display:none;">
+
+            <strong>Current Image</strong>
+
+            <img
+                id="resource-current-image"
+                class="resource-current-image"
+                alt="">
+
+            <p class="resource-field-help">
+                Leave the image field blank while editing to keep this image.
+            </p>
+
+        </div>
+
+    </div>
+
+    <div
+        id="resource-link-fields"
+        style="display:none;">
+
+        <label for="resource-title">
+            Title
+        </label>
+
+        <input
+            type="text"
+            id="resource-title"
+            maxlength="100"
+            placeholder="Resource title">
+
+        <label for="resource-description">
+            Description
+        </label>
+
+        <textarea
+            id="resource-description"
+            rows="4"
+            maxlength="500"
+            placeholder="Short description shown on the Resources page."></textarea>
+
+        <label for="resource-url">
+            URL
+        </label>
+
+        <input
+            type="url"
+            id="resource-url"
+            placeholder="https://...">
+
+    </div>
+
+    <div class="button-row">
+
+        <button
+            type="button"
+            id="saveResource"
+            class="btn-orange">
+            💾 Save Resource
+        </button>
+
+        <button
+            type="button"
+            id="clearResource"
+            class="btn-orange">
+            🗑 Clear Editor
+        </button>
+
+    </div>
+
+    <br>
+    <hr>
+
+    <h3>📋 Current Resources</h3>
+
+    <p
+        id="resource-admin-count"
+        class="draft-counts">
+        Loading resources...
+    </p>
+
+    <div id="resource-admin-list">
+        Loading resources...
+    </div>
+
+</div>
+
+<br><br>
+
 <!-- Future Modules -->
 
 <div class="admin-grid">
@@ -1856,7 +2049,7 @@
 
 <script
     type="module"
-    src="assets/js/admin-auth.js?v=6">
+    src="assets/js/admin-auth.js?v=7">
 </script>
 
 </body>
