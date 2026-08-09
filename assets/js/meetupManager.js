@@ -13,10 +13,11 @@ import {
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
-
 const meetupsCollection =
-    collection(db, "meetups");
-
+    collection(
+        db,
+        "meetups"
+    );
 
 /* ============================
    HELPERS
@@ -26,26 +27,29 @@ function getElement(id) {
     return document.getElementById(id);
 }
 
-
 function formatDate(timestamp) {
 
     if (!timestamp) {
         return "";
     }
 
-    const date = timestamp.toDate();
+    const date =
+        timestamp.toDate();
 
     return date.toLocaleDateString(
         "en-US",
         {
-            weekday: "long",
-            month: "long",
-            day: "numeric",
-            year: "numeric"
+            weekday:
+                "long",
+            month:
+                "long",
+            day:
+                "numeric",
+            year:
+                "numeric"
         }
     );
 }
-
 
 function formatTime(timestamp) {
 
@@ -58,12 +62,85 @@ function formatTime(timestamp) {
         .toLocaleTimeString(
             "en-US",
             {
-                hour: "numeric",
-                minute: "2-digit"
+                hour:
+                    "numeric",
+                minute:
+                    "2-digit"
             }
         );
 }
 
+function getMeetupTimeText(meetup) {
+
+    let timeText =
+        formatTime(
+            meetup.startDateTime
+        );
+
+    if (
+        meetup.endTime &&
+        meetup.endDateTime
+    ) {
+
+        timeText +=
+            ` – ${formatTime(
+                meetup.endDateTime
+            )}`;
+    }
+
+    return timeText;
+}
+
+function requestNotificationDraft(
+    meetup
+) {
+
+    const eventDate =
+        formatDate(
+            meetup.startDateTime
+        );
+
+    const timeText =
+        getMeetupTimeText(
+            meetup
+        );
+
+    const description =
+        String(
+            meetup.description || ""
+        ).trim();
+
+    let message =
+        `Join us for ${meetup.title || "our upcoming PokéTitans meetup"}!\n\n` +
+        `📅 ${eventDate}\n` +
+        `🕕 ${timeText}\n` +
+        `📍 ${meetup.location || ""}`;
+
+    if (description) {
+        message +=
+            `\n\n${description}`;
+    }
+
+    message +=
+        "\n\nWe hope to see you there!";
+
+    window.dispatchEvent(
+        new CustomEvent(
+            "poketitans:notification-draft",
+            {
+                detail: {
+                    source:
+                        "meetup",
+                    title:
+                        `📍 ${meetup.title || "PokéTitans Meetup"}`,
+                    message,
+                    audience:
+                        "meetup"
+                }
+            }
+        )
+    );
+}
 
 /* ============================
    CLEAR EDITOR
@@ -71,35 +148,58 @@ function formatTime(timestamp) {
 
 function clearMeetupEditor() {
 
-    getElement("meetup-id").value = "";
+    getElement(
+        "meetup-id"
+    ).value = "";
 
-    getElement("meetup-title").value = "";
+    getElement(
+        "meetup-title"
+    ).value = "";
 
-    getElement("meetup-type").value =
+    getElement(
+        "meetup-type"
+    ).value =
         "Raid Hour";
 
-    getElement("meetup-date").value = "";
+    getElement(
+        "meetup-date"
+    ).value = "";
 
-    getElement("meetup-start-time").value = "";
+    getElement(
+        "meetup-start-time"
+    ).value = "";
 
-    getElement("meetup-end-time").value = "";
+    getElement(
+        "meetup-end-time"
+    ).value = "";
 
-    getElement("meetup-location").value =
+    getElement(
+        "meetup-location"
+    ).value =
         "Pembroke Historical Society Museum";
 
-    getElement("meetup-attendance").value = "";
+    getElement(
+        "meetup-attendance"
+    ).value = "";
 
-    getElement("meetup-description").value = "";
+    getElement(
+        "meetup-description"
+    ).value = "";
 
-    getElement("meetup-link").value = "";
+    getElement(
+        "meetup-link"
+    ).value = "";
 
-    getElement("meetup-editor-title").textContent =
+    getElement(
+        "meetup-editor-title"
+    ).textContent =
         "➕ Create Meetup";
 
-    getElement("saveMeetup").textContent =
+    getElement(
+        "saveMeetup"
+    ).textContent =
         "💾 Save Meetup";
 }
-
 
 /* ============================
    SAVE / UPDATE
@@ -108,35 +208,54 @@ function clearMeetupEditor() {
 async function saveMeetup() {
 
     const id =
-        getElement("meetup-id").value;
+        getElement(
+            "meetup-id"
+        ).value;
 
     const title =
-        getElement("meetup-title").value.trim();
+        getElement(
+            "meetup-title"
+        ).value.trim();
 
     const eventType =
-        getElement("meetup-type").value;
+        getElement(
+            "meetup-type"
+        ).value;
 
     const date =
-        getElement("meetup-date").value;
+        getElement(
+            "meetup-date"
+        ).value;
 
     const startTime =
-        getElement("meetup-start-time").value;
+        getElement(
+            "meetup-start-time"
+        ).value;
 
     const endTime =
-        getElement("meetup-end-time").value;
+        getElement(
+            "meetup-end-time"
+        ).value;
 
     const location =
-        getElement("meetup-location").value.trim();
+        getElement(
+            "meetup-location"
+        ).value.trim();
 
     const attendance =
-        getElement("meetup-attendance").value.trim();
+        getElement(
+            "meetup-attendance"
+        ).value.trim();
 
     const description =
-        getElement("meetup-description").value.trim();
+        getElement(
+            "meetup-description"
+        ).value.trim();
 
     const link =
-        getElement("meetup-link").value.trim();
-
+        getElement(
+            "meetup-link"
+        ).value.trim();
 
     if (
         !title ||
@@ -152,12 +271,10 @@ async function saveMeetup() {
         return;
     }
 
-
     const startDate =
         new Date(
             `${date}T${startTime}:00`
         );
-
 
     let endDate;
 
@@ -174,10 +291,13 @@ async function saveMeetup() {
             startDate;
     }
 
-
     if (
-        Number.isNaN(startDate.getTime()) ||
-        Number.isNaN(endDate.getTime())
+        Number.isNaN(
+            startDate.getTime()
+        ) ||
+        Number.isNaN(
+            endDate.getTime()
+        )
     ) {
 
         alert(
@@ -186,7 +306,6 @@ async function saveMeetup() {
 
         return;
     }
-
 
     if (
         endTime &&
@@ -200,9 +319,7 @@ async function saveMeetup() {
         return;
     }
 
-
     const meetup = {
-
         title,
         eventType,
         date,
@@ -214,22 +331,29 @@ async function saveMeetup() {
         link,
 
         startDateTime:
-            Timestamp.fromDate(startDate),
+            Timestamp.fromDate(
+                startDate
+            ),
 
         endDateTime:
-            Timestamp.fromDate(endDate),
+            Timestamp.fromDate(
+                endDate
+            ),
 
         updatedAt:
             serverTimestamp()
     };
-
 
     try {
 
         if (id) {
 
             await updateDoc(
-                doc(db, "meetups", id),
+                doc(
+                    db,
+                    "meetups",
+                    id
+                ),
                 meetup
             );
 
@@ -244,11 +368,9 @@ async function saveMeetup() {
             );
         }
 
-
         clearMeetupEditor();
 
         await loadMeetups();
-
 
     } catch (error) {
 
@@ -263,137 +385,196 @@ async function saveMeetup() {
     }
 }
 
-
 /* ============================
    EDIT
 ============================ */
 
-function editMeetup(id, meetup) {
+function editMeetup(
+    id,
+    meetup
+) {
 
-    getElement("meetup-id").value =
+    getElement(
+        "meetup-id"
+    ).value =
         id;
 
-    getElement("meetup-title").value =
+    getElement(
+        "meetup-title"
+    ).value =
         meetup.title || "";
 
-    getElement("meetup-type").value =
-        meetup.eventType || "Other";
+    getElement(
+        "meetup-type"
+    ).value =
+        meetup.eventType ||
+        "Other";
 
-    getElement("meetup-date").value =
+    getElement(
+        "meetup-date"
+    ).value =
         meetup.date || "";
 
-    getElement("meetup-start-time").value =
+    getElement(
+        "meetup-start-time"
+    ).value =
         meetup.startTime || "";
 
-    getElement("meetup-end-time").value =
+    getElement(
+        "meetup-end-time"
+    ).value =
         meetup.endTime || "";
 
-    getElement("meetup-location").value =
+    getElement(
+        "meetup-location"
+    ).value =
         meetup.location || "";
 
-    getElement("meetup-attendance").value =
+    getElement(
+        "meetup-attendance"
+    ).value =
         meetup.attendance || "";
 
-    getElement("meetup-description").value =
+    getElement(
+        "meetup-description"
+    ).value =
         meetup.description || "";
 
-    getElement("meetup-link").value =
+    getElement(
+        "meetup-link"
+    ).value =
         meetup.link || "";
 
-    getElement("meetup-editor-title").textContent =
+    getElement(
+        "meetup-editor-title"
+    ).textContent =
         "✏ Edit Meetup";
 
-    getElement("saveMeetup").textContent =
+    getElement(
+        "saveMeetup"
+    ).textContent =
         "💾 Update Meetup";
 
-
     document
-        .querySelector(".meetup-manager")
-        .scrollIntoView({
-            behavior: "smooth",
-            block: "start"
+        .querySelector(
+            ".meetup-manager"
+        )
+        ?.scrollIntoView({
+            behavior:
+                "smooth",
+            block:
+                "start"
         });
 }
-
 
 /* ============================
    DUPLICATE
 ============================ */
 
-function duplicateMeetup(meetup) {
+function duplicateMeetup(
+    meetup
+) {
 
-    // Clear ID so Save creates a NEW Firestore document
-    getElement("meetup-id").value = "";
+    getElement(
+        "meetup-id"
+    ).value = "";
 
-    getElement("meetup-title").value =
+    getElement(
+        "meetup-title"
+    ).value =
         meetup.title || "";
 
-    getElement("meetup-type").value =
-        meetup.eventType || "Other";
+    getElement(
+        "meetup-type"
+    ).value =
+        meetup.eventType ||
+        "Other";
 
-    // Leave date blank so an old date is not duplicated accidentally
-    getElement("meetup-date").value = "";
+    getElement(
+        "meetup-date"
+    ).value = "";
 
-    getElement("meetup-start-time").value =
+    getElement(
+        "meetup-start-time"
+    ).value =
         meetup.startTime || "";
 
-    getElement("meetup-end-time").value =
+    getElement(
+        "meetup-end-time"
+    ).value =
         meetup.endTime || "";
 
-    getElement("meetup-location").value =
+    getElement(
+        "meetup-location"
+    ).value =
         meetup.location ||
         "Pembroke Historical Society Museum";
 
-    getElement("meetup-attendance").value =
+    getElement(
+        "meetup-attendance"
+    ).value =
         meetup.attendance || "";
 
-    getElement("meetup-description").value =
+    getElement(
+        "meetup-description"
+    ).value =
         meetup.description || "";
 
-    // Campfire meetup URLs should be unique
-    getElement("meetup-link").value = "";
+    getElement(
+        "meetup-link"
+    ).value = "";
 
-    getElement("meetup-editor-title").textContent =
+    getElement(
+        "meetup-editor-title"
+    ).textContent =
         "📋 Duplicate Meetup";
 
-    getElement("saveMeetup").textContent =
+    getElement(
+        "saveMeetup"
+    ).textContent =
         "💾 Save New Meetup";
 
-
     document
-        .querySelector(".meetup-manager")
-        .scrollIntoView({
-            behavior: "smooth",
-            block: "start"
+        .querySelector(
+            ".meetup-manager"
+        )
+        ?.scrollIntoView({
+            behavior:
+                "smooth",
+            block:
+                "start"
         });
 }
-
 
 /* ============================
    DELETE
 ============================ */
 
-async function deleteMeetup(id, title) {
+async function deleteMeetup(
+    id,
+    title
+) {
 
     const confirmed =
         confirm(
             `Delete "${title}"?`
         );
 
-
     if (!confirmed) {
         return;
     }
 
-
     try {
 
         await deleteDoc(
-            doc(db, "meetups", id)
+            doc(
+                db,
+                "meetups",
+                id
+            )
         );
 
         await loadMeetups();
-
 
     } catch (error) {
 
@@ -408,7 +589,6 @@ async function deleteMeetup(id, title) {
     }
 }
 
-
 /* ============================
    LOAD MEETUPS
 ============================ */
@@ -416,8 +596,9 @@ async function deleteMeetup(id, title) {
 async function loadMeetups() {
 
     const container =
-        getElement("meetup-list");
-
+        getElement(
+            "meetup-list"
+        );
 
     try {
 
@@ -430,163 +611,218 @@ async function loadMeetups() {
                 )
             );
 
-
         const snapshot =
-            await getDocs(meetupQuery);
-
+            await getDocs(
+                meetupQuery
+            );
 
         const now =
             new Date();
 
-
         const meetups = [];
 
+        snapshot.forEach(
+            documentSnapshot => {
 
-        snapshot.forEach(documentSnapshot => {
+                const meetup =
+                    documentSnapshot.data();
 
-            const meetup =
-                documentSnapshot.data();
+                if (
+                    meetup.endDateTime &&
+                    meetup.endDateTime
+                        .toDate() < now
+                ) {
+                    return;
+                }
 
-            if (
-                meetup.endDateTime &&
-                meetup.endDateTime
-                    .toDate() < now
-            ) {
-                return;
+                meetups.push({
+                    id:
+                        documentSnapshot.id,
+                    ...meetup
+                });
             }
+        );
 
-
-            meetups.push({
-                id:
-                    documentSnapshot.id,
-
-                ...meetup
-            });
-        });
-
+        container.innerHTML =
+            "";
 
         if (!meetups.length) {
 
-            container.innerHTML = `
-                <p>
-                    No upcoming meetups scheduled.
-                </p>
-            `;
+            const empty =
+                document.createElement(
+                    "p"
+                );
+
+            empty.textContent =
+                "No upcoming meetups scheduled.";
+
+            container.appendChild(
+                empty
+            );
 
             return;
         }
 
+        meetups.forEach(
+            meetup => {
 
-        container.innerHTML = "";
+                const card =
+                    document.createElement(
+                        "div"
+                    );
 
+                card.className =
+                    "admin-card meetup-admin-card";
 
-        meetups.forEach(meetup => {
+                const heading =
+                    document.createElement(
+                        "h3"
+                    );
 
-            const card =
-                document.createElement("div");
+                heading.textContent =
+                    meetup.title || "";
 
-            card.className =
-                "admin-card meetup-admin-card";
+                const type =
+                    document.createElement(
+                        "p"
+                    );
 
+                const strong =
+                    document.createElement(
+                        "strong"
+                    );
 
-            let timeText =
-                formatTime(
-                    meetup.startDateTime
+                strong.textContent =
+                    meetup.eventType || "";
+
+                type.appendChild(
+                    strong
                 );
 
+                const date =
+                    document.createElement(
+                        "p"
+                    );
 
-            if (
-                meetup.endTime &&
-                meetup.endDateTime
-            ) {
-
-                timeText +=
-                    ` – ${formatTime(
-                        meetup.endDateTime
-                    )}`;
-            }
-
-
-            card.innerHTML = `
-
-                <h3>
-                    ${meetup.title}
-                </h3>
-
-                <p>
-                    <strong>
-                        ${meetup.eventType || ""}
-                    </strong>
-                </p>
-
-                <p>
-                    📅
-                    ${formatDate(
+                date.textContent =
+                    `📅 ${formatDate(
                         meetup.startDateTime
-                    )}
-                </p>
+                    )}`;
 
-                <p>
-                    🕕 ${timeText}
-                </p>
+                const time =
+                    document.createElement(
+                        "p"
+                    );
 
-                <p>
-                    📍 ${meetup.location}
-                </p>
+                time.textContent =
+                    `🕕 ${getMeetupTimeText(
+                        meetup
+                    )}`;
 
-                ${
+                const location =
+                    document.createElement(
+                        "p"
+                    );
+
+                location.textContent =
+                    `📍 ${meetup.location || ""}`;
+
+                card.append(
+                    heading,
+                    type,
+                    date,
+                    time,
+                    location
+                );
+
+                if (
                     meetup.attendance
-                        ? `<p>👥 ${meetup.attendance}</p>`
-                        : ""
+                ) {
+
+                    const attendance =
+                        document.createElement(
+                            "p"
+                        );
+
+                    attendance.textContent =
+                        `👥 ${meetup.attendance}`;
+
+                    card.appendChild(
+                        attendance
+                    );
                 }
 
-                <button
-                    class="btn-orange meetup-duplicate">
+                const buttonRow =
+                    document.createElement(
+                        "div"
+                    );
 
-                    📋 Duplicate
+                buttonRow.className =
+                    "button-row";
 
-                </button>
+                const notificationButton =
+                    document.createElement(
+                        "button"
+                    );
 
-                <button
-                    class="btn-orange meetup-edit">
+                notificationButton.type =
+                    "button";
 
-                    ✏ Edit
+                notificationButton.className =
+                    "btn-orange meetup-notification";
 
-                </button>
+                notificationButton.textContent =
+                    "🔔 Create Notification Draft";
 
-                <button
-                    class="btn-orange meetup-delete">
-
-                    🗑 Delete
-
-                </button>
-
-            `;
-
-
-            card
-                .querySelector(
-                    ".meetup-duplicate"
-                )
-                .addEventListener(
+                notificationButton.addEventListener(
                     "click",
                     () => {
+                        requestNotificationDraft(
+                            meetup
+                        );
+                    }
+                );
 
+                const duplicateButton =
+                    document.createElement(
+                        "button"
+                    );
+
+                duplicateButton.type =
+                    "button";
+
+                duplicateButton.className =
+                    "btn-orange meetup-duplicate";
+
+                duplicateButton.textContent =
+                    "📋 Duplicate";
+
+                duplicateButton.addEventListener(
+                    "click",
+                    () => {
                         duplicateMeetup(
                             meetup
                         );
                     }
                 );
 
+                const editButton =
+                    document.createElement(
+                        "button"
+                    );
 
-            card
-                .querySelector(
-                    ".meetup-edit"
-                )
-                .addEventListener(
+                editButton.type =
+                    "button";
+
+                editButton.className =
+                    "btn-orange meetup-edit";
+
+                editButton.textContent =
+                    "✏ Edit";
+
+                editButton.addEventListener(
                     "click",
                     () => {
-
                         editMeetup(
                             meetup.id,
                             meetup
@@ -594,15 +830,23 @@ async function loadMeetups() {
                     }
                 );
 
+                const deleteButton =
+                    document.createElement(
+                        "button"
+                    );
 
-            card
-                .querySelector(
-                    ".meetup-delete"
-                )
-                .addEventListener(
+                deleteButton.type =
+                    "button";
+
+                deleteButton.className =
+                    "btn-orange meetup-delete";
+
+                deleteButton.textContent =
+                    "🗑 Delete";
+
+                deleteButton.addEventListener(
                     "click",
                     () => {
-
                         deleteMeetup(
                             meetup.id,
                             meetup.title
@@ -610,10 +854,22 @@ async function loadMeetups() {
                     }
                 );
 
+                buttonRow.append(
+                    notificationButton,
+                    duplicateButton,
+                    editButton,
+                    deleteButton
+                );
 
-            container.appendChild(card);
-        });
+                card.appendChild(
+                    buttonRow
+                );
 
+                container.appendChild(
+                    card
+                );
+            }
+        );
 
     } catch (error) {
 
@@ -622,14 +878,22 @@ async function loadMeetups() {
             error
         );
 
-        container.innerHTML = `
-            <p>
-                Unable to load meetups.
-            </p>
-        `;
+        container.innerHTML =
+            "";
+
+        const message =
+            document.createElement(
+                "p"
+            );
+
+        message.textContent =
+            "Unable to load meetups.";
+
+        container.appendChild(
+            message
+        );
     }
 }
-
 
 /* ============================
    INITIALIZE
@@ -637,19 +901,19 @@ async function loadMeetups() {
 
 export async function initMeetupManager() {
 
-    getElement("saveMeetup")
-        .addEventListener(
-            "click",
-            saveMeetup
-        );
+    getElement(
+        "saveMeetup"
+    ).addEventListener(
+        "click",
+        saveMeetup
+    );
 
-
-    getElement("clearMeetup")
-        .addEventListener(
-            "click",
-            clearMeetupEditor
-        );
-
+    getElement(
+        "clearMeetup"
+    ).addEventListener(
+        "click",
+        clearMeetupEditor
+    );
 
     await loadMeetups();
 }
