@@ -437,6 +437,160 @@
 </div>
 
     <br><br>
+
+<!-- Homepage Announcement Manager -->
+
+<div
+    class="notification-center announcement-manager"
+    id="announcement-manager">
+
+    <h2>📢 Homepage Announcement</h2>
+
+    <p class="section-description">
+        Create, schedule, edit or disable the announcement displayed on the homepage.
+    </p>
+
+    <p
+        id="announcement-admin-status"
+        class="draft-counts">
+
+        Loading announcement...
+
+    </p>
+
+    <hr>
+
+    <label
+        for="announcement-enabled"
+        style="display:flex; align-items:center; gap:10px;">
+
+        <input
+            type="checkbox"
+            id="announcement-enabled"
+            style="width:auto;">
+
+        Enable announcement
+
+    </label>
+
+    <label for="announcement-title-admin">
+        Title
+    </label>
+
+    <input
+        type="text"
+        id="announcement-title-admin"
+        maxlength="100"
+        placeholder="Community announcement">
+
+    <label for="announcement-message-admin">
+        Message
+    </label>
+
+    <textarea
+        id="announcement-message-admin"
+        rows="5"
+        maxlength="1000"
+        placeholder="Announcement message..."></textarea>
+
+    <label for="announcement-posted-date">
+        Posted Date
+    </label>
+
+    <input
+        type="date"
+        id="announcement-posted-date">
+
+    <hr>
+
+    <h3>Optional Schedule</h3>
+
+    <p class="section-description">
+        Leave Start and End blank for an announcement that goes live immediately and stays live until you disable it. Scheduled times use Eastern Time.
+    </p>
+
+    <div class="editor-grid">
+
+        <div>
+
+            <label for="announcement-start-date">
+                Start Date
+            </label>
+
+            <input
+                type="date"
+                id="announcement-start-date">
+
+        </div>
+
+        <div>
+
+            <label for="announcement-start-time">
+                Start Time
+            </label>
+
+            <input
+                type="time"
+                id="announcement-start-time">
+
+        </div>
+
+    </div>
+
+    <div class="editor-grid">
+
+        <div>
+
+            <label for="announcement-end-date">
+                End Date
+            </label>
+
+            <input
+                type="date"
+                id="announcement-end-date">
+
+        </div>
+
+        <div>
+
+            <label for="announcement-end-time">
+                End Time
+            </label>
+
+            <input
+                type="time"
+                id="announcement-end-time">
+
+        </div>
+
+    </div>
+
+    <div class="button-row">
+
+        <button
+            type="button"
+            id="saveAnnouncement"
+            class="btn-orange">
+
+            💾 Save Announcement
+
+        </button>
+
+        <button
+            type="button"
+            id="disableAnnouncement"
+            class="btn-orange">
+
+            ⏹ Disable Now
+
+        </button>
+
+    </div>
+
+</div>
+
+<br><br>
+
 <!-- Meetup Manager -->
 
 <div class="notification-center meetup-manager">
@@ -1359,7 +1513,7 @@
 
 <script
     type="module"
-    src="assets/js/admin-auth.js?v=3">
+    src="assets/js/admin-auth.js?v=4">
 </script>
 
 </body>
