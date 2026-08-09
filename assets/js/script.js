@@ -4,7 +4,9 @@ import {
     collection,
     getDocs,
     query,
-    orderBy
+    orderBy,
+    doc,
+    getDoc
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 console.log("Script loaded");
@@ -12,6 +14,8 @@ console.log("Script loaded");
 let allGraphicAssets = [];
 let todayGraphics = [];
 let todayTransitionTimer = null;
+let announcementData = null;
+let announcementTransitionTimer = null;
 
 function timestampToDate(value) {
 
@@ -792,57 +796,277 @@ document.addEventListener(
     }
 );
 
-fetch("./data/announcement.json")
-    .then(response =>
-        response.json()
-    )
-    .then(data => {
+// ==========================
+// HOMEPAGE ANNOUNCEMENT
+// ==========================
 
-        if (!data.enabled) return;
+function formatAnnouncementPostedDate(
+    value
+) {
 
-        const section =
-            document.getElementById(
-                "announcement-section"
+    if (
+        typeof value !== "string" ||
+        !/^\d{4}-\d{2}-\d{2}$/.test(
+            value
+        )
+    ) {
+        return value || "";
+    }
+
+    const date =
+        new Date(
+            `${value}T12:00:00`
+        );
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+        return value;
+    }
+
+    return date.toLocaleDateString(
+        "en-US",
+        {
+            month:
+                "long",
+            day:
+                "numeric",
+            year:
+                "numeric"
+        }
+    );
+}
+
+function renderAnnouncement() {
+
+    const section =
+        document.getElementById(
+            "announcement-section"
+        );
+
+    const title =
+        document.getElementById(
+            "announcement-title"
+        );
+
+    const message =
+        document.getElementById(
+            "announcement-message"
+        );
+
+    const date =
+        document.getElementById(
+            "announcement-date"
+        );
+
+    if (!section) {
+        return;
+    }
+
+    section.style.display =
+        "none";
+
+    const data =
+        announcementData;
+
+    if (
+        !data ||
+        data.enabled !== true ||
+        !data.title ||
+        !data.message
+    ) {
+        return;
+    }
+
+    const now =
+        new Date();
+
+    const start =
+        timestampToDate(
+            data.startAt
+        );
+
+    const end =
+        timestampToDate(
+            data.endAt
+        );
+
+    if (
+        start &&
+        start > now
+    ) {
+        return;
+    }
+
+    if (
+        end &&
+        end <= now
+    ) {
+        return;
+    }
+
+    section.style.display =
+        "block";
+
+    if (title) {
+        title.textContent =
+            "📢 " +
+            data.title;
+    }
+
+    if (message) {
+        message.textContent =
+            data.message;
+    }
+
+    if (date) {
+
+        const postedDate =
+            formatAnnouncementPostedDate(
+                data.postedDate
             );
 
-        const title =
-            document.getElementById(
-                "announcement-title"
+        date.textContent =
+            postedDate
+                ? "Posted " +
+                  postedDate
+                : "";
+    }
+}
+
+function scheduleAnnouncementTransition() {
+
+    if (
+        announcementTransitionTimer
+    ) {
+
+        clearTimeout(
+            announcementTransitionTimer
+        );
+
+        announcementTransitionTimer =
+            null;
+    }
+
+    if (
+        !announcementData ||
+        announcementData.enabled !== true
+    ) {
+        return;
+    }
+
+    const now =
+        new Date();
+
+    const futureTimes = [];
+
+    const start =
+        timestampToDate(
+            announcementData.startAt
+        );
+
+    const end =
+        timestampToDate(
+            announcementData.endAt
+        );
+
+    if (
+        start &&
+        start > now
+    ) {
+        futureTimes.push(
+            start.getTime()
+        );
+    }
+
+    if (
+        end &&
+        end > now
+    ) {
+        futureTimes.push(
+            end.getTime()
+        );
+    }
+
+    if (!futureTimes.length) {
+        return;
+    }
+
+    const nextTime =
+        Math.min(
+            ...futureTimes
+        );
+
+    const delay =
+        Math.max(
+            1000,
+            nextTime -
+            now.getTime() +
+            1000
+        );
+
+    const MAX_TIMEOUT =
+        2147483647;
+
+    announcementTransitionTimer =
+        setTimeout(
+            () => {
+
+                renderAnnouncement();
+                scheduleAnnouncementTransition();
+            },
+            Math.min(
+                delay,
+                MAX_TIMEOUT
+            )
+        );
+}
+
+async function loadAnnouncement() {
+
+    const section =
+        document.getElementById(
+            "announcement-section"
+        );
+
+    if (section) {
+        section.style.display =
+            "none";
+    }
+
+    try {
+
+        const snapshot =
+            await getDoc(
+                doc(
+                    db,
+                    "siteAnnouncements",
+                    "homepage"
+                )
             );
 
-        const message =
-            document.getElementById(
-                "announcement-message"
-            );
+        announcementData =
+            snapshot.exists()
+                ? snapshot.data()
+                : null;
 
-        const date =
-            document.getElementById(
-                "announcement-date"
-            );
+        renderAnnouncement();
+        scheduleAnnouncementTransition();
 
-        if (section) {
-            section.style.display =
-                "block";
-        }
+    } catch (error) {
 
-        if (title) {
-            title.textContent =
-                "📢 " + data.title;
-        }
-
-        if (message) {
-            message.textContent =
-                data.message;
-        }
-
-        if (date) {
-            date.textContent =
-                "Posted " + data.date;
-        }
-    })
-    .catch(error => {
         console.error(
             "Unable to load announcement:",
             error
         );
-    });
+
+        announcementData =
+            null;
+
+        renderAnnouncement();
+    }
+}
+
+loadAnnouncement();
