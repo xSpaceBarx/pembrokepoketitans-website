@@ -38,6 +38,53 @@ function timestampToDate(value) {
         : converted;
 }
 
+function safeHttpUrl(value) {
+
+    if (!value) return "";
+
+    try {
+
+        const url =
+            new URL(
+                value,
+                window.location.href
+            );
+
+        if (
+            url.protocol === "http:" ||
+            url.protocol === "https:"
+        ) {
+            return url.href;
+        }
+
+    } catch {
+        // Ignore invalid URLs.
+    }
+
+    return "";
+}
+
+function createTextParagraph(
+    text,
+    className = ""
+) {
+
+    const paragraph =
+        document.createElement(
+            "p"
+        );
+
+    if (className) {
+        paragraph.className =
+            className;
+    }
+
+    paragraph.textContent =
+        text;
+
+    return paragraph;
+}
+
 function getActiveTodayGraphic(
     now = new Date()
 ) {
@@ -168,26 +215,48 @@ function formatGraphicEventDate(
     );
 }
 
-function getTodayGraphicHtml() {
+function createTodayGraphicElement() {
 
     const activeToday =
         getActiveTodayGraphic();
 
     if (!activeToday) {
-        return "";
+        return null;
     }
 
     const imageSource =
-        activeToday.imageUrl ||
-        activeToday.imagePath;
+        safeHttpUrl(
+            activeToday.imageUrl ||
+            activeToday.imagePath
+        );
 
-    return `
-        <img
-            src="${imageSource}"
-            class="today-counters"
-            alt="Today's Featured Graphic"
-            onerror="this.style.display='none';">
-    `;
+    if (!imageSource) {
+        return null;
+    }
+
+    const image =
+        document.createElement(
+            "img"
+        );
+
+    image.src =
+        imageSource;
+
+    image.className =
+        "today-counters";
+
+    image.alt =
+        "Today's Featured Graphic";
+
+    image.addEventListener(
+        "error",
+        () => {
+            image.style.display =
+                "none";
+        }
+    );
+
+    return image;
 }
 
 function scheduleTodayTransition(
@@ -452,6 +521,178 @@ document.addEventListener(
                 );
             }
 
+            function createMeetupCard(
+                event,
+                includeTodayGraphic = false
+            ) {
+
+                const card =
+                    document.createElement(
+                        "div"
+                    );
+
+                card.className =
+                    "event-card";
+
+                const title =
+                    document.createElement(
+                        "h3"
+                    );
+
+                title.textContent =
+                    event.title || "";
+
+                card.appendChild(
+                    title
+                );
+
+                card.appendChild(
+                    createTextParagraph(
+                        "📅 " +
+                        formatMeetupDate(
+                            event.startDateTime
+                        )
+                    )
+                );
+
+                card.appendChild(
+                    createTextParagraph(
+                        "🕕 " +
+                        formatMeetupTime(
+                            event
+                        )
+                    )
+                );
+
+                const locationParagraph =
+                    document.createElement(
+                        "p"
+                    );
+
+                locationParagraph.append(
+                    document.createTextNode(
+                        "📍 "
+                    )
+                );
+
+                const locationLink =
+                    document.createElement(
+                        "a"
+                    );
+
+                const mapLink =
+                    safeHttpUrl(
+                        getMeetupMapLink(
+                            event.location || ""
+                        )
+                    );
+
+                if (mapLink) {
+
+                    locationLink.href =
+                        mapLink;
+
+                    locationLink.target =
+                        "_blank";
+
+                    locationLink.rel =
+                        "noopener noreferrer";
+
+                    locationLink.className =
+                        "event-link";
+
+                    locationLink.textContent =
+                        event.location || "";
+
+                    locationParagraph.appendChild(
+                        locationLink
+                    );
+
+                } else {
+
+                    locationParagraph.append(
+                        document.createTextNode(
+                            event.location || ""
+                        )
+                    );
+                }
+
+                card.appendChild(
+                    locationParagraph
+                );
+
+                if (event.attendance) {
+
+                    card.appendChild(
+                        createTextParagraph(
+                            "👥 " +
+                            event.attendance
+                        )
+                    );
+                }
+
+                if (event.description) {
+
+                    card.appendChild(
+                        createTextParagraph(
+                            event.description
+                        )
+                    );
+                }
+
+                if (includeTodayGraphic) {
+
+                    const todayGraphic =
+                        createTodayGraphicElement();
+
+                    if (todayGraphic) {
+                        card.appendChild(
+                            todayGraphic
+                        );
+                    }
+                }
+
+                const eventLink =
+                    safeHttpUrl(
+                        event.link
+                    );
+
+                if (eventLink) {
+
+                    card.appendChild(
+                        document.createElement(
+                            "br"
+                        )
+                    );
+
+                    const joinButton =
+                        document.createElement(
+                            "a"
+                        );
+
+                    joinButton.href =
+                        eventLink;
+
+                    joinButton.target =
+                        "_blank";
+
+                    joinButton.rel =
+                        "noopener noreferrer";
+
+                    joinButton.className =
+                        "hero-button";
+
+                    joinButton.textContent =
+                        "Join Campfire Meet Up";
+
+                    card.appendChild(
+                        joinButton
+                    );
+                }
+
+                return card;
+            }
+
             // ==========================
             // NEXT MEET UP
             // ==========================
@@ -467,104 +708,40 @@ document.addEventListener(
                     return;
                 }
 
+                eventCard.innerHTML =
+                    "";
+
                 if (
                     events.length === 0
                 ) {
 
-                    eventCard.innerHTML = `
-                        <div class="event-card">
-                            <p>
-                                No upcoming meetups scheduled.
-                            </p>
-                        </div>
-                    `;
+                    const emptyCard =
+                        document.createElement(
+                            "div"
+                        );
+
+                    emptyCard.className =
+                        "event-card";
+
+                    emptyCard.appendChild(
+                        createTextParagraph(
+                            "No upcoming meetups scheduled."
+                        )
+                    );
+
+                    eventCard.appendChild(
+                        emptyCard
+                    );
 
                     return;
                 }
 
-                const nextEvent =
-                    events[0];
-
-                const nextMapLink =
-                    getMeetupMapLink(
-                        nextEvent.location
-                    );
-
-                const nextDate =
-                    formatMeetupDate(
-                        nextEvent.startDateTime
-                    );
-
-                const nextTime =
-                    formatMeetupTime(
-                        nextEvent
-                    );
-
-                const todayGraphic =
-                    getTodayGraphicHtml();
-
-                eventCard.innerHTML = `
-
-                    <div class="event-card">
-
-                        <h3>
-                            ${nextEvent.title}
-                        </h3>
-
-                        <p>
-                            📅 ${nextDate}
-                        </p>
-
-                        <p>
-                            🕕 ${nextTime}
-                        </p>
-
-                        <p>
-                            📍
-                            <a
-                                href="${nextMapLink}"
-                                target="_blank"
-                                class="event-link">
-
-                                ${nextEvent.location}
-
-                            </a>
-                        </p>
-
-                        ${
-                            nextEvent.attendance
-                                ? `<p>👥 ${nextEvent.attendance}</p>`
-                                : ""
-                        }
-
-                        ${
-                            nextEvent.description
-                                ? `<p>${nextEvent.description}</p>`
-                                : ""
-                        }
-
-                        ${todayGraphic}
-
-                        ${
-                            nextEvent.link
-                                ? `
-                                <br>
-
-                                <a
-                                    href="${nextEvent.link}"
-                                    target="_blank"
-                                    class="hero-button">
-
-                                    Join Campfire Meet Up
-
-                                </a>
-                                `
-                                : ""
-                        }
-
-                    </div>
-
-                `;
+                eventCard.appendChild(
+                    createMeetupCard(
+                        events[0],
+                        true
+                    )
+                );
             }
 
             renderNextMeetup();
@@ -595,92 +772,28 @@ document.addEventListener(
                     0
                 ) {
 
-                    upcomingContainer.innerHTML = `
-                        <p style="text-align:center;">
-                            No additional meetups scheduled.
-                        </p>
-                    `;
+                    const empty =
+                        createTextParagraph(
+                            "No additional meetups scheduled."
+                        );
+
+                    empty.style.textAlign =
+                        "center";
+
+                    upcomingContainer.appendChild(
+                        empty
+                    );
 
                 } else {
 
                     upcomingEvents.forEach(
                         event => {
 
-                            const mapLink =
-                                getMeetupMapLink(
-                                    event.location
-                                );
-
-                            const eventDate =
-                                formatMeetupDate(
-                                    event.startDateTime
-                                );
-
-                            const eventTime =
-                                formatMeetupTime(
+                            upcomingContainer.appendChild(
+                                createMeetupCard(
                                     event
-                                );
-
-                            upcomingContainer.innerHTML += `
-
-                                <div class="event-card">
-
-                                    <h3>
-                                        ${event.title}
-                                    </h3>
-
-                                    <p>
-                                        📅 ${eventDate}
-                                    </p>
-
-                                    <p>
-                                        🕕 ${eventTime}
-                                    </p>
-
-                                    <p>
-                                        📍
-                                        <a
-                                            href="${mapLink}"
-                                            target="_blank"
-                                            class="event-link">
-
-                                            ${event.location}
-
-                                        </a>
-                                    </p>
-
-                                    ${
-                                        event.attendance
-                                            ? `<p>👥 ${event.attendance}</p>`
-                                            : ""
-                                    }
-
-                                    ${
-                                        event.description
-                                            ? `<p>${event.description}</p>`
-                                            : ""
-                                    }
-
-                                    ${
-                                        event.link
-                                            ? `
-                                            <br>
-
-                                            <a
-                                                href="${event.link}"
-                                                target="_blank"
-                                                class="hero-button">
-
-                                                Join Campfire Meet Up
-
-                                            </a>
-                                            `
-                                            : ""
-                                    }
-
-                                </div>
-
-                            `;
+                                )
+                            );
                         }
                     );
                 }
@@ -720,8 +833,11 @@ document.addEventListener(
                     0
                 ) {
 
-                    raidContainer.innerHTML =
-                        "<p>No current raid graphics are available.</p>";
+                    raidContainer.appendChild(
+                        createTextParagraph(
+                            "No current raid graphics are available."
+                        )
+                    );
 
                 } else {
 
@@ -729,41 +845,82 @@ document.addEventListener(
                         raid => {
 
                             const imageSource =
-                                raid.imageUrl ||
-                                raid.imagePath;
+                                safeHttpUrl(
+                                    raid.imageUrl ||
+                                    raid.imagePath
+                                );
+
+                            if (!imageSource) {
+                                return;
+                            }
+
+                            const raidCard =
+                                document.createElement(
+                                    "div"
+                                );
+
+                            raidCard.className =
+                                "raid-card";
+
+                            const heading =
+                                document.createElement(
+                                    "h3"
+                                );
+
+                            heading.textContent =
+                                raid.label ||
+                                "Current Raid";
+
+                            raidCard.appendChild(
+                                heading
+                            );
 
                             const eventDate =
                                 formatGraphicEventDate(
                                     raid.eventDate
                                 );
 
-                            raidContainer.innerHTML += `
+                            if (eventDate) {
 
-                                <div class="raid-card">
+                                raidCard.appendChild(
+                                    createTextParagraph(
+                                        eventDate,
+                                        "raid-date"
+                                    )
+                                );
+                            }
 
-                                    <h3>
-                                        ${raid.label || "Current Raid"}
-                                    </h3>
+                            const image =
+                                document.createElement(
+                                    "img"
+                                );
 
-                                    ${
-                                        eventDate
-                                            ? `
-                                            <p class="raid-date">
-                                                ${eventDate}
-                                            </p>
-                                            `
-                                            : ""
-                                    }
+                            image.src =
+                                imageSource;
 
-                                    <img
-                                        src="${imageSource}"
-                                        alt="${raid.label || raid.type}"
-                                        class="raid-image"
-                                        onerror="this.style.display='none';">
+                            image.alt =
+                                raid.label ||
+                                raid.type ||
+                                "Current Raid";
 
-                                </div>
+                            image.className =
+                                "raid-image";
 
-                            `;
+                            image.addEventListener(
+                                "error",
+                                () => {
+                                    image.style.display =
+                                        "none";
+                                }
+                            );
+
+                            raidCard.appendChild(
+                                image
+                            );
+
+                            raidContainer.appendChild(
+                                raidCard
+                            );
                         }
                     );
                 }
@@ -779,8 +936,15 @@ document.addEventListener(
                 );
 
             if (eventCard) {
+
                 eventCard.innerHTML =
-                    "<p>Unable to load meet ups.</p>";
+                    "";
+
+                eventCard.appendChild(
+                    createTextParagraph(
+                        "Unable to load meet ups."
+                    )
+                );
             }
 
             const raidContainer =
@@ -789,8 +953,15 @@ document.addEventListener(
                 );
 
             if (raidContainer) {
+
                 raidContainer.innerHTML =
-                    "<p>Unable to load raid information.</p>";
+                    "";
+
+                raidContainer.appendChild(
+                    createTextParagraph(
+                        "Unable to load raid information."
+                    )
+                );
             }
         }
     }
