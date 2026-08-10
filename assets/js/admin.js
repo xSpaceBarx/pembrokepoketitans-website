@@ -6,7 +6,7 @@ import { initMeetupManager } from "./meetupManager.js?v=2";
 import { initGraphicsManager } from "./graphicsManager.js?v=5";
 import { initTrainerManager } from "./trainerManager.js?v=1";
 import { initAnnouncementManager } from "./announcementManager.js?v=1";
-import { initSiteStatusDashboard } from "./siteStatusDashboard.js?v=2";
+import { initSiteStatusDashboard } from "./siteStatusDashboard.js?v=3";
 import { initResourcesManager } from "./resourcesManager.js?v=1";
 
 const templates = {
