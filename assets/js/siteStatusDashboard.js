@@ -686,7 +686,8 @@ function observeAdminManagers() {
         "meetup-list",
         "graphicsCounts",
         "featured-event-queue",
-        "trainer-admin-count"
+        "trainer-admin-count",
+        "resource-admin-count"
     ];
 
     const observer =
@@ -722,7 +723,8 @@ async function loadDashboardData() {
         notificationSnapshot,
         graphicSnapshot,
         featuredSnapshot,
-        trainerSnapshot
+        trainerSnapshot,
+        resourceSnapshot
     ] =
         await Promise.all([
             getDoc(
@@ -761,6 +763,12 @@ async function loadDashboardData() {
                     db,
                     "trainers"
                 )
+            ),
+            getDocs(
+                collection(
+                    db,
+                    "resources"
+                )
             )
         ]);
 
@@ -798,7 +806,14 @@ async function loadDashboardData() {
                 })
             ),
         trainerCount:
-            trainerSnapshot.size
+            trainerSnapshot.size,
+        resources:
+            resourceSnapshot.docs.map(
+                item => ({
+                    id: item.id,
+                    ...item.data()
+                })
+            )
     };
 }
 
@@ -1142,6 +1157,109 @@ function renderDashboard(
     setText(
         "status-trainers-detail",
         `Trainer${data.trainerCount === 1 ? "" : "s"} in the directory`
+    );
+
+    // ---------------------------------
+    // Resources
+    // ---------------------------------
+
+    const resourceCounts = {
+        quickguides: {
+            active: 0,
+            total: 0
+        },
+        websites: {
+            active: 0,
+            total: 0
+        },
+        podcasts: {
+            active: 0,
+            total: 0
+        },
+        socials: {
+            active: 0,
+            total: 0
+        }
+    };
+
+    data.resources.forEach(
+        resource => {
+
+            const bucket =
+                resourceCounts[
+                    resource.section
+                ];
+
+            if (!bucket) {
+                return;
+            }
+
+            bucket.total += 1;
+
+            if (
+                resource.active ===
+                true
+            ) {
+                bucket.active += 1;
+            }
+        }
+    );
+
+    const activeResourceTotal =
+        Object.values(
+            resourceCounts
+        ).reduce(
+            (
+                total,
+                item
+            ) =>
+                total +
+                item.active,
+            0
+        );
+
+    const resourceTotal =
+        Object.values(
+            resourceCounts
+        ).reduce(
+            (
+                total,
+                item
+            ) =>
+                total +
+                item.total,
+            0
+        );
+
+    const hiddenResourceTotal =
+        Math.max(
+            0,
+            resourceTotal -
+            activeResourceTotal
+        );
+
+    setStatus(
+        "status-resources-state",
+        activeResourceTotal > 0
+            ? "good"
+            : "neutral",
+        activeResourceTotal > 0
+            ? `🟢 ${activeResourceTotal} Active`
+            : "⚪ 0 Active"
+    );
+
+    setText(
+        "status-resources-detail",
+        `${resourceCounts.quickguides.active} guides • ${resourceCounts.websites.active} websites`
+    );
+
+    setText(
+        "status-resources-subdetail",
+        `${resourceCounts.podcasts.active} podcasts • ${resourceCounts.socials.active} socials${
+            hiddenResourceTotal > 0
+                ? ` • ${hiddenResourceTotal} hidden`
+                : ""
+        }`
     );
 
     // ---------------------------------
