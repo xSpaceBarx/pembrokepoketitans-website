@@ -1,8 +1,9 @@
 /* ==========================================
-   PokéTitans Public Site Basics v2
+   PokéTitans Public Site Basics v3
    - Automatic footer year
    - Accessibility fallbacks for static images
    - Click / tap to enlarge event graphics
+   - In-page lightbox for instruction-image links
 ========================================== */
 
 const ENLARGEABLE_GRAPHIC_SELECTOR = [
@@ -10,6 +11,9 @@ const ENLARGEABLE_GRAPHIC_SELECTOR = [
     ".raid-image",
     ".today-counters"
 ].join(",");
+
+const LIGHTBOX_LINK_SELECTOR =
+    ".site-image-lightbox-link";
 
 let lastGraphicTrigger = null;
 
@@ -55,6 +59,31 @@ function setAltIfMissing(
         });
 }
 
+function safeImageUrl(value) {
+    if (!value) {
+        return "";
+    }
+
+    try {
+        const url =
+            new URL(
+                value,
+                window.location.href
+            );
+
+        if (
+            url.protocol === "http:" ||
+            url.protocol === "https:"
+        ) {
+            return url.href;
+        }
+    } catch {
+        // Ignore invalid URLs.
+    }
+
+    return "";
+}
+
 function installGraphicLightboxStyles() {
     if (
         document.getElementById(
@@ -75,7 +104,8 @@ function installGraphicLightboxStyles() {
             cursor: zoom-in;
         }
 
-        ${ENLARGEABLE_GRAPHIC_SELECTOR}:focus-visible {
+        ${ENLARGEABLE_GRAPHIC_SELECTOR}:focus-visible,
+        ${LIGHTBOX_LINK_SELECTOR}:focus-visible {
             outline: 3px solid #F57C00;
             outline-offset: 4px;
         }
@@ -87,18 +117,28 @@ function installGraphicLightboxStyles() {
             display: none;
             align-items: center;
             justify-content: center;
-            padding: 60px 24px 24px;
+            padding: 60px 24px 28px;
             background: rgba(0,0,0,.86);
+            overflow-y: auto;
         }
 
         .site-graphic-lightbox.is-open {
             display: flex;
         }
 
+        .site-graphic-lightbox-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+            max-width: 96vw;
+            max-height: 92vh;
+        }
+
         .site-graphic-lightbox-image {
             display: block;
             max-width: min(1200px, 96vw);
-            max-height: 88vh;
+            max-height: 82vh;
             width: auto;
             height: auto;
             object-fit: contain;
@@ -107,7 +147,7 @@ function installGraphicLightboxStyles() {
         }
 
         .site-graphic-lightbox-close {
-            position: absolute;
+            position: fixed;
             top: 14px;
             right: 20px;
             width: 44px;
@@ -119,6 +159,25 @@ function installGraphicLightboxStyles() {
             font-size: 2rem;
             line-height: 1;
             cursor: pointer;
+            z-index: 5001;
+        }
+
+        .site-graphic-lightbox-return {
+            display: none;
+            border: 0;
+            border-radius: 999px;
+            padding: 12px 20px;
+            background: #F57C00;
+            color: #ffffff;
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(0,0,0,.25);
+        }
+
+        .site-graphic-lightbox.instruction-mode
+            .site-graphic-lightbox-return {
+            display: inline-block;
         }
 
         .site-graphic-lightbox-open {
@@ -127,7 +186,17 @@ function installGraphicLightboxStyles() {
 
         @media (max-width: 700px) {
             .site-graphic-lightbox {
-                padding: 64px 12px 18px;
+                padding: 64px 12px 22px;
+                align-items: flex-start;
+            }
+
+            .site-graphic-lightbox-content {
+                margin: auto;
+            }
+
+            .site-graphic-lightbox-image {
+                max-width: 96vw;
+                max-height: 78vh;
             }
         }
     `;
@@ -173,7 +242,7 @@ function ensureGraphicLightbox() {
 
     lightbox.setAttribute(
         "aria-label",
-        "Enlarged Pokémon GO graphic"
+        "Enlarged image"
     );
 
     const close =
@@ -187,11 +256,17 @@ function ensureGraphicLightbox() {
 
     close.setAttribute(
         "aria-label",
-        "Close enlarged graphic"
+        "Close enlarged image"
     );
 
     close.textContent =
         "×";
+
+    const content =
+        document.createElement("div");
+
+    content.className =
+        "site-graphic-lightbox-content";
 
     const image =
         document.createElement("img");
@@ -202,11 +277,23 @@ function ensureGraphicLightbox() {
     image.alt =
         "";
 
+    const returnButton =
+        document.createElement("button");
+
+    returnButton.type =
+        "button";
+
+    returnButton.className =
+        "site-graphic-lightbox-return";
+
+    returnButton.textContent =
+        "← Back to PokéTitans Alerts";
+
     const closeLightbox =
         () => {
-
             lightbox.classList.remove(
-                "is-open"
+                "is-open",
+                "instruction-mode"
             );
 
             lightbox.setAttribute(
@@ -246,10 +333,14 @@ function ensureGraphicLightbox() {
         closeLightbox
     );
 
+    returnButton.addEventListener(
+        "click",
+        closeLightbox
+    );
+
     lightbox.addEventListener(
         "click",
         event => {
-
             if (
                 event.target ===
                 lightbox
@@ -262,7 +353,6 @@ function ensureGraphicLightbox() {
     document.addEventListener(
         "keydown",
         event => {
-
             if (
                 event.key ===
                     "Escape" &&
@@ -275,36 +365,50 @@ function ensureGraphicLightbox() {
         }
     );
 
+    content.append(
+        image,
+        returnButton
+    );
+
     lightbox.append(
         close,
-        image
+        content
     );
 
     document.body.appendChild(
         lightbox
     );
 
-    lightbox.openGraphic =
-        triggerImage => {
+    lightbox.openSource =
+        (
+            source,
+            altText,
+            trigger,
+            instructionMode = false
+        ) => {
+            const safeSource =
+                safeImageUrl(
+                    source
+                );
 
-            const source =
-                triggerImage.currentSrc ||
-                triggerImage.src ||
-                "";
-
-            if (!source) {
+            if (!safeSource) {
                 return;
             }
 
             lastGraphicTrigger =
-                triggerImage;
+                trigger || null;
 
             image.src =
-                source;
+                safeSource;
 
             image.alt =
-                triggerImage.alt ||
-                "Pokémon GO graphic";
+                altText ||
+                "PokéTitans image";
+
+            lightbox.classList.toggle(
+                "instruction-mode",
+                instructionMode
+            );
 
             lightbox.classList.add(
                 "is-open"
@@ -320,6 +424,19 @@ function ensureGraphicLightbox() {
             );
 
             close.focus();
+        };
+
+    lightbox.openGraphic =
+        triggerImage => {
+            lightbox.openSource(
+                triggerImage.currentSrc ||
+                    triggerImage.src ||
+                    "",
+                triggerImage.alt ||
+                    "Pokémon GO graphic",
+                triggerImage,
+                false
+            );
         };
 
     return lightbox;
@@ -373,22 +490,14 @@ function installGraphicLightboxBehavior() {
     ensureGraphicLightbox();
     decorateAllGraphics();
 
-    /*
-     * Homepage and Events graphics can be rendered after page load
-     * from Firestore. Observe the page so newly inserted graphics
-     * automatically gain the same enlarge behavior.
-     */
     const observer =
         new MutationObserver(
             mutations => {
-
                 mutations.forEach(
                     mutation => {
-
                         mutation.addedNodes
                             .forEach(
                                 node => {
-
                                     if (
                                         !(
                                             node instanceof
@@ -433,6 +542,28 @@ function installGraphicLightboxBehavior() {
     document.addEventListener(
         "click",
         event => {
+            const instructionLink =
+                event.target.closest?.(
+                    LIGHTBOX_LINK_SELECTOR
+                );
+
+            if (instructionLink) {
+                event.preventDefault();
+
+                ensureGraphicLightbox()
+                    .openSource(
+                        instructionLink.href,
+                        instructionLink.dataset.lightboxAlt ||
+                            instructionLink.getAttribute(
+                                "aria-label"
+                            ) ||
+                            "PokéTitans iPhone notification setup instructions",
+                        instructionLink,
+                        true
+                    );
+
+                return;
+            }
 
             const image =
                 event.target.closest?.(
@@ -453,7 +584,6 @@ function installGraphicLightboxBehavior() {
     document.addEventListener(
         "keydown",
         event => {
-
             if (
                 event.key !==
                     "Enter" &&
