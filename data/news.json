@@ -1,11 +1,39 @@
 {
   "news": [
     {
+      "title": "Pokémon GO Explorer Gadget Appears to Be Rolling Out Worldwide",
+      "link": "https://pokemongohub.net/post/news/pokemon-go-explorer-gadget-appears-to-be-rolling-out-worldwide/",
+      "date": "2026-08-12 09:07:05",
+      "description": "Pokémon GO’s Explorer Gadget appears to be entering its widest rollout yet, with new reports of the built-in auto-catcher appearing for Trai...",
+      "image": "https://db.pokemongohub.net/images/flat-icons/TodayView_Icon_General.png"
+    },
+    {
       "title": "Pokémon GO Fest 2026: Mega Finale",
       "link": "https://pokemongohub.net/post/event/pokemon-go-fest-2026-mega-finale/",
-      "date": "2026-08-11 21:58:14",
+      "date": "2026-08-12 07:30:14",
       "description": "Pokémon GO Fest 2026: Mega Finale brings the summer to a close with two days of rotating habitats, a huge lineup of Mega Raids, and Super Me...",
       "image": "https://db.pokemongohub.net/images/icons/QuestIconProfessor.png"
+    },
+    {
+      "title": "PokéXciting! Cross-Region GO Stamp Rally",
+      "link": "https://pokemongohub.net/post/event/pokexciting-cross-region-go-stamp-rally/",
+      "date": "2026-08-12 07:21:21",
+      "description": "The first PokéXciting! Cross-Region GO Stamp Rally begins on September 12, 2026, giving Trainers a new long-term way to collect unique stamp...",
+      "image": "https://db.pokemongohub.net/images/flat-icons/TodayView_Icon_Pokestop.png"
+    },
+    {
+      "title": "PokéXciting! Pokémon 30th Anniversary Tour",
+      "link": "https://pokemongohub.net/post/event/pokexciting-pokemon-30th-anniversary-tour/",
+      "date": "2026-08-12 07:08:09",
+      "description": "PokéXciting! is a new two-day Pokémon 30th anniversary celebration coming to cities across the Asia-Pacific region, with special Pokémon GO ...",
+      "image": "https://db.pokemongohub.net/images/icons/QuestIconProfessor.png"
+    },
+    {
+      "title": "Mega Houndoom EX Drop Event (Pokémon TCG Pocket)",
+      "link": "https://pokemongohub.net/post/tcg-pocket/mega-houndoom-ex-drop-event-pokemon-tcg-pocket/",
+      "date": "2026-08-12 06:39:47",
+      "description": "A new Mega Evolution EX debuts in Pokémon TCG Pocket through the latest Drop event! Joining the Ruler of the Skies meta is Mega Houndoom EX,...",
+      "image": "https://pokemongohub.net/wp-content/uploads/2026/08/mega-houndoom-ex-216x300.jpg"
     },
     {
       "title": "Mega Ascension",
@@ -13,34 +41,6 @@
       "date": "2026-08-11 21:58:09",
       "description": "Mega Ascension kicks off the Mega Finale celebrations, running from Monday, August 31 at 10:00 a.m. to Friday, September 4 at 11:59 p.m. loc...",
       "image": "https://db.pokemongohub.net/images/icons/QuestIconProfessor.png"
-    },
-    {
-      "title": "GO Pass: Mega Finale",
-      "link": "https://pokemongohub.net/post/guide/go-pass-mega-finale/",
-      "date": "2026-08-11 21:58:04",
-      "description": "GO Pass: Mega Finale is a limited-time progression track available from Monday, August 31 to Sunday, September 6, 2026, spanning both Mega A...",
-      "image": "https://db.pokemongohub.net/images/icons/QuestIconProfessor.png"
-    },
-    {
-      "title": "Pokemon GO Fest 2026: Mega Finale Teaser Shows New Megas",
-      "link": "https://pokemongohub.net/post/news/pokemon-go-fest-2026-mega-finale-teaser-shows-new-megas/",
-      "date": "2026-08-11 06:41:32",
-      "description": "Scopely has released another teaser for the upcoming Pokémon GO Fest 2026: Mega Finale, scheduled to take place on September 5–6, 2026. The ...",
-      "image": "https://db.pokemongohub.net/images/ingame/normal/pm655.fMEGA.icon.png"
-    },
-    {
-      "title": "Choose Your Path: Venom and Vines",
-      "link": "https://pokemongohub.net/post/event/venom-and-vines-choose-your-path-timed-research-all-paths/",
-      "date": "2026-08-11 06:04:31",
-      "description": "Choose Your Path: Venom and Vines is a special Timed Research in Pokémon GO, available from Tuesday, August 11th, 2026, at 10:00 a.m. local ...",
-      "image": "https://db.pokemongohub.net/images/flat-icons/TodayView_Icon_Research.png"
-    },
-    {
-      "title": "Autumn 2026 Season’s Community Days and Events Dates",
-      "link": "https://pokemongohub.net/post/event/save-the-dates-for-next-seasons-community-days-and-events/",
-      "date": "2026-08-10 17:24:05",
-      "description": "Trainers, we have the dates for not only next Season’s Community Days, but also weekend events! Get these dates in your diary for the season...",
-      "image": "https://pokemongohub.net/wp-content/uploads/2026/08/Season-24-Save-the-Dates-GH-small-1024x1024.png"
     }
   ]
 }
