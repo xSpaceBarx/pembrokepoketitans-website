@@ -9,7 +9,10 @@ import {
     collection,
     getDocs,
     orderBy,
-    query
+    query,
+    doc,
+    updateDoc,
+    serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 const audienceNames = {
@@ -40,6 +43,293 @@ const statusPriority = {
 
 };
 
+const TIME_ZONE =
+    "America/New_York";
+
+let scheduledFinalizeTimer =
+    null;
+
+function easternDateTimeToDate(
+    dateValue,
+    timeValue
+) {
+
+    if (
+        !/^\d{4}-\d{2}-\d{2}$/.test(
+            dateValue || ""
+        ) ||
+        !/^\d{2}:\d{2}$/.test(
+            timeValue || ""
+        )
+    ) {
+        return null;
+    }
+
+    const [
+        year,
+        month,
+        day
+    ] =
+        dateValue
+            .split("-")
+            .map(Number);
+
+    const [
+        hour,
+        minute
+    ] =
+        timeValue
+            .split(":")
+            .map(Number);
+
+    let result =
+        new Date(
+            Date.UTC(
+                year,
+                month - 1,
+                day,
+                hour,
+                minute,
+                0,
+                0
+            )
+        );
+
+    const formatter =
+        new Intl.DateTimeFormat(
+            "en-US",
+            {
+                timeZone:
+                    TIME_ZONE,
+                year:
+                    "numeric",
+                month:
+                    "2-digit",
+                day:
+                    "2-digit",
+                hour:
+                    "2-digit",
+                minute:
+                    "2-digit",
+                second:
+                    "2-digit",
+                hourCycle:
+                    "h23"
+            }
+        );
+
+    for (
+        let pass = 0;
+        pass < 2;
+        pass += 1
+    ) {
+
+        const parts =
+            Object.fromEntries(
+                formatter
+                    .formatToParts(
+                        result
+                    )
+                    .filter(
+                        part =>
+                            part.type !==
+                            "literal"
+                    )
+                    .map(
+                        part => [
+                            part.type,
+                            part.value
+                        ]
+                    )
+            );
+
+        const representedAsUtc =
+            Date.UTC(
+                Number(
+                    parts.year
+                ),
+                Number(
+                    parts.month
+                ) - 1,
+                Number(
+                    parts.day
+                ),
+                Number(
+                    parts.hour
+                ),
+                Number(
+                    parts.minute
+                ),
+                Number(
+                    parts.second
+                )
+            );
+
+        const offset =
+            representedAsUtc -
+            result.getTime();
+
+        result =
+            new Date(
+                Date.UTC(
+                    year,
+                    month - 1,
+                    day,
+                    hour,
+                    minute,
+                    0,
+                    0
+                ) -
+                offset
+            );
+    }
+
+    return result;
+}
+
+function scheduledTimeFor(
+    notification
+) {
+
+    if (
+        notification.status !==
+            "schedule" ||
+        !notification.date ||
+        !notification.time
+    ) {
+        return null;
+    }
+
+    return easternDateTimeToDate(
+        notification.date,
+        notification.time
+    );
+}
+
+async function finalizeDueScheduledNotifications(
+    notifications,
+    now = new Date()
+) {
+
+    const due =
+        notifications.filter(
+            notification => {
+
+                const scheduledTime =
+                    scheduledTimeFor(
+                        notification
+                    );
+
+                return (
+                    scheduledTime &&
+                    scheduledTime <=
+                        now
+                );
+            }
+        );
+
+    if (!due.length) {
+        return false;
+    }
+
+    await Promise.all(
+        due.map(
+            notification =>
+                updateDoc(
+                    doc(
+                        db,
+                        "notifications",
+                        notification.id
+                    ),
+                    {
+                        status:
+                            "published",
+                        publishedAt:
+                            serverTimestamp(),
+                        updated:
+                            serverTimestamp()
+                    }
+                )
+        )
+    );
+
+    return true;
+}
+
+function scheduleNextPipelineRefresh(
+    notifications
+) {
+
+    if (
+        scheduledFinalizeTimer
+    ) {
+        clearTimeout(
+            scheduledFinalizeTimer
+        );
+
+        scheduledFinalizeTimer =
+            null;
+    }
+
+    const now =
+        new Date();
+
+    const futureTimes =
+        notifications
+            .map(
+                scheduledTimeFor
+            )
+            .filter(
+                value =>
+                    value &&
+                    value > now
+            )
+            .sort(
+                (a, b) =>
+                    a - b
+            );
+
+    if (!futureTimes.length) {
+        return;
+    }
+
+    const nextTime =
+        futureTimes[0];
+
+    const delay =
+        Math.max(
+            1000,
+            nextTime.getTime() -
+            now.getTime() +
+            1500
+        );
+
+    const MAX_TIMEOUT =
+        2147483647;
+
+    scheduledFinalizeTimer =
+        setTimeout(
+            async () => {
+
+                try {
+                    await loadDrafts();
+                    await updatePlannerStatus();
+                } catch (error) {
+                    console.error(
+                        "Unable to auto-finalize scheduled notification:",
+                        error
+                    );
+                }
+
+            },
+            Math.min(
+                delay,
+                MAX_TIMEOUT
+            )
+        );
+}
+
+
 export async function loadDrafts() {
 
     const draftContainer = document.getElementById("draftQueue");
@@ -57,20 +347,43 @@ export async function loadDrafts() {
             orderBy("created", "desc")
         );
 
-        const snapshot = await getDocs(q);
+        let snapshot = await getDocs(q);
+
+        let notifications =
+            snapshot.docs.map(
+                item => ({
+                    id:
+                        item.id,
+                    ...item.data()
+                })
+            );
+
+        const finalized =
+            await finalizeDueScheduledNotifications(
+                notifications
+            );
+
+        if (finalized) {
+
+            snapshot =
+                await getDocs(q);
+
+            notifications =
+                snapshot.docs.map(
+                    item => ({
+                        id:
+                            item.id,
+                        ...item.data()
+                    })
+                );
+        }
 
         const drafts = [];
         const scheduled = [];
         const published = [];
 
-        snapshot.forEach(doc => {
-
-            const notification = {
-
-                id: doc.id,
-                ...doc.data()
-
-            };
+        notifications.forEach(
+            notification => {
 
             const existing = plannerLookup[notification.audience];
 
@@ -109,6 +422,10 @@ export async function loadDrafts() {
             }
 
         });
+
+        scheduleNextPipelineRefresh(
+            notifications
+        );
 
         // Drafts -> newest updated first
         drafts.sort((a, b) => {
