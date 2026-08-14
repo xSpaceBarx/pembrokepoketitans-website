@@ -1,46 +1,46 @@
 {
   "news": [
     {
+      "title": "PokéXciting! Kuala Lumpur 2026",
+      "link": "https://pokemongohub.net/post/event/pokexciting-kuala-lumpur-2026/",
+      "date": "2026-08-14 06:50:04",
+      "description": "PokéXciting! is coming to Kuala Lumpur for the first stop of Pokémon’s 30th anniversary tour. The free event takes place at KLCC Park from S...",
+      "image": "https://db.pokemongohub.net/images/flat-icons/TodayView_Icon_PokemonEncounter.png"
+    },
+    {
+      "title": "Dancing in The Moonlight (2026)",
+      "link": "https://pokemongohub.net/post/event/dancing-in-the-moonlight-2026/",
+      "date": "2026-08-14 06:20:33",
+      "description": "Dancing in the Moonlight returns in 2026, bringing Special Background Clefairy, four daily wild encounter bursts, two consecutive Timed Rese...",
+      "image": "https://db.pokemongohub.net/images/items/AppraisalStar.png"
+    },
+    {
       "title": "Explorer Gadget Officially Debuts in Pokémon GO",
       "link": "https://pokemongohub.net/post/article/explorer-gadget-officially-debuts/",
       "date": "2026-08-13 19:55:11",
       "description": "The Explorer Gadget is officially coming to Pokémon GO, giving eligible Trainers a built-in way to catch Pokémon and spin PokéStops while th...",
-      "image": "assets/images/resources/gohub-placeholder.png"
+      "image": "https://db.pokemongohub.net/images/items/AppraisalStar.png"
     },
     {
       "title": "10th Anniversary Celebration: Guaranteed Hundo Mewtwo Timed Research",
       "link": "https://pokemongohub.net/post/event/10th-anniversary-celebration-timed-research-guaranteed-hundo-mewtwo/",
       "date": "2026-08-13 05:15:14",
       "description": "The Pokémon GO 10th Anniversary celebrations just got even bigger! Trainers worldwide will be able to claim a free Timed Research culminatin...",
-      "image": "assets/images/resources/gohub-placeholder.png"
+      "image": "https://db.pokemongohub.net/images/flat-icons/TodayView_Icon_Research.png"
     },
     {
       "title": "Groudon Raid Counters Guide",
       "link": "https://pokemongohub.net/post/guide/groudon-raid-boss/",
       "date": "2026-08-13 05:00:19",
       "description": "Groudon is a pure type Tier 5 Legendary Raid Boss in Pokémon GO. The best Groudon counters are strong , , and type Pokémon. Learn how to bea...",
-      "image": "assets/images/resources/gohub-placeholder.png"
+      "image": "https://db.pokemongohub.net/images/ingame/normal/pm383.icon.png"
     },
     {
       "title": "Mega Garchomp Raid Counters Guide",
       "link": "https://pokemongohub.net/post/guide/mega-garchomp-raid-counters-guide/",
       "date": "2026-08-13 05:00:06",
       "description": "Mega Garchomp is a and type Mega Raid boss. Best Mega Garchomp raid counters include powerful types, as it has a double weakness to them, al...",
-      "image": "assets/images/resources/gohub-placeholder.png"
-    },
-    {
-      "title": "Pokémon GO Explorer Gadget Appears to Be Rolling Out Worldwide",
-      "link": "https://pokemongohub.net/post/news/pokemon-go-explorer-gadget-appears-to-be-rolling-out-worldwide/",
-      "date": "2026-08-12 09:07:05",
-      "description": "Pokémon GO’s Explorer Gadget appears to be entering its widest rollout yet, with new reports of the built-in auto-catcher appearing for Trai...",
-      "image": "assets/images/resources/gohub-placeholder.png"
-    },
-    {
-      "title": "Pokémon GO Fest 2026: Mega Finale",
-      "link": "https://pokemongohub.net/post/event/pokemon-go-fest-2026-mega-finale/",
-      "date": "2026-08-12 07:30:14",
-      "description": "Pokémon GO Fest 2026: Mega Finale brings the summer to a close with two days of rotating habitats, a huge lineup of Mega Raids, and Super Me...",
-      "image": "assets/images/resources/gohub-placeholder.png"
+      "image": "https://db.pokemongohub.net/images/ingame/normal/pm445.fMEGA.icon.png"
     }
   ]
 }
