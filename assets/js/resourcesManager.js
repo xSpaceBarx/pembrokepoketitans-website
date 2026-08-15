@@ -1641,10 +1641,7 @@ export async function initResourcesManager() {
     clearEditor({ keepSection: true });
 
     try {
-        await Promise.all([
-            loadResources(),
-            loadCommunitySubmissions()
-        ]);
+        await loadResources();
     } catch (error) {
         console.error("Unable to load resources:", error);
         const list = getElement("resource-admin-list");
@@ -1654,6 +1651,35 @@ export async function initResourcesManager() {
         }
         if (count) {
             count.textContent = "Unable to load resource totals.";
+        }
+    }
+
+    try {
+        await loadCommunitySubmissions();
+    } catch (error) {
+        console.error(
+            "Unable to load community submissions:",
+            error
+        );
+
+        const list =
+            getElement(
+                "community-submission-list"
+            );
+
+        const count =
+            getElement(
+                "community-submission-count"
+            );
+
+        if (count) {
+            count.textContent =
+                "Unable to load pending community submissions.";
+        }
+
+        if (list) {
+            list.textContent =
+                "Check the Admin login and Firestore communitySubmissions rules.";
         }
     }
 }
