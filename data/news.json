@@ -1,6 +1,27 @@
 {
   "news": [
     {
+      "title": "A PvP Analysis on Icy Wind Thievul (August 2026 Community Day)",
+      "link": "https://pokemongohub.net/post/pvp/icy-wind-thievul-august-2026/",
+      "date": "2026-08-15 08:00:09",
+      "description": "This month’s Community Day is quietly a really good one for PvPers, and even better than I think most are giving it credit for! Come see why...",
+      "image": "https://db.pokemongohub.net/images/official/detail/828.png"
+    },
+    {
+      "title": "Nifty or Thrifty: Evolution Cup PvP Guide (August 2026)",
+      "link": "https://pokemongohub.net/post/pvp/nifty-or-thrifty-evolution-cup/",
+      "date": "2026-08-15 07:36:26",
+      "description": "So uh… hey there, Pokéfriends. Remember me? Your friendly neighborhood PvP writer/analyst. Believe it or not, it’s been over a month since m...",
+      "image": "https://s.w.org/images/core/emoji/17.0.2/72x72/1f3de.png"
+    },
+    {
+      "title": "Nickit Community Day (August 2026)",
+      "link": "https://pokemongohub.net/post/event/nickit-community-day-august-2026/",
+      "date": "2026-08-15 07:00:34",
+      "description": "The August 2026 Community Day features the cunning little Nickit, the Fox Pokémon and winner of the Community Choice poll! Join the event on...",
+      "image": "https://db.pokemongohub.net/images/flat-icons/TodayView_Icon_Candy.png"
+    },
+    {
       "title": "PokéXciting! Kuala Lumpur 2026",
       "link": "https://pokemongohub.net/post/event/pokexciting-kuala-lumpur-2026/",
       "date": "2026-08-14 06:50:04",
@@ -20,27 +41,6 @@
       "date": "2026-08-13 19:55:11",
       "description": "The Explorer Gadget is officially coming to Pokémon GO, giving eligible Trainers a built-in way to catch Pokémon and spin PokéStops while th...",
       "image": "https://db.pokemongohub.net/images/items/AppraisalStar.png"
-    },
-    {
-      "title": "10th Anniversary Celebration: Guaranteed Hundo Mewtwo Timed Research",
-      "link": "https://pokemongohub.net/post/event/10th-anniversary-celebration-timed-research-guaranteed-hundo-mewtwo/",
-      "date": "2026-08-13 05:15:14",
-      "description": "The Pokémon GO 10th Anniversary celebrations just got even bigger! Trainers worldwide will be able to claim a free Timed Research culminatin...",
-      "image": "https://db.pokemongohub.net/images/flat-icons/TodayView_Icon_Research.png"
-    },
-    {
-      "title": "Groudon Raid Counters Guide",
-      "link": "https://pokemongohub.net/post/guide/groudon-raid-boss/",
-      "date": "2026-08-13 05:00:19",
-      "description": "Groudon is a pure type Tier 5 Legendary Raid Boss in Pokémon GO. The best Groudon counters are strong , , and type Pokémon. Learn how to bea...",
-      "image": "https://db.pokemongohub.net/images/ingame/normal/pm383.icon.png"
-    },
-    {
-      "title": "Mega Garchomp Raid Counters Guide",
-      "link": "https://pokemongohub.net/post/guide/mega-garchomp-raid-counters-guide/",
-      "date": "2026-08-13 05:00:06",
-      "description": "Mega Garchomp is a and type Mega Raid boss. Best Mega Garchomp raid counters include powerful types, as it has a double weakness to them, al...",
-      "image": "https://db.pokemongohub.net/images/ingame/normal/pm445.fMEGA.icon.png"
     }
   ]
 }
