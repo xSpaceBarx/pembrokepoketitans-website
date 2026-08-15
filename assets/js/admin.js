@@ -2,12 +2,12 @@ import { loadDrafts } from "./draftQueue.js?v=3";
 import { saveNotification } from "./notifications-admin.js";
 import { updatePlannerStatus } from "./plannerStatus.js";
 import { publishNotification } from "./publishNotification.js?v=3";
-import { initMeetupManager } from "./meetupManager.js?v=2";
-import { initGraphicsManager } from "./graphicsManager.js?v=5";
+import { initMeetupManager } from "./meetupManager.js?v=3";
+import { initGraphicsManager } from "./graphicsManager.js?v=6";
 import { initTrainerManager } from "./trainerManager.js?v=1";
 import { initAnnouncementManager } from "./announcementManager.js?v=1";
-import { initSiteStatusDashboard } from "./siteStatusDashboard.js?v=3";
-import { initResourcesManager } from "./resourcesManager.js?v=1";
+import { initSiteStatusDashboard } from "./siteStatusDashboard.js?v=4";
+import { initResourcesManager } from "./resourcesManager.js?v=2";
 
 const templates = {
 
@@ -20,43 +20,71 @@ const templates = {
     raidhour: {
         title: "⚡ Raid Hour Tonight!",
         message: `Raid Hour starts tonight!\n\n⏰ 6:00–7:00 PM\n\nLet's raid together!`,
-        audience: "raidhour"
+        audience: "raidhour",
+        schedule: {
+            weekday: 3,
+            time: "17:30"
+        }
     },
 
     spotlight: {
         title: "✨ Spotlight Hour Tonight!",
         message: `Spotlight Hour begins tonight!\n\n⏰ 6:00–7:00 PM\n\nGood luck, Trainers!`,
-        audience: "spotlight"
+        audience: "spotlight",
+        schedule: {
+            weekday: 4,
+            time: "17:30"
+        }
     },
 
     maxmonday: {
-        title: "💎 Max Monday Tonight!",
-        message: `Max Monday begins tonight!\n\nTake on Max Battles with the community and earn those Max Particles!`,
-        audience: "maxmonday"
+        title: "💎 Max Monday Has Begun!",
+        message: `Max Monday has begun!\n\nTake on Max Battles with the community and earn those Max Particles!`,
+        audience: "maxmonday",
+        schedule: {
+            weekday: 1,
+            time: "09:00"
+        }
     },
 
     raidrotation: {
         title: "🆕 New Raid Boss Rotation!",
         message: `A brand new Raid Boss rotation is now live!\n\nCheck out what's appearing in Gyms!`,
-        audience: "raidrotation"
+        audience: "raidrotation",
+        schedule: {
+            weekday: 3,
+            time: "09:00"
+        }
     },
 
     raidday: {
         title: "⚔ Raid Day Today!",
         message: `Raid Day is here!\n\nGood luck, Trainers!`,
-        audience: "raidday"
+        audience: "raidday",
+        schedule: {
+            weekday: 6,
+            time: "13:30"
+        }
     },
 
     hatchday: {
         title: "🥚 Hatch Day Today!",
         message: `It's Hatch Day!\n\nDon't forget your Egg Incubators and enjoy the bonuses while the event is active.`,
-        audience: "hatchday"
+        audience: "hatchday",
+        schedule: {
+            weekday: 6,
+            time: "13:30"
+        }
     },
 
     communityday: {
         title: "🎉 Community Day Today!",
         message: `Community Day has begun!\n\nGood luck catching today's featured Pokémon and enjoy all of the event bonuses!`,
-        audience: "communityday"
+        audience: "communityday",
+        schedule: {
+            weekday: 6,
+            time: "13:30"
+        }
     },
 
     globalevent: {
@@ -67,8 +95,12 @@ const templates = {
 
     gopass: {
         title: "🎟 Daily Bonuses & GO Pass",
-        message: `Don't forget to collect today's Daily Bonuses and GO Pass rewards before they expire!`,
-        audience: "gopass"
+        message: `Don't forget to collect today's Daily Bonuses and GO Pass rewards before they expire at 8pm!`,
+        audience: "gopass",
+        schedule: {
+            weekday: 3,
+            time: "19:30"
+        }
     },
 
     trinket: {
@@ -97,6 +129,185 @@ const templates = {
 
 };
 
+const TIME_ZONE =
+    "America/New_York";
+
+function easternNowParts() {
+
+    const parts =
+        new Intl.DateTimeFormat(
+            "en-US",
+            {
+                timeZone:
+                    TIME_ZONE,
+                year:
+                    "numeric",
+                month:
+                    "2-digit",
+                day:
+                    "2-digit",
+                hour:
+                    "2-digit",
+                minute:
+                    "2-digit",
+                hourCycle:
+                    "h23"
+            }
+        )
+            .formatToParts(
+                new Date()
+            );
+
+    const values = {};
+
+    parts.forEach(
+        part => {
+
+            if (
+                part.type !==
+                "literal"
+            ) {
+                values[
+                    part.type
+                ] =
+                    Number(
+                        part.value
+                    );
+            }
+        }
+    );
+
+    const calendarDate =
+        new Date(
+            Date.UTC(
+                values.year,
+                values.month - 1,
+                values.day
+            )
+        );
+
+    return {
+        year:
+            values.year,
+        month:
+            values.month,
+        day:
+            values.day,
+        weekday:
+            calendarDate
+                .getUTCDay(),
+        minutes:
+            values.hour *
+                60 +
+            values.minute
+    };
+}
+
+function formatDateInput(
+    date
+) {
+
+    return [
+        date.getUTCFullYear(),
+        String(
+            date.getUTCMonth() +
+            1
+        ).padStart(
+            2,
+            "0"
+        ),
+        String(
+            date.getUTCDate()
+        ).padStart(
+            2,
+            "0"
+        )
+    ].join("-");
+}
+
+function closestUpcomingWeekday(
+    targetWeekday,
+    timeValue
+) {
+
+    const now =
+        easternNowParts();
+
+    const [
+        hour,
+        minute
+    ] =
+        String(
+            timeValue
+        )
+            .split(":")
+            .map(Number);
+
+    const targetMinutes =
+        hour * 60 +
+        minute;
+
+    let daysAhead =
+        (
+            targetWeekday -
+            now.weekday +
+            7
+        ) % 7;
+
+    /*
+     * If today is the requested weekday but the
+     * requested send time has already arrived,
+     * use that weekday next week instead of
+     * creating a schedule in the past.
+     */
+    if (
+        daysAhead === 0 &&
+        now.minutes >=
+            targetMinutes
+    ) {
+        daysAhead =
+            7;
+    }
+
+    const date =
+        new Date(
+            Date.UTC(
+                now.year,
+                now.month - 1,
+                now.day +
+                    daysAhead
+            )
+        );
+
+    return formatDateInput(
+        date
+    );
+}
+
+function scheduleForTemplate(
+    template
+) {
+
+    if (!template?.schedule) {
+        return null;
+    }
+
+    return {
+        delivery:
+            "schedule",
+        date:
+            closestUpcomingWeekday(
+                template.schedule
+                    .weekday,
+                template.schedule
+                    .time
+            ),
+        time:
+            template.schedule
+                .time
+    };
+}
+
 /* ============================
    LIVE PREVIEW
 ============================ */
@@ -117,7 +328,10 @@ function startNewNotification(
     {
         title = "",
         message = "",
-        audience = "news"
+        audience = "news",
+        delivery = "now",
+        date = "",
+        time = ""
     } = {}
 ) {
 
@@ -166,15 +380,17 @@ function startNewNotification(
     document.getElementById(
         "notification-delivery"
     ).value =
-        "now";
+        delivery;
 
     document.getElementById(
         "notification-date"
-    ).value = "";
+    ).value =
+        date;
 
     document.getElementById(
         "notification-time"
-    ).value = "";
+    ).value =
+        time;
 
     updatePreview();
 
@@ -229,13 +445,27 @@ document
 
             if (!template) return;
 
+            const schedule =
+                scheduleForTemplate(
+                    template
+                );
+
             startNewNotification({
                 title:
                     template.title,
                 message:
                     template.message,
                 audience:
-                    template.audience
+                    template.audience,
+                delivery:
+                    schedule?.delivery ||
+                    "now",
+                date:
+                    schedule?.date ||
+                    "",
+                time:
+                    schedule?.time ||
+                    ""
             });
 
         });
