@@ -687,7 +687,8 @@ function observeAdminManagers() {
         "graphicsCounts",
         "featured-event-queue",
         "trainer-admin-count",
-        "resource-admin-count"
+        "resource-admin-count",
+        "community-submission-count"
     ];
 
     const observer =
@@ -724,7 +725,8 @@ async function loadDashboardData() {
         graphicSnapshot,
         featuredSnapshot,
         trainerSnapshot,
-        resourceSnapshot
+        resourceSnapshot,
+        communitySubmissionSnapshot
     ] =
         await Promise.all([
             getDoc(
@@ -769,6 +771,12 @@ async function loadDashboardData() {
                     db,
                     "resources"
                 )
+            ),
+            getDocs(
+                collection(
+                    db,
+                    "communitySubmissions"
+                )
             )
         ]);
 
@@ -809,6 +817,13 @@ async function loadDashboardData() {
             trainerSnapshot.size,
         resources:
             resourceSnapshot.docs.map(
+                item => ({
+                    id: item.id,
+                    ...item.data()
+                })
+            ),
+        communitySubmissions:
+            communitySubmissionSnapshot.docs.map(
                 item => ({
                     id: item.id,
                     ...item.data()
@@ -1179,6 +1194,10 @@ function renderDashboard(
         socials: {
             active: 0,
             total: 0
+        },
+        communities: {
+            active: 0,
+            total: 0
         }
     };
 
@@ -1238,6 +1257,15 @@ function renderDashboard(
             activeResourceTotal
         );
 
+    const pendingCommunitySubmissions =
+        data.communitySubmissions
+            .filter(
+                submission =>
+                    submission.status ===
+                    "pending"
+            )
+            .length;
+
     setStatus(
         "status-resources-state",
         activeResourceTotal > 0
@@ -1255,7 +1283,11 @@ function renderDashboard(
 
     setText(
         "status-resources-subdetail",
-        `${resourceCounts.podcasts.active} podcasts • ${resourceCounts.socials.active} socials${
+        `${resourceCounts.podcasts.active} podcasts • ${resourceCounts.socials.active} socials • ${resourceCounts.communities.active} communities${
+            pendingCommunitySubmissions > 0
+                ? ` • ${pendingCommunitySubmissions} pending approval`
+                : ""
+        }${
             hiddenResourceTotal > 0
                 ? ` • ${hiddenResourceTotal} hidden`
                 : ""
@@ -1409,6 +1441,29 @@ function renderDashboard(
                 );
             }
         );
+
+        if (
+            pendingCommunitySubmissions >
+            0
+        ) {
+
+            attentionCount +=
+                1;
+
+            appendAttentionItem(
+                attentionContainer,
+                {
+                    tone:
+                        "warning",
+                    icon:
+                        "🟡",
+                    text:
+                        `${pendingCommunitySubmissions} community link submission${pendingCommunitySubmissions === 1 ? "" : "s"} waiting for approval.`,
+                    href:
+                        "#resources-manager"
+                }
+            );
+        }
 
         if (
             notificationCounts.draft > 0
