@@ -1,605 +1,2170 @@
-import { loadDrafts } from "./draftQueue.js?v=3";
-import { saveNotification } from "./notifications-admin.js";
-import { updatePlannerStatus } from "./plannerStatus.js";
-import { publishNotification } from "./publishNotification.js?v=3";
-import { initMeetupManager } from "./meetupManager.js?v=3";
-import { initGraphicsManager } from "./graphicsManager.js?v=7";
-import { initTrainerManager } from "./trainerManager.js?v=1";
-import { initAnnouncementManager } from "./announcementManager.js?v=1";
-import { initSiteStatusDashboard } from "./siteStatusDashboard.js?v=4";
-import { initResourcesManager } from "./resourcesManager.js?v=4";
-
-const templates = {
-
-    meetup: {
-        title: "📍 Campfire Meetup Reminder",
-        message: `Don't forget tonight's PokéTitans meetup!\n\n📍 Pembroke Historical Society\n🕠 Meetup begins at 6:00 PM\n\nWe hope to see you there!`,
-        audience: "meetup"
-    },
-
-    raidhour: {
-        title: "⚡ Raid Hour Tonight!",
-        message: `Raid Hour starts tonight!\n\n⏰ 6:00–7:00 PM\n\nLet's raid together!`,
-        audience: "raidhour",
-        schedule: {
-            weekday: 3,
-            time: "17:30"
-        }
-    },
-
-    spotlight: {
-        title: "✨ Spotlight Hour Tonight!",
-        message: `Spotlight Hour begins tonight!\n\n⏰ 6:00–7:00 PM\n\nGood luck, Trainers!`,
-        audience: "spotlight",
-        schedule: {
-            weekday: 4,
-            time: "17:30"
-        }
-    },
-
-    maxmonday: {
-        title: "💎 Max Monday Has Begun!",
-        message: `Max Monday has begun!\n\nTake on Max Battles with the community and earn those Max Particles!`,
-        audience: "maxmonday",
-        schedule: {
-            weekday: 1,
-            time: "09:00"
-        }
-    },
-
-    raidrotation: {
-        title: "🆕 New Raid Boss Rotation!",
-        message: `A brand new Raid Boss rotation is now live!\n\nCheck out what's appearing in Gyms!`,
-        audience: "raidrotation",
-        schedule: {
-            weekday: 3,
-            time: "09:00"
-        }
-    },
-
-    raidday: {
-        title: "⚔ Raid Day Today!",
-        message: `Raid Day is here!\n\nGood luck, Trainers!`,
-        audience: "raidday",
-        schedule: {
-            weekday: 6,
-            time: "13:30"
-        }
-    },
-
-    hatchday: {
-        title: "🥚 Hatch Day Today!",
-        message: `It's Hatch Day!\n\nDon't forget your Egg Incubators and enjoy the bonuses while the event is active.`,
-        audience: "hatchday",
-        schedule: {
-            weekday: 6,
-            time: "13:30"
-        }
-    },
-
-    communityday: {
-        title: "🎉 Community Day Today!",
-        message: `Community Day has begun!\n\nGood luck catching today's featured Pokémon and enjoy all of the event bonuses!`,
-        audience: "communityday",
-        schedule: {
-            weekday: 6,
-            time: "13:30"
-        }
-    },
-
-    globalevent: {
-        title: "🌎 Global Event Begins!",
-        message: `Today's global Pokémon GO event is now live!\n\nCheck the Today View for bonuses, featured Pokémon and event tasks.\n\nHave fun, Trainers!`,
-        audience: "globalevent"
-    },
-
-    gopass: {
-        title: "🎟 Daily Bonuses & GO Pass",
-        message: `Don't forget to collect today's Daily Bonuses and GO Pass rewards before they expire at 8pm!`,
-        audience: "gopass",
-        schedule: {
-            weekday: 3,
-            time: "19:30"
-        }
-    },
-
-    trinket: {
-        title: "🍀 Lucky Trinket Reminder",
-        message: `Remember to use your Lucky Trinket before 8:00 PM tonight!`,
-        audience: "trinket"
-    },
-
-    research: {
-        title: "📦 New Special Research",
-        message: `New Special or Timed Research is now available!\n\nOpen Pokémon GO and start working through the new tasks.`,
-        audience: "research"
-    },
-
-    codes: {
-        title: "🎁 New Redemption Code",
-        message: `A new Pokémon GO redemption code is available!\n\nClaim it before it expires.`,
-        audience: "codes"
-    },
-
-    news: {
-        title: "🚨 Pokémon GO Breaking News",
-        message: `Important Pokémon GO news will appear here.`,
-        audience: "news"
-    }
-
-};
-
-const TIME_ZONE =
-    "America/New_York";
-
-function easternNowParts() {
-
-    const parts =
-        new Intl.DateTimeFormat(
-            "en-US",
-            {
-                timeZone:
-                    TIME_ZONE,
-                year:
-                    "numeric",
-                month:
-                    "2-digit",
-                day:
-                    "2-digit",
-                hour:
-                    "2-digit",
-                minute:
-                    "2-digit",
-                hourCycle:
-                    "h23"
-            }
-        )
-            .formatToParts(
-                new Date()
-            );
-
-    const values = {};
-
-    parts.forEach(
-        part => {
-
-            if (
-                part.type !==
-                "literal"
-            ) {
-                values[
-                    part.type
-                ] =
-                    Number(
-                        part.value
-                    );
-            }
-        }
-    );
-
-    const calendarDate =
-        new Date(
-            Date.UTC(
-                values.year,
-                values.month - 1,
-                values.day
-            )
-        );
-
-    return {
-        year:
-            values.year,
-        month:
-            values.month,
-        day:
-            values.day,
-        weekday:
-            calendarDate
-                .getUTCDay(),
-        minutes:
-            values.hour *
-                60 +
-            values.minute
-    };
-}
-
-function formatDateInput(
-    date
-) {
-
-    return [
-        date.getUTCFullYear(),
-        String(
-            date.getUTCMonth() +
-            1
-        ).padStart(
-            2,
-            "0"
-        ),
-        String(
-            date.getUTCDate()
-        ).padStart(
-            2,
-            "0"
-        )
-    ].join("-");
-}
-
-function closestUpcomingWeekday(
-    targetWeekday,
-    timeValue
-) {
-
-    const now =
-        easternNowParts();
-
-    const [
-        hour,
-        minute
-    ] =
-        String(
-            timeValue
-        )
-            .split(":")
-            .map(Number);
-
-    const targetMinutes =
-        hour * 60 +
-        minute;
-
-    let daysAhead =
-        (
-            targetWeekday -
-            now.weekday +
-            7
-        ) % 7;
-
-    /*
-     * If today is the requested weekday but the
-     * requested send time has already arrived,
-     * use that weekday next week instead of
-     * creating a schedule in the past.
-     */
-    if (
-        daysAhead === 0 &&
-        now.minutes >=
-            targetMinutes
-    ) {
-        daysAhead =
-            7;
-    }
-
-    const date =
-        new Date(
-            Date.UTC(
-                now.year,
-                now.month - 1,
-                now.day +
-                    daysAhead
-            )
-        );
-
-    return formatDateInput(
-        date
-    );
-}
-
-function scheduleForTemplate(
-    template
-) {
-
-    if (!template?.schedule) {
-        return null;
-    }
-
-    return {
-        delivery:
-            "schedule",
-        date:
-            closestUpcomingWeekday(
-                template.schedule
-                    .weekday,
-                template.schedule
-                    .time
-            ),
-        time:
-            template.schedule
-                .time
-    };
-}
-
-/* ============================
-   LIVE PREVIEW
-============================ */
-
-function updatePreview() {
-
-    document.getElementById("preview-title").textContent =
-        document.getElementById("notification-title").value ||
-        "Notification Title";
-
-    document.getElementById("preview-message").textContent =
-        document.getElementById("notification-message").value ||
-        "Your notification message will appear here.";
-
-}
-
-function startNewNotification(
-    {
-        title = "",
-        message = "",
-        audience = "news",
-        delivery = "now",
-        date = "",
-        time = ""
-    } = {}
-) {
-
-    document.getElementById(
-        "notification-id"
-    ).value = "";
-
-    document.getElementById(
-        "editingBanner"
-    ).style.display =
-        "none";
-
-    document.getElementById(
-        "sendNotification"
-    ).innerHTML =
-        "💾 Save Draft";
-
-    document.getElementById(
-        "notification-title"
-    ).value =
-        title;
-
-    document.getElementById(
-        "notification-message"
-    ).value =
-        message;
-
-    const audienceSelect =
-        document.getElementById(
-            "notification-audience"
-        );
-
-    const audienceExists =
-        Array.from(
-            audienceSelect.options
-        ).some(
-            option =>
-                option.value === audience
-        );
-
-    audienceSelect.value =
-        audienceExists
-            ? audience
-            : "news";
-
-    document.getElementById(
-        "notification-delivery"
-    ).value =
-        delivery;
-
-    document.getElementById(
-        "notification-date"
-    ).value =
-        date;
-
-    document.getElementById(
-        "notification-time"
-    ).value =
-        time;
-
-    updatePreview();
-
-    document.getElementById(
-        "notification-center"
-    )?.scrollIntoView({
-        behavior:
-            "smooth",
-        block:
-            "start"
-    });
-}
-
-window.addEventListener(
-    "poketitans:notification-draft",
-    event => {
-
-        const detail =
-            event.detail || {};
-
-        startNewNotification({
-            title:
-                detail.title || "",
-            message:
-                detail.message || "",
-            audience:
-                detail.audience || "news"
-        });
-    }
-);
-
-document
-    .getElementById("notification-title")
-    .addEventListener("input", updatePreview);
-
-document
-    .getElementById("notification-message")
-    .addEventListener("input", updatePreview);
-
-/* ============================
-   NOTIFICATION PLANNER
-============================ */
-
-document
-    .querySelectorAll(".planner-item[data-template]")
-    .forEach(card => {
-
-        card.addEventListener("click", () => {
-
-            const template =
-                templates[card.dataset.template];
-
-            if (!template) return;
-
-            const schedule =
-                scheduleForTemplate(
-                    template
-                );
-
-            startNewNotification({
-                title:
-                    template.title,
-                message:
-                    template.message,
-                audience:
-                    template.audience,
-                delivery:
-                    schedule?.delivery ||
-                    "now",
-                date:
-                    schedule?.date ||
-                    "",
-                time:
-                    schedule?.time ||
-                    ""
-            });
-
-        });
-
-    });
-
-/* ============================
-   SAVE DRAFT
-============================ */
-
-document
-    .getElementById("sendNotification")
-    .addEventListener("click", async () => {
-
-        const notification = {
-
-            title:
-                document.getElementById("notification-title").value,
-
-            message:
-                document.getElementById("notification-message").value,
-
-            audience:
-                document.getElementById("notification-audience").value,
-
-            delivery:
-                document.getElementById("notification-delivery").value,
-
-            date:
-                document.getElementById("notification-date").value,
-
-            time:
-                document.getElementById("notification-time").value
-
-        };
-
-        const id =
-            document.getElementById("notification-id").value;
-
-        const savedId =
-            await saveNotification(notification, id);
-
-        if (savedId) {
-            document.getElementById("notification-id").value =
-                savedId;
-        }
-
-        await loadDrafts();
-        await updatePlannerStatus();
-
-    });
-
-/* ============================
-   PUBLISH
-============================ */
-
-document
-    .getElementById("publishNotification")
-    .addEventListener("click", async () => {
-
-        const id =
-            document.getElementById("notification-id").value;
-
-        if (!id) {
-
-            alert(
-                "Please save this notification as a draft first."
-            );
-
-            return;
-
-        }
-
-        const result =
-            await publishNotification(id);
-
-        if (!result) {
-            return;
-        }
-
-        await loadDrafts();
-        await updatePlannerStatus();
-
-        if (result === "scheduled") {
-
-            alert(
-                "✅ Notification scheduled successfully."
-            );
-
-        } else {
-
-            alert(
-                "✅ Notification sent and published successfully."
-            );
-
-        }
-
-    });
-
-/* ============================
-   CLEAR NOTIFICATION EDITOR
-============================ */
-
-document
-    .getElementById("clearNotification")
-    .addEventListener("click", () => {
-
-        document.getElementById("notification-id").value = "";
-        document.getElementById("notification-title").value = "";
-        document.getElementById("notification-message").value = "";
-        document.getElementById("notification-date").value = "";
-        document.getElementById("notification-time").value = "";
-
-        document.getElementById("sendNotification").innerHTML =
-            "💾 Save Draft";
-
-        document.getElementById("editingBanner").style.display =
-            "none";
-
-        updatePreview();
-
-    });
-
-/* ============================
-   INITIALIZE
-============================ */
-
-updatePreview();
-
-await loadDrafts();
-await updatePlannerStatus();
-await initAnnouncementManager();
-await initMeetupManager();
-await initGraphicsManager();
-await initTrainerManager();
-await initResourcesManager();
-await initSiteStatusDashboard();
+!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PokéTitans Command Center</title>
+
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/admin.css?v=4">
+
+</head>
+
+<body id="admin-top">
+<div id="admin-auth-overlay">
+
+    <div class="admin-login-card">
+
+        <div class="admin-login-icon">
+            🔐
+        </div>
+
+        <h1>PokéTitans Admin</h1>
+
+        <p>
+            Administrator access is restricted.
+        </p>
+
+        <button
+            id="admin-google-login"
+            class="hero-button">
+
+            Sign in with Google
+
+        </button>
+
+        <p
+            id="admin-auth-message"
+            class="admin-auth-message">
+
+            Checking login...
+
+        </p>
+
+    </div>
+
+</div>
+<section class="page-hero">
+
+    <div class="overlay"></div>
+
+    <div class="hero-content">
+
+        <h1>🛠 PokéTitans Command Center</h1>
+
+        <p>
+            Manage your community from one place.
+        </p>
+
+    </div>
+
+</section>
+
+<section class="section">
+
+<div class="container">
+
+<!-- Admin Quick Navigation -->
+
+<nav
+    class="admin-section-nav"
+    aria-label="Admin section shortcuts">
+
+    <h2>⚡ Jump to Section</h2>
+
+    <div class="admin-section-nav-grid">
+
+        <a class="admin-jump-link" href="#weekly-checklist">
+            📅 Weekly Checklist
+        </a>
+
+        <a class="admin-jump-link" href="#event-special-notifications">
+            🎉 Event &amp; Special Notifications
+        </a>
+
+        <a class="admin-jump-link" href="#notification-center">
+            📢 Notification Center
+        </a>
+
+        <a class="admin-jump-link" href="#announcement-manager">
+            🏠 Homepage Announcement
+        </a>
+
+        <a class="admin-jump-link" href="#meetup-manager">
+            📍 Meetup Manager
+        </a>
+
+        <a class="admin-jump-link" href="#graphics-manager">
+            🖼️ Event Graphics Manager
+        </a>
+
+        <a class="admin-jump-link" href="#monthly-special-graphics">
+            🎉 Monthly &amp; Special Graphics
+        </a>
+
+        <a class="admin-jump-link" href="#graphics-editor">
+            ✏ Graphic Editor
+        </a>
+
+        <a class="admin-jump-link" href="#featured-event-manager">
+            🔥 Featured Event Queue
+        </a>
+
+        <a class="admin-jump-link" href="#graphics-pipeline">
+            🕒 Live &amp; Scheduled Graphics
+        </a>
+
+        <a class="admin-jump-link" href="#trainer-manager">
+            👥 Trainer Management
+        </a>
+
+        <a class="admin-jump-link" href="#resources-manager">
+            📚 Resources Manager
+        </a>
+
+        <a class="admin-jump-link" href="#community-links-admin">
+            🤝 Community Links
+        </a>
+
+        <a class="admin-jump-link" href="#analytics">
+            📊 Analytics
+        </a>
+
+    </div>
+
+</nav>
+
+<br>
+
+<!-- Site Status Dashboard -->
+
+<section
+    class="site-status-dashboard"
+    id="site-status-dashboard">
+
+    <div class="site-status-heading">
+
+        <div>
+
+            <h2>
+                🛠 PokéTitans Site Status
+            </h2>
+
+            <p
+                id="site-status-date"
+                class="site-status-date">
+            </p>
+
+        </div>
+
+        <div class="site-status-refresh-wrap">
+
+            <button
+                type="button"
+                id="refresh-site-status"
+                class="btn-orange site-status-refresh">
+
+                ↻ Refresh Status
+
+            </button>
+
+            <span
+                id="site-status-refreshed"
+                class="site-status-refreshed">
+
+                Loading status...
+
+            </span>
+
+        </div>
+
+    </div>
+
+    <div class="site-status-grid">
+
+        <a
+            href="#announcement-manager"
+            class="site-status-card">
+
+            <div class="site-status-label">
+                📢 Homepage Announcement
+            </div>
+
+            <div
+                id="status-announcement-state"
+                class="site-status-state site-status-neutral">
+
+                Loading...
+
+            </div>
+
+            <div
+                id="status-announcement-detail"
+                class="site-status-detail">
+
+                Checking announcement...
+
+            </div>
+
+            <div class="site-status-card-action">
+                Manage →
+            </div>
+
+        </a>
+
+        <a
+            href="#meetup-manager"
+            class="site-status-card">
+
+            <div class="site-status-label">
+                📍 Next Meetup
+            </div>
+
+            <div
+                id="status-meetup-state"
+                class="site-status-state site-status-neutral">
+
+                Loading...
+
+            </div>
+
+            <div
+                id="status-meetup-detail"
+                class="site-status-detail">
+
+                Checking meetups...
+
+            </div>
+
+            <div
+                id="status-meetup-subdetail"
+                class="site-status-subdetail">
+            </div>
+
+            <div class="site-status-card-action">
+                Manage →
+            </div>
+
+        </a>
+
+        <a
+            href="#notification-pipeline"
+            class="site-status-card">
+
+            <div class="site-status-label">
+                🔔 Notifications
+            </div>
+
+            <div
+                id="status-notification-state"
+                class="site-status-state site-status-neutral">
+
+                Loading...
+
+            </div>
+
+            <div
+                id="status-notification-detail"
+                class="site-status-detail">
+
+                Checking pipeline...
+
+            </div>
+
+            <div class="site-status-card-action">
+                View Pipeline →
+            </div>
+
+        </a>
+
+        <a
+            href="#graphics-pipeline"
+            class="site-status-card">
+
+            <div class="site-status-label">
+                🖼️ Graphics
+            </div>
+
+            <div
+                id="status-graphics-state"
+                class="site-status-state site-status-neutral">
+
+                Loading...
+
+            </div>
+
+            <div
+                id="status-graphics-detail"
+                class="site-status-detail">
+
+                Checking graphics...
+
+            </div>
+
+            <div class="site-status-card-action">
+                View Graphics →
+            </div>
+
+        </a>
+
+        <a
+            href="#featured-event-manager"
+            class="site-status-card">
+
+            <div class="site-status-label">
+                🎉 Featured Event
+            </div>
+
+            <div
+                id="status-featured-state"
+                class="site-status-state site-status-neutral">
+
+                Loading...
+
+            </div>
+
+            <div
+                id="status-featured-detail"
+                class="site-status-detail">
+
+                Checking event queue...
+
+            </div>
+
+            <div
+                id="status-featured-subdetail"
+                class="site-status-subdetail">
+            </div>
+
+            <div class="site-status-card-action">
+                Manage →
+            </div>
+
+        </a>
+
+        <a
+            href="#trainer-manager"
+            class="site-status-card">
+
+            <div class="site-status-label">
+                👥 Trainers
+            </div>
+
+            <div
+                id="status-trainers-state"
+                class="site-status-state site-status-neutral">
+
+                Loading...
+
+            </div>
+
+            <div
+                id="status-trainers-detail"
+                class="site-status-detail">
+
+                Checking Trainer Directory...
+
+            </div>
+
+            <div class="site-status-card-action">
+                Manage →
+            </div>
+
+        </a>
+
+        <a
+            href="#resources-manager"
+            class="site-status-card">
+
+            <div class="site-status-label">
+                📚 Resources
+            </div>
+
+            <div
+                id="status-resources-state"
+                class="site-status-state site-status-neutral">
+
+                Loading...
+
+            </div>
+
+            <div
+                id="status-resources-detail"
+                class="site-status-detail">
+
+                Checking Resources...
+
+            </div>
+
+            <div
+                id="status-resources-subdetail"
+                class="site-status-subdetail">
+            </div>
+
+            <div class="site-status-card-action">
+                Manage →
+            </div>
+
+        </a>
+
+    </div>
+
+    <div class="site-attention-panel">
+
+        <h3>
+            ⚠️ Needs Attention
+        </h3>
+
+        <div
+            id="site-attention-list"
+            class="site-attention-list">
+
+            <div class="site-attention-item">
+                Checking current Admin tasks...
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<br>
+
+   <!-- Weekly Planner -->
+
+<div class="weekly-planner" id="weekly-checklist">
+
+    <h2>📅 Weekly Checklist</h2>
+
+    <p class="section-description">
+        Notifications you'll normally update every week.
+    </p>
+
+    <div class="planner-grid">
+
+        <div class="planner-item" data-template="meetup">
+            <h3>📍 PokéTitans Campfire Meetups</h3>
+            <div class="planner-status" id="planner-meetup">
+                ⚪ Missing
+            </div>
+        </div>
+
+        <div class="planner-item" data-template="raidhour">
+            <h3>⚡ Raid Hour</h3>
+            <div class="planner-status" id="planner-raidhour">
+                ⚪ Missing
+            </div>
+        </div>
+
+        <div class="planner-item" data-template="spotlight">
+            <h3>✨ Spotlight Hour</h3>
+            <div class="planner-status" id="planner-spotlight">
+                ⚪ Missing
+            </div>
+        </div>
+
+        <div class="planner-item" data-template="maxmonday">
+            <h3>💎 Max Monday</h3>
+            <div class="planner-status" id="planner-maxmonday">
+                ⚪ Missing
+            </div>
+        </div>
+
+        <div class="planner-item" data-template="raidrotation">
+            <h3>🆕 New Raid Boss Rotation</h3>
+            <div class="planner-status" id="planner-raidrotation">
+                ⚪ Missing
+            </div>
+        </div>
+
+        <div class="planner-item" data-template="gopass">
+            <h3>🎟 Daily Bonuses & GO Pass</h3>
+            <div class="planner-status" id="planner-gopass">
+                ⚪ Missing
+            </div>
+        </div>
+
+    </div>
+
+    <hr>
+
+    <h2 id="event-special-notifications">🎉 Event & Special Notifications</h2>
+
+    <p class="section-description">
+        Notifications used only when special events occur.
+    </p>
+
+    <div class="planner-grid">
+
+        <div class="planner-item" data-template="communityday">
+            <h3>🎉 Community Day</h3>
+            <div class="planner-status" id="planner-communityday">
+                ⚪ Missing
+            </div>
+        </div>
+
+        <div class="planner-item" data-template="raidday">
+            <h3>⚔ Raid Day</h3>
+            <div class="planner-status" id="planner-raidday">
+                ⚪ Missing
+            </div>
+        </div>
+
+        <div class="planner-item" data-template="hatchday">
+            <h3>🥚 Hatch Day</h3>
+            <div class="planner-status" id="planner-hatchday">
+                ⚪ Missing
+            </div>
+        </div>
+
+        <div class="planner-item" data-template="globalevent">
+            <h3>🌎 Global Events</h3>
+            <div class="planner-status" id="planner-globalevent">
+                ⚪ Missing
+            </div>
+        </div>
+
+        <div class="planner-item" data-template="trinket">
+            <h3>🍀 Lucky Trinket</h3>
+            <div class="planner-status" id="planner-trinket">
+                ⚪ Missing
+            </div>
+        </div>
+
+        <div class="planner-item" data-template="research">
+            <h3>📦 Special Research</h3>
+            <div class="planner-status" id="planner-research">
+                ⚪ Missing
+            </div>
+        </div>
+
+        <div class="planner-item" data-template="codes">
+            <h3>🎁 Redemption Codes</h3>
+            <div class="planner-status" id="planner-codes">
+                ⚪ Missing
+            </div>
+        </div>
+
+        <div class="planner-item" data-template="news">
+            <h3>🚨 Breaking News</h3>
+            <div class="planner-status" id="planner-news">
+                ⚪ Missing
+            </div>
+        </div>
+
+    </div>
+
+</div>
+    <br>
+
+    <!-- Notification Center -->
+
+    <div class="notification-center" id="notification-center">
+
+        <h2>📢 Notification Center</h2>
+
+        <p class="section-description">
+            Quickly create, schedule and send community notifications.
+        </p>
+
+        <hr>
+
+        <hr>
+
+        <h3>✏ Notification Editor</h3>
+<input
+    type="hidden"
+    id="notification-id">
+        <div
+    id="editingBanner"
+    class="editing-banner"
+    style="display:none;">
+
+    📝 Editing Draft
+
+</div>
+        <label for="notification-title">Title</label>
+
+        <input
+            type="text"
+            id="notification-title"
+            placeholder="Notification title">
+
+        <label for="notification-message">Message</label>
+
+        <textarea
+            id="notification-message"
+            rows="6"
+            placeholder="Type your notification message..."></textarea>
+
+        <div class="editor-grid">
+
+            <div>
+
+                <label>Audience</label>
+
+<select id="notification-audience">
+
+    <option value="meetup">
+        📍 PokéTitans Campfire Meetups
+    </option>
+
+    <option value="raidhour">
+        ⚡ Raid Hour
+    </option>
+
+    <option value="spotlight">
+        ✨ Spotlight Hour
+    </option>
+
+    <option value="maxmonday">
+        💥 Max Monday
+    </option>
+
+    <option value="raidrotation">
+        🆕 New Raid Boss Rotation
+    </option>
+
+    <option value="gopass">
+        🎟 Daily Bonuses / GO Pass
+    </option>
+
+    <option value="trinket">
+        🍀 Lucky Trinket
+    </option>
+
+    <option value="raidday">
+        ⚔ Raid Day
+    </option>
+
+    <option value="hatchday">
+        🥚 Hatch Day
+    </option>
+
+    <option value="communityday">
+        🎉 Community Day
+    </option>
+
+    <option value="globalevent">
+        🌎 Global Event
+    </option>
+
+    <option value="research">
+        📦 Special Research / Timed Research
+    </option>
+
+    <option value="codes">
+        🎁 Redemption Codes
+    </option>
+
+    <option value="news">
+        🚨 Breaking News
+    </option>
+
+</select>
+
+            </div>
+
+            <div>
+
+                <label>Delivery</label>
+
+                <select id="notification-delivery">
+
+                    <option value="now">
+                        Send Immediately
+                    </option>
+
+                    <option value="schedule">
+                        Schedule
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+        <div class="schedule-grid">
+
+            <div>
+
+                <label>Date</label>
+
+                <input
+                    type="date"
+                    id="notification-date">
+
+            </div>
+
+            <div>
+
+                <label>Time</label>
+
+                <input
+                    type="time"
+                    id="notification-time">
+
+            </div>
+
+        </div>
+
+<div class="button-row">
+
+    <button
+        id="sendNotification"
+        class="btn-orange">
+
+        💾 Save Draft
+
+    </button>
+
+    <button
+        id="publishNotification"
+        class="btn-orange">
+
+        🚀 Publish
+
+    </button>
+
+    <button
+        id="clearNotification"
+        class="btn-orange">
+
+        🗑 Clear Editor
+
+    </button>
+
+</div>
+
+<hr>
+
+<h3>📱 Live Notification Preview</h3>
+
+<div class="notification-preview">
+
+    <div class="preview-header">
+
+        🔔 PokéTitans
+
+    </div>
+
+    <div
+        id="preview-title"
+        class="preview-title">
+
+        Notification Title
+
+    </div>
+
+    <div
+        id="preview-message"
+        class="preview-message">
+
+        Your notification message will appear here.
+
+    </div>
+
+    <div
+        id="preview-footer"
+        class="preview-footer">
+
+        Just now
+
+    </div>
+
+</div>
+
+    </div>
+
+    <br><br>
+
+<!-- Notification Pipeline -->
+
+<div class="draft-section" id="notification-pipeline">
+
+    <h2>📋 Notification Pipeline</h2>
+
+    <p id="draftCounts" class="draft-counts">
+
+        Loading statistics...
+
+    </p>
+
+    <div id="draftQueue">
+
+        Loading drafts...
+
+    </div>
+
+</div>
+
+    <br><br>
+
+<!-- Homepage Announcement Manager -->
+
+<div
+    class="notification-center announcement-manager"
+    id="announcement-manager">
+
+    <h2>📢 Homepage Announcement</h2>
+
+    <p class="section-description">
+        Create, schedule, edit or disable the announcement displayed on the homepage.
+    </p>
+
+    <p
+        id="announcement-admin-status"
+        class="draft-counts">
+
+        Loading announcement...
+
+    </p>
+
+    <hr>
+
+    <label
+        for="announcement-enabled"
+        style="display:flex; align-items:center; gap:10px;">
+
+        <input
+            type="checkbox"
+            id="announcement-enabled"
+            style="width:auto;">
+
+        Enable announcement
+
+    </label>
+
+    <label for="announcement-title-admin">
+        Title
+    </label>
+
+    <input
+        type="text"
+        id="announcement-title-admin"
+        maxlength="100"
+        placeholder="Community announcement">
+
+    <label for="announcement-message-admin">
+        Message
+    </label>
+
+    <textarea
+        id="announcement-message-admin"
+        rows="5"
+        maxlength="1000"
+        placeholder="Announcement message..."></textarea>
+
+    <label for="announcement-posted-date">
+        Posted Date
+    </label>
+
+    <input
+        type="date"
+        id="announcement-posted-date">
+
+    <hr>
+
+    <h3>Optional Schedule</h3>
+
+    <p class="section-description">
+        Leave Start and End blank for an announcement that goes live immediately and stays live until you disable it. Scheduled times use Eastern Time.
+    </p>
+
+    <div class="editor-grid">
+
+        <div>
+
+            <label for="announcement-start-date">
+                Start Date
+            </label>
+
+            <input
+                type="date"
+                id="announcement-start-date">
+
+        </div>
+
+        <div>
+
+            <label for="announcement-start-time">
+                Start Time
+            </label>
+
+            <input
+                type="time"
+                id="announcement-start-time">
+
+        </div>
+
+    </div>
+
+    <div class="editor-grid">
+
+        <div>
+
+            <label for="announcement-end-date">
+                End Date
+            </label>
+
+            <input
+                type="date"
+                id="announcement-end-date">
+
+        </div>
+
+        <div>
+
+            <label for="announcement-end-time">
+                End Time
+            </label>
+
+            <input
+                type="time"
+                id="announcement-end-time">
+
+        </div>
+
+    </div>
+
+    <div class="button-row">
+
+        <button
+            type="button"
+            id="saveAnnouncement"
+            class="btn-orange">
+
+            💾 Save Announcement
+
+        </button>
+
+        <button
+            type="button"
+            id="disableAnnouncement"
+            class="btn-orange">
+
+            ⏹ Disable Now
+
+        </button>
+
+    </div>
+
+</div>
+
+<br><br>
+
+<!-- Meetup Manager -->
+
+<div class="notification-center meetup-manager" id="meetup-manager">
+
+    <h2>📅 Meetup Manager</h2>
+
+    <p class="section-description">
+        Create and manage upcoming PokéTitans Campfire meetups.
+    </p>
+
+    <hr>
+
+    <h3 id="meetup-editor-title">
+        ➕ Create Meetup
+    </h3>
+
+    <input
+        type="hidden"
+        id="meetup-id">
+
+    <label for="meetup-title">
+        Event Title
+    </label>
+
+    <input
+        type="text"
+        id="meetup-title"
+        placeholder="Lunala Raid Hour - Shiny Debut">
+
+    <div class="editor-grid">
+
+        <div>
+
+            <label for="meetup-type">
+                Event Type
+            </label>
+
+            <select id="meetup-type">
+
+                <option value="Raid Hour">
+                    ⚡ Raid Hour
+                </option>
+
+                <option value="Community Day">
+                    🎉 Community Day
+                </option>
+
+                <option value="Raid Day">
+                    ⚔ Raid Day
+                </option>
+
+                <option value="Max Battle">
+                    💎 Max Battle
+                </option>
+
+                <option value="Special Event">
+                    🌎 Special Event
+                </option>
+
+                <option value="Other">
+                    📍 Other
+                </option>
+
+            </select>
+
+        </div>
+
+        <div>
+
+            <label for="meetup-date">
+                Date
+            </label>
+
+            <input
+                type="date"
+                id="meetup-date">
+
+        </div>
+
+    </div>
+
+    <div class="editor-grid">
+
+        <div>
+
+            <label for="meetup-start-time">
+                Start Time
+            </label>
+
+            <input
+                type="time"
+                id="meetup-start-time">
+
+        </div>
+
+        <div>
+
+            <label for="meetup-end-time">
+                End Time
+            </label>
+
+            <input
+                type="time"
+                id="meetup-end-time">
+
+        </div>
+
+    </div>
+
+    <label for="meetup-location">
+        Location
+    </label>
+
+    <input
+        type="text"
+        id="meetup-location"
+        value="Pembroke Historical Society Museum">
+
+    <label for="meetup-attendance">
+        Expected Attendance
+    </label>
+
+    <input
+        type="text"
+        id="meetup-attendance"
+        placeholder="8-12 Trainers">
+
+    <label for="meetup-description">
+        Description
+    </label>
+
+    <textarea
+        id="meetup-description"
+        rows="4"
+        placeholder="Shiny release of Lunala!"></textarea>
+
+    <label for="meetup-link">
+        Campfire Meetup Link
+    </label>
+
+    <input
+        type="url"
+        id="meetup-link"
+        placeholder="https://cmpf.re/...">
+
+    <br><br>
+
+    <button
+        id="saveMeetup"
+        class="btn-orange">
+
+        💾 Save Meetup
+
+    </button>
+
+    <button
+        id="clearMeetup"
+        class="btn-orange">
+
+        🗑 Clear Editor
+
+    </button>
+
+    <br><br>
+
+    <hr>
+
+    <h3>
+        📋 Upcoming Meetups
+    </h3>
+
+    <div id="meetup-list">
+        Loading meetups...
+    </div>
+
+</div>
+
+<br><br>
+
+<!-- Event Graphics Manager -->
+
+<div class="weekly-planner graphics-manager" id="graphics-manager">
+
+    <h2>🖼️ Event Graphics Manager</h2>
+
+    <p class="section-description">
+        Upload, schedule and manage the graphics displayed across the PokéTitans website.
+    </p>
+
+    <hr>
+
+    <h2>📅 Weekly Graphics</h2>
+
+    <p class="section-description">
+        Graphics you'll normally update or schedule every week.
+    </p>
+
+    <div class="planner-grid graphics-planner-grid">
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="goweekly">
+            <h3>📅 GO Weekly</h3>
+            <div class="planner-status" id="graphic-status-goweekly">
+                ⚪ Missing
+            </div>
+        </div>
+
+        <div
+            class="planner-item graphic-planner-item featured-queue-card"
+            data-featured-position="current">
+            <h3>🔥 Current Event</h3>
+            <div class="planner-status" id="graphic-status-currentevent">
+                ⚪ Missing
+            </div>
+        </div>
+
+        <div
+            class="planner-item graphic-planner-item featured-queue-card"
+            data-featured-position="upcoming">
+            <h3>⏭️ Upcoming Event</h3>
+            <div class="planner-status" id="graphic-status-upcomingevent">
+                ⚪ Missing
+            </div>
+        </div>
+
+        <div
+            class="planner-item graphic-planner-item featured-queue-card"
+            data-featured-position="future">
+            <h3>🔭 Future Event</h3>
+            <div class="planner-status" id="graphic-status-futureevent">
+                ⚪ Missing
+            </div>
+        </div>
+
+        <div
+            class="planner-item graphic-planner-item featured-queue-card"
+            data-featured-position="future2">
+            <h3>🔭 Future Event 2</h3>
+            <div class="planner-status" id="graphic-status-futureevent2">
+                ⚪ Missing
+            </div>
+        </div>
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="legendary">
+            <h3>👑 Legendary Raids</h3>
+            <div class="planner-status" id="graphic-status-legendary">
+                ⚪ Missing
+            </div>
+        </div>
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="mega">
+            <h3>🧬 Mega Raids</h3>
+            <div class="planner-status" id="graphic-status-mega">
+                ⚪ Missing
+            </div>
+        </div>
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="maxmonday">
+            <h3>💎 Max Monday</h3>
+            <div class="planner-status" id="graphic-status-maxmonday">
+                ⚪ Missing
+            </div>
+        </div>
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="spotlighthour">
+            <h3>✨ Spotlight Hour</h3>
+            <div class="planner-status" id="graphic-status-spotlighthour">
+                ⚪ Missing
+            </div>
+        </div>
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="today">
+            <h3>🎯 Today Image</h3>
+            <div class="planner-status" id="graphic-status-today">
+                ⚪ Optional
+            </div>
+        </div>
+
+    </div>
+
+    <hr>
+
+    <h2 id="monthly-special-graphics">🎉 Monthly &amp; Special Event Graphics</h2>
+
+    <p class="section-description">
+        Monthly graphics and event graphics that are only displayed when applicable.
+    </p>
+
+    <div class="planner-grid graphics-planner-grid">
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="monthly">
+            <h3>📆 Monthly Calendar</h3>
+            <div class="planner-status" id="graphic-status-monthly">
+                ⚪ Missing
+            </div>
+        </div>
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="seasonaldetails">
+            <h3>🌎 Seasonal Details</h3>
+            <div class="planner-status" id="graphic-status-seasonaldetails">
+                ⚪ Missing
+            </div>
+        </div>
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="shadowraids">
+            <h3>🌑 Shadow Raids</h3>
+            <div class="planner-status" id="graphic-status-shadowraids">
+                ⚪ Missing
+            </div>
+        </div>
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="communityday">
+            <h3>🎉 Community Day</h3>
+            <div class="planner-status" id="graphic-status-communityday">
+                ⚪ Inactive
+            </div>
+        </div>
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="communitydayclassic">
+            <h3>🔁 Community Day Classic</h3>
+            <div class="planner-status" id="graphic-status-communitydayclassic">
+                ⚪ Inactive
+            </div>
+        </div>
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="hatchday">
+            <h3>🥚 Hatch Day</h3>
+            <div class="planner-status" id="graphic-status-hatchday">
+                ⚪ Inactive
+            </div>
+        </div>
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="raidday">
+            <h3>⚔️ Raid Day</h3>
+            <div class="planner-status" id="graphic-status-raidday">
+                ⚪ Inactive
+            </div>
+        </div>
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="megaraidday">
+            <h3>🧬 Mega Raid Day</h3>
+            <div class="planner-status" id="graphic-status-megaraidday">
+                ⚪ Inactive
+            </div>
+        </div>
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="shadowraidday">
+            <h3>🌑 Shadow Raid Day</h3>
+            <div class="planner-status" id="graphic-status-shadowraidday">
+                ⚪ Inactive
+            </div>
+        </div>
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="maxbattleday">
+            <h3>💎 Max Battle Day</h3>
+            <div class="planner-status" id="graphic-status-maxbattleday">
+                ⚪ Inactive
+            </div>
+        </div>
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="catchmasteryday">
+            <h3>🎯 Catch Mastery Day</h3>
+            <div class="planner-status" id="graphic-status-catchmasteryday">
+                ⚪ Inactive
+            </div>
+        </div>
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="researchday">
+            <h3>🔬 Research Day</h3>
+            <div class="planner-status" id="graphic-status-researchday">
+                ⚪ Inactive
+            </div>
+        </div>
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="globalevent">
+            <h3>🌐 Global Event</h3>
+            <div class="planner-status" id="graphic-status-globalevent">
+                ⚪ Inactive
+            </div>
+        </div>
+
+        <div class="planner-item graphic-planner-item" data-graphic-type="ticketedevent">
+            <h3>🎟️ Ticketed Event</h3>
+            <div class="planner-status" id="graphic-status-ticketedevent">
+                ⚪ Inactive
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<br><br>
+
+<!-- Standard Graphic Editor -->
+
+<div class="notification-center graphics-editor" id="graphics-editor">
+
+    <h2>🖼️ Graphic Editor</h2>
+
+    <p class="section-description">
+        Select a non-featured graphic card above to upload, publish or schedule its next image.
+    </p>
+
+    <input type="hidden" id="graphic-id">
+    <input type="hidden" id="graphic-type">
+
+    <hr>
+
+    <h3 id="graphic-editor-title">
+        Select a graphic card above
+    </h3>
+
+    <div class="editor-grid graphic-preview-grid">
+
+        <div>
+            <h3>Current Graphic</h3>
+            <div id="graphic-current-preview">
+                No active graphic loaded.
+            </div>
+        </div>
+
+        <div>
+            <h3>Next Scheduled</h3>
+            <div id="graphic-next-preview">
+                Nothing scheduled.
+            </div>
+        </div>
+
+    </div>
+
+    <br>
+
+    <label for="graphic-image">
+        Upload Graphic
+    </label>
+
+    <input
+        type="file"
+        id="graphic-image"
+        accept="image/png,image/jpeg,image/webp">
+
+    <div class="editor-grid">
+
+        <div>
+
+            <label for="graphic-event-date">
+                Event Date
+            </label>
+
+            <input
+                type="date"
+                id="graphic-event-date">
+
+        </div>
+
+        <div>
+
+            <label for="graphic-placement">
+                Website Placement
+            </label>
+
+            <input
+                type="text"
+                id="graphic-placement"
+                readonly
+                placeholder="Automatically assigned">
+
+        </div>
+
+    </div>
+
+    <h3>🕒 Publishing Schedule</h3>
+
+    <p class="section-description">
+        All graphic publishing times use Eastern Time.
+    </p>
+
+    <div class="editor-grid">
+
+        <div>
+
+            <label for="graphic-go-live-date">
+                Go Live Date
+            </label>
+
+            <input
+                type="date"
+                id="graphic-go-live-date">
+
+        </div>
+
+        <div>
+
+            <label for="graphic-go-live-time">
+                Go Live Time
+            </label>
+
+            <input
+                type="time"
+                id="graphic-go-live-time">
+
+        </div>
+
+    </div>
+
+    <div class="editor-grid">
+
+        <div>
+
+            <label for="graphic-hide-date">
+                Hide After Date
+            </label>
+
+            <input
+                type="date"
+                id="graphic-hide-date">
+
+        </div>
+
+        <div>
+
+            <label for="graphic-hide-time">
+                Hide After Time
+            </label>
+
+            <input
+                type="time"
+                id="graphic-hide-time">
+
+        </div>
+
+    </div>
+
+    <label for="graphic-link">
+        Optional Link
+    </label>
+
+    <input
+        type="url"
+        id="graphic-link"
+        placeholder="https://...">
+
+    <div id="graphic-ticket-field" style="display:none;">
+
+        <label for="graphic-ticket-url">
+            Ticket Purchase URL
+        </label>
+
+        <input
+            type="url"
+            id="graphic-ticket-url"
+            placeholder="https://...">
+
+    </div>
+
+    <div class="button-row">
+
+        <button
+            type="button"
+            id="saveGraphic"
+            class="btn-orange">
+
+            💾 Save Schedule
+
+        </button>
+
+        <button
+            type="button"
+            id="publishGraphicNow"
+            class="btn-orange">
+
+            🚀 Publish Now
+
+        </button>
+
+        <button
+            type="button"
+            id="clearGraphic"
+            class="btn-orange">
+
+            🗑 Clear Editor
+
+        </button>
+
+    </div>
+
+</div>
+
+<br><br>
+
+<!-- Featured Event Queue -->
+
+<div class="notification-center featured-event-manager" id="featured-event-manager">
+
+    <h2>🔥 Featured Event Queue</h2>
+
+    <p class="section-description">
+        Upload each featured event once. Event dates automatically determine Current Event, Upcoming Event, Future Event and Future Event 2. On the Events page, featured events still sort chronologically with every other event.
+    </p>
+
+    <input
+        type="hidden"
+        id="featured-event-id">
+
+    <hr>
+
+    <h3 id="featured-event-editor-title">
+        ➕ Add Featured Event
+    </h3>
+
+    <label for="featured-event-name">
+        Event Name
+    </label>
+
+    <input
+        type="text"
+        id="featured-event-name"
+        placeholder="Pokémon GO featured event">
+
+    <label for="featured-event-image">
+        Event Graphic
+    </label>
+
+    <input
+        type="file"
+        id="featured-event-image"
+        accept="image/png,image/jpeg,image/webp">
+
+    <p class="section-description">
+        Event start and end times use Eastern Time.
+    </p>
+
+    <div class="editor-grid">
+
+        <div>
+
+            <label for="featured-event-start-date">
+                Event Start Date
+            </label>
+
+            <input
+                type="date"
+                id="featured-event-start-date">
+
+        </div>
+
+        <div>
+
+            <label for="featured-event-start-time">
+                Event Start Time
+            </label>
+
+            <input
+                type="time"
+                id="featured-event-start-time">
+
+        </div>
+
+    </div>
+
+    <div class="editor-grid">
+
+        <div>
+
+            <label for="featured-event-end-date">
+                Event End Date
+            </label>
+
+            <input
+                type="date"
+                id="featured-event-end-date">
+
+        </div>
+
+        <div>
+
+            <label for="featured-event-end-time">
+                Event End Time
+            </label>
+
+            <input
+                type="time"
+                id="featured-event-end-time">
+
+        </div>
+
+    </div>
+
+    <label for="featured-event-link">
+        Optional Link
+    </label>
+
+    <input
+        type="url"
+        id="featured-event-link"
+        placeholder="https://...">
+
+    <div class="button-row">
+
+        <button
+            type="button"
+            id="saveFeaturedEvent"
+            class="btn-orange">
+
+            💾 Save Featured Event
+
+        </button>
+
+        <button
+            type="button"
+            id="clearFeaturedEvent"
+            class="btn-orange">
+
+            🗑 Clear Editor
+
+        </button>
+
+    </div>
+
+    <br>
+
+    <hr>
+
+    <h3>📋 Featured Event Queue</h3>
+
+    <div id="featured-event-queue">
+        No featured events loaded yet.
+    </div>
+
+</div>
+
+<br><br>
+
+<!-- Live + Scheduled Graphics Pipeline -->
+
+<div class="draft-section graphics-pipeline" id="graphics-pipeline">
+
+    <h2>🖼️ Live &amp; Scheduled Graphics</h2>
+
+    <p id="graphicsCounts" class="draft-counts">
+        Live and scheduled graphics will appear here.
+    </p>
+
+    <div id="graphicsQueue">
+        No live or scheduled graphics loaded yet.
+    </div>
+
+</div>
+
+<br><br>
+
+<!-- Trainer Management -->
+
+<div
+    class="notification-center trainer-manager"
+    id="trainer-manager">
+
+    <h2>👥 Trainer Management</h2>
+
+    <p class="section-description">
+        Search, edit and remove Trainers currently listed in the public Trainer Directory.
+    </p>
+
+    <hr>
+
+    <h3 id="trainer-admin-editor-title">
+        Select a trainer below to edit
+    </h3>
+
+    <input
+        type="hidden"
+        id="trainer-admin-id">
+
+    <div class="editor-grid">
+
+        <div>
+
+            <label for="trainer-admin-name">
+                Trainer Name
+            </label>
+
+            <input
+                type="text"
+                id="trainer-admin-name"
+                placeholder="Trainer Name">
+
+        </div>
+
+        <div>
+
+            <label for="trainer-admin-code">
+                Friend Code
+            </label>
+
+            <input
+                type="text"
+                id="trainer-admin-code"
+                placeholder="2428 9779 6456"
+                maxlength="14"
+                inputmode="numeric"
+                autocomplete="off">
+
+        </div>
+
+    </div>
+
+    <label for="trainer-admin-location">
+        Main Play Location
+    </label>
+
+    <select id="trainer-admin-location">
+
+        <option value="">
+            Select Location
+        </option>
+
+        <option>Pembroke</option>
+        <option>Hanover</option>
+        <option>Hanson</option>
+        <option>Halifax</option>
+        <option>Kingston</option>
+        <option>Marshfield</option>
+        <option>Rockland</option>
+        <option>Scituate</option>
+        <option>Quincy</option>
+        <option>Plymouth</option>
+        <option>Abington</option>
+        <option>Whitman</option>
+        <option>Plympton</option>
+        <option>Carver</option>
+        <option>Other</option>
+
+    </select>
+
+    <input
+        type="text"
+        id="trainer-admin-other-location"
+        placeholder="Enter main play location"
+        style="display:none; margin-top:12px;">
+
+    <div class="button-row">
+
+        <button
+            type="button"
+            id="saveTrainerAdmin"
+            class="btn-orange"
+            disabled>
+
+            💾 Save Changes
+
+        </button>
+
+        <button
+            type="button"
+            id="clearTrainerAdmin"
+            class="btn-orange">
+
+            🗑 Clear Editor
+
+        </button>
+
+    </div>
+
+    <br>
+
+    <hr>
+
+    <h3>📋 Registered Trainers</h3>
+
+    <p
+        id="trainer-admin-count"
+        class="draft-counts">
+
+        Loading trainers...
+
+    </p>
+
+    <details class="admin-collapsible trainer-list-collapsible">
+
+        <summary>
+            👥 Show / Hide Trainer Directory
+        </summary>
+
+        <div class="admin-collapsible-content">
+
+            <label for="trainer-admin-search">
+                Search Trainers
+            </label>
+
+            <input
+                type="search"
+                id="trainer-admin-search"
+                placeholder="Search by Trainer Name, Friend Code or Location">
+
+            <div id="trainer-admin-list">
+                Loading trainers...
+            </div>
+
+        </div>
+
+    </details>
+
+</div>
+
+<br><br>
+
+
+<!-- Resources Manager -->
+
+<div
+    class="notification-center resources-manager"
+    id="resources-manager">
+
+    <h2>📚 Resources Manager</h2>
+
+    <p class="section-description">
+        Manage Quick Guides, Useful Websites, Podcasts, Socials and Community Links independently. The automatic GOHub news feed is not managed here.
+    </p>
+
+    <div class="editor-grid">
+
+        <div>
+            <label for="resource-admin-section">
+                Section
+            </label>
+
+            <select id="resource-admin-section">
+                <option value="quickguides">📚 Quick Guides</option>
+                <option value="websites">🌐 Useful Websites</option>
+                <option value="podcasts">🎙️ Podcasts</option>
+                <option value="socials">📱 Socials</option>
+                <option value="communities">🤝 Community Links</option>
+            </select>
+        </div>
+
+        <div class="resource-visibility-field">
+            <label for="resource-active">
+                Visibility
+            </label>
+
+            <label class="resource-active-label">
+                <input
+                    type="checkbox"
+                    id="resource-active"
+                    checked>
+                Visible on Resources page
+            </label>
+        </div>
+
+    </div>
+
+    <hr>
+
+    <h3 id="resource-editor-title">
+        ➕ Add Quick Guide
+    </h3>
+
+    <input
+        type="hidden"
+        id="resource-admin-id">
+
+    <div id="resource-quickguide-fields">
+
+        <div class="editor-grid">
+
+            <div>
+                <label for="resource-internal-name">
+                    Internal Name
+                </label>
+
+                <input
+                    type="text"
+                    id="resource-internal-name"
+                    maxlength="100"
+                    placeholder="Type Effectiveness Guide">
+            </div>
+
+            <div>
+                <label for="resource-alt-text">
+                    Alt Text
+                </label>
+
+                <input
+                    type="text"
+                    id="resource-alt-text"
+                    maxlength="180"
+                    placeholder="Pokémon GO type effectiveness quick guide">
+            </div>
+
+        </div>
+
+        <label for="resource-image">
+            Quick Guide Image
+        </label>
+
+        <input
+            type="file"
+            id="resource-image"
+            accept="image/png,image/jpeg,image/webp">
+
+        <p class="resource-field-help">
+            PNG, JPEG or WebP up to 25 MB. The Internal Name is only for Admin; the public page displays the image only.
+        </p>
+
+        <div
+            id="resource-current-image-wrap"
+            class="resource-current-image-wrap"
+            style="display:none;">
+
+            <strong>Current Image</strong>
+
+            <img
+                id="resource-current-image"
+                class="resource-current-image"
+                alt="">
+
+            <p class="resource-field-help">
+                Leave the image field blank while editing to keep this image.
+            </p>
+
+        </div>
+
+    </div>
+
+    <div
+        id="resource-link-fields"
+        style="display:none;">
+
+        <label for="resource-title">
+            Title
+        </label>
+
+        <input
+            type="text"
+            id="resource-title"
+            maxlength="100"
+            placeholder="Resource title">
+
+        <label for="resource-description">
+            Description
+        </label>
+
+        <textarea
+            id="resource-description"
+            rows="4"
+            maxlength="500"
+            placeholder="Short description shown on the Resources page."></textarea>
+
+        <label for="resource-url">
+            URL
+        </label>
+
+        <input
+            type="url"
+            id="resource-url"
+            placeholder="https://...">
+<div
+    id="resource-community-fields"
+    style="display:none;">
+
+    <label for="resource-community-platform">
+        Community Platform
+    </label>
+
+    <select id="resource-community-platform">
+        <option value="">Select Discord or Campfire</option>
+        <option value="Discord">Discord</option>
+        <option value="Campfire">Campfire</option>
+    </select>
+
+    <label for="resource-community-area">
+        Community Area / Town
+    </label>
+
+    <input
+        type="text"
+        id="resource-community-area"
+        maxlength="80"
+        placeholder="South Shore, Plymouth, Quincy, etc.">
+
+</div>
+
+    </div>
+
+    <div class="button-row">
+
+        <button
+            type="button"
+            id="saveResource"
+            class="btn-orange">
+            💾 Save Resource
+        </button>
+
+        <button
+            type="button"
+            id="clearResource"
+            class="btn-orange">
+            🗑 Clear Editor
+        </button>
+
+    </div>
+
+    <br>
+    <hr>
+
+    <h3>📋 Current Resources</h3>
+
+    <p
+        id="resource-admin-count"
+        class="draft-counts">
+        Loading resources...
+    </p>
+
+    <div id="resource-admin-list">
+        Loading resources...
+    </div>
+<br>
+<hr>
+
+<div id="community-links-admin">
+
+    <h3>🤝 Published Community Links</h3>
+
+    <p
+        class="section-description"
+        style="text-align:left;margin:0 0 12px;">
+        View and manage approved Pokémon GO communities currently saved to the Resources page. Live and hidden links both appear here.
+    </p>
+
+    <p
+        id="community-links-admin-count"
+        class="draft-counts">
+        Loading published community links...
+    </p>
+
+    <div id="community-links-admin-list">
+        Loading published community links...
+    </div>
+
+</div>
+
+<br>
+<hr>
+
+<div id="community-submissions-admin">
+
+    <h3>📨 Community Link Submissions</h3>
+
+    <p
+        class="section-description"
+        style="text-align:left;margin:0 0 12px;">
+        Links submitted from the public Resources page stay hidden until you approve them here.
+    </p>
+
+    <p
+        id="community-submission-count"
+        class="draft-counts">
+        Loading submissions...
+    </p>
+
+    <div id="community-submission-list">
+        Loading submissions...
+    </div>
+
+</div>
+</div>
+
+<br><br>
+
+<!-- Future Modules -->
+
+<div class="admin-grid">
+
+    <div class="admin-card" id="analytics">
+
+        <h2>📊 Analytics</h2>
+
+        <p>
+            Website traffic and notification statistics.
+        </p>
+
+        <button class="btn-orange" disabled>
+
+            Coming Soon
+
+        </button>
+
+    </div>
+
+</div>
+
+</div>
+
+</section>
+
+<a
+    href="#admin-top"
+    class="admin-back-to-top"
+    aria-label="Back to top">
+    ↑ Top
+</a>
+
+<script
+    type="module"
+    src="assets/js/admin-auth.js?v=11">
+</script>
+
+</body>
+
+</html>
