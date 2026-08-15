@@ -2,7 +2,9 @@ import { db } from "./firebase.js";
 
 import {
     collection,
-    getDocs
+    getDocs,
+    addDoc,
+    serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 const SECTION_CONFIG = {
@@ -25,6 +27,11 @@ const SECTION_CONFIG = {
         containerId: "socials-container",
         sectionId: "socials",
         navText: "Community Socials"
+    },
+    communities: {
+        containerId: "communities-container",
+        sectionId: "communities",
+        navText: "Local Communities"
     }
 };
 
@@ -32,7 +39,8 @@ const SECTION_ORDER = [
     "quickguides",
     "websites",
     "podcasts",
-    "socials"
+    "socials",
+    "communities"
 ];
 
 const managedResources = new Map();
@@ -54,6 +62,90 @@ function safeHttpUrl(value) {
         }
     } catch {
         // Invalid URL.
+    }
+
+    return "";
+}
+
+function communityUrlMatchesPlatform(
+    value,
+    platform
+) {
+
+    const safe =
+        safeHttpUrl(
+            value
+        );
+
+    if (!safe) {
+        return false;
+    }
+
+    try {
+
+        const host =
+            new URL(
+                safe
+            ).hostname
+                .toLowerCase();
+
+        if (
+            platform ===
+            "Discord"
+        ) {
+            return (
+                host ===
+                    "discord.gg" ||
+                host ===
+                    "discord.com" ||
+                host.endsWith(
+                    ".discord.com"
+                )
+            );
+        }
+
+        if (
+            platform ===
+            "Campfire"
+        ) {
+            return (
+                host ===
+                    "cmpf.re" ||
+                host ===
+                    "campfire.onelink.me" ||
+                host.includes(
+                    "campfire"
+                )
+            );
+        }
+
+    } catch {
+        return false;
+    }
+
+    return false;
+}
+
+function inferCommunityPlatform(
+    value
+) {
+
+    if (
+        communityUrlMatchesPlatform(
+            value,
+            "Discord"
+        )
+    ) {
+        return "Discord";
+    }
+
+    if (
+        communityUrlMatchesPlatform(
+            value,
+            "Campfire"
+        )
+    ) {
+        return "Campfire";
     }
 
     return "";
@@ -118,6 +210,438 @@ function setSectionVisible(
         visible
             ? ""
             : "none";
+}
+
+function ensureCommunityNavLink() {
+
+    const nav =
+        document.querySelector(
+            ".resource-nav"
+        );
+
+    if (!nav) {
+        return;
+    }
+
+    let link =
+        Array.from(
+            nav.querySelectorAll(
+                "a"
+            )
+        ).find(
+            item =>
+                item.getAttribute(
+                    "href"
+                ) ===
+                "#communities"
+        );
+
+    if (!link) {
+
+        link =
+            document.createElement(
+                "a"
+            );
+
+        link.className =
+            "hero-button secondary-button";
+
+        link.href =
+            "#communities";
+
+        link.textContent =
+            "Local Communities";
+
+        nav.appendChild(
+            link
+        );
+    }
+}
+
+function createCommunitySection() {
+
+    const section =
+        document.createElement(
+            "section"
+        );
+
+    section.id =
+        "communities";
+
+    section.className =
+        "section resources-managed-section";
+
+    const container =
+        document.createElement(
+            "div"
+        );
+
+    container.className =
+        "container";
+
+    const title =
+        document.createElement(
+            "h2"
+        );
+
+    title.className =
+        "section-title";
+
+    title.textContent =
+        "🤝 Other Pokémon GO Communities";
+
+    const description =
+        document.createElement(
+            "p"
+        );
+
+    description.className =
+        "section-description";
+
+    description.textContent =
+        "Find other local Pokémon GO groups on Discord and Campfire. Community links are reviewed before they appear here.";
+
+    const grid =
+        document.createElement(
+            "div"
+        );
+
+    grid.id =
+        "communities-container";
+
+    grid.className =
+        "managed-resource-grid community-links-grid";
+
+    const submitCard =
+        document.createElement(
+            "div"
+        );
+
+    submitCard.className =
+        "community-submit-card";
+
+    submitCard.innerHTML = `
+        <h3>📨 Submit a Community</h3>
+        <p>
+            Run a local Pokémon GO Discord or Campfire group? Submit it for review. It will only appear on this page after PokéTitans approval.
+        </p>
+
+        <form id="community-submission-form" class="community-submission-form">
+            <div>
+                <label for="community-submit-name">Community Name</label>
+                <input
+                    type="text"
+                    id="community-submit-name"
+                    maxlength="80"
+                    required
+                    placeholder="South Shore Pokémon GO">
+            </div>
+
+            <div>
+                <label for="community-submit-area">Area / Town</label>
+                <input
+                    type="text"
+                    id="community-submit-area"
+                    maxlength="80"
+                    required
+                    placeholder="Plymouth, South Shore, Quincy, etc.">
+            </div>
+
+            <div>
+                <label for="community-submit-platform">Platform</label>
+                <select id="community-submit-platform" required>
+                    <option value="">Select Platform</option>
+                    <option value="Discord">Discord</option>
+                    <option value="Campfire">Campfire</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="community-submit-url">Invite / Community Link</label>
+                <input
+                    type="url"
+                    id="community-submit-url"
+                    maxlength="500"
+                    required
+                    placeholder="https://discord.gg/... or https://cmpf.re/...">
+            </div>
+
+            <div class="community-form-full">
+                <label for="community-submit-description">Short Description</label>
+                <textarea
+                    id="community-submit-description"
+                    maxlength="300"
+                    rows="4"
+                    placeholder="Tell Trainers what area your group covers or what your community focuses on."></textarea>
+            </div>
+
+            <div class="community-honeypot" aria-hidden="true">
+                <label for="community-submit-website">Website</label>
+                <input
+                    type="text"
+                    id="community-submit-website"
+                    tabindex="-1"
+                    autocomplete="off">
+            </div>
+
+            <div class="community-form-full">
+                <button
+                    type="submit"
+                    class="hero-button community-submit-button">
+                    Submit Community for Review
+                </button>
+
+                <p
+                    id="community-submit-status"
+                    class="community-submit-status"
+                    role="status"
+                    aria-live="polite">
+                </p>
+            </div>
+        </form>
+    `;
+
+    container.append(
+        title,
+        description,
+        grid,
+        submitCard
+    );
+
+    section.appendChild(
+        container
+    );
+
+    return section;
+}
+
+function installCommunitySection() {
+
+    ensureCommunityNavLink();
+
+    if (
+        document.getElementById(
+            "communities"
+        )
+    ) {
+        return;
+    }
+
+    const section =
+        createCommunitySection();
+
+    const footer =
+        document.querySelector(
+            "footer"
+        );
+
+    if (
+        footer?.parentNode
+    ) {
+        footer.parentNode.insertBefore(
+            section,
+            footer
+        );
+    } else {
+        document.body.appendChild(
+            section
+        );
+    }
+
+    getElementByIdSafe(
+        "community-submission-form"
+    )?.addEventListener(
+        "submit",
+        submitCommunityLink
+    );
+}
+
+function getElementByIdSafe(
+    id
+) {
+    return document.getElementById(
+        id
+    );
+}
+
+async function submitCommunityLink(
+    event
+) {
+
+    event.preventDefault();
+
+    const status =
+        getElementByIdSafe(
+            "community-submit-status"
+        );
+
+    const button =
+        event.currentTarget
+            .querySelector(
+                ".community-submit-button"
+            );
+
+    const honeypot =
+        getElementByIdSafe(
+            "community-submit-website"
+        )?.value
+            .trim() ||
+        "";
+
+    if (honeypot) {
+        if (status) {
+            status.textContent =
+                "Submission received.";
+        }
+        return;
+    }
+
+    const communityName =
+        getElementByIdSafe(
+            "community-submit-name"
+        ).value
+            .trim();
+
+    const area =
+        getElementByIdSafe(
+            "community-submit-area"
+        ).value
+            .trim();
+
+    const platform =
+        getElementByIdSafe(
+            "community-submit-platform"
+        ).value;
+
+    const url =
+        safeHttpUrl(
+            getElementByIdSafe(
+                "community-submit-url"
+            ).value
+        );
+
+    const description =
+        getElementByIdSafe(
+            "community-submit-description"
+        ).value
+            .trim();
+
+    if (
+        communityName.length <
+            3 ||
+        area.length <
+            2
+    ) {
+        status.textContent =
+            "Please enter a community name and area.";
+        return;
+    }
+
+    if (
+        ![
+            "Discord",
+            "Campfire"
+        ].includes(
+            platform
+        )
+    ) {
+        status.textContent =
+            "Please choose Discord or Campfire.";
+        return;
+    }
+
+    if (
+        !url ||
+        !communityUrlMatchesPlatform(
+            url,
+            platform
+        )
+    ) {
+        status.textContent =
+            platform ===
+                "Discord"
+                ? "Please enter a valid Discord invite/community link."
+                : "Please enter a valid Campfire community link.";
+        return;
+    }
+
+    const lastSubmittedAt =
+        Number(
+            localStorage.getItem(
+                "poketitans-community-submitted-at"
+            ) ||
+            0
+        );
+
+    if (
+        Date.now() -
+            lastSubmittedAt <
+        30 * 1000
+    ) {
+        status.textContent =
+            "Please wait a moment before submitting another community.";
+        return;
+    }
+
+    button.disabled =
+        true;
+
+    button.textContent =
+        "Submitting...";
+
+    status.textContent =
+        "";
+
+    try {
+
+        await addDoc(
+            collection(
+                db,
+                "communitySubmissions"
+            ),
+            {
+                communityName,
+                area,
+                platform,
+                description,
+                url,
+                status:
+                    "pending",
+                createdAt:
+                    serverTimestamp()
+            }
+        );
+
+        localStorage.setItem(
+            "poketitans-community-submitted-at",
+            String(
+                Date.now()
+            )
+        );
+
+        event.currentTarget.reset();
+
+        status.textContent =
+            "✅ Thanks! Your community was submitted for review and will appear here only after approval.";
+
+    } catch (error) {
+
+        console.error(
+            "Unable to submit community link:",
+            error
+        );
+
+        status.textContent =
+            "Unable to submit the community right now. Please try again later.";
+
+    } finally {
+
+        button.disabled =
+            false;
+
+        button.textContent =
+            "Submit Community for Review";
+    }
 }
 
 function ensureToolsNavLink() {
@@ -581,6 +1105,43 @@ function createLinkCard(
         resource.title ||
         "Resource";
 
+    let communityMeta =
+        null;
+
+    if (
+        sectionKey ===
+            "communities"
+    ) {
+
+        communityMeta =
+            document.createElement(
+                "p"
+            );
+
+        communityMeta.className =
+            "community-resource-meta";
+
+        const platform =
+            resource.platform ||
+            inferCommunityPlatform(
+                url
+            ) ||
+            "Community";
+
+        communityMeta.textContent =
+            [
+                platform,
+                resource.area ||
+                    ""
+            ]
+                .filter(
+                    Boolean
+                )
+                .join(
+                    " • "
+                );
+    }
+
     const description =
         document.createElement("p");
 
@@ -607,18 +1168,45 @@ function createLinkCard(
         podcasts:
             "Listen",
         socials:
-            "Follow"
+            "Follow",
+        communities:
+            (
+                resource.platform ||
+                inferCommunityPlatform(
+                    url
+                )
+            ) ===
+                "Discord"
+                ? "Join Discord"
+                : (
+                    resource.platform ||
+                    inferCommunityPlatform(
+                        url
+                  )
+                  ) ===
+                    "Campfire"
+                    ? "Open Campfire"
+                    : "Open Community"
     };
 
     button.textContent =
         buttonLabels[sectionKey] ||
         "Open";
 
-    card.append(
-        title,
-        description,
-        button
-    );
+    if (communityMeta) {
+        card.append(
+            title,
+            communityMeta,
+            description,
+            button
+        );
+    } else {
+        card.append(
+            title,
+            description,
+            button
+        );
+    }
 
     return card;
 }
@@ -647,6 +1235,34 @@ function renderManagedSection(
      * leave the existing legacy/static renderer alone.
      */
     if (!allItems.length) {
+
+        if (
+            sectionKey ===
+            "communities"
+        ) {
+            container.replaceChildren();
+
+            const empty =
+                document.createElement(
+                    "p"
+                );
+
+            empty.className =
+                "community-empty-message";
+
+            empty.textContent =
+                "No additional community links are listed yet. You can submit one below for review.";
+
+            container.appendChild(
+                empty
+            );
+
+            setSectionVisible(
+                sectionKey,
+                true
+            );
+        }
+
         return;
     }
 
@@ -686,9 +1302,35 @@ function renderManagedSection(
         }
     );
 
+    if (
+        sectionKey ===
+            "communities" &&
+        container.children.length ===
+            0
+    ) {
+        const empty =
+            document.createElement(
+                "p"
+            );
+
+        empty.className =
+            "community-empty-message";
+
+        empty.textContent =
+            "No additional community links are visible right now. You can submit one below for review.";
+
+        container.appendChild(
+            empty
+        );
+    }
+
     setSectionVisible(
         sectionKey,
-        container.children.length > 0
+        sectionKey ===
+            "communities"
+            ? true
+            : container.children.length >
+                0
     );
 
     queueMicrotask(() => {
@@ -799,6 +1441,7 @@ async function loadManagedResources() {
 }
 
 async function initializeManagedResources() {
+    installCommunitySection();
     installToolsSection();
 
     try {
