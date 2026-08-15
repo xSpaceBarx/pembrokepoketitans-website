@@ -163,3 +163,136 @@
         padding: 64px 12px 18px;
     }
 }
+
+
+/* ==========================================
+   Community Links + Public Submission Form
+========================================== */
+
+.community-links-grid {
+    margin-bottom: 34px;
+}
+
+.community-resource-meta {
+    margin-bottom: 10px !important;
+    color: #153A5B !important;
+    font-weight: 700;
+}
+
+.community-empty-message {
+    grid-column: 1 / -1;
+    margin: 0;
+    padding: 20px;
+    border-radius: 14px;
+    background: #ffffff;
+    color: #555;
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(0,0,0,.06);
+}
+
+.community-submit-card {
+    max-width: 900px;
+    margin: 42px auto 0;
+    padding: 28px;
+    border-radius: 18px;
+    background: #ffffff;
+    box-shadow: 0 8px 22px rgba(0,0,0,.08);
+}
+
+.community-submit-card h3 {
+    margin: 0 0 8px;
+    color: #153A5B;
+    font-size: 1.5rem;
+}
+
+.community-submit-card > p {
+    margin: 0 0 24px;
+    color: #555;
+    line-height: 1.65;
+}
+
+.community-submission-form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.community-submission-form label {
+    display: block;
+    margin-bottom: 7px;
+    color: #153A5B;
+    font-weight: 700;
+}
+
+.community-submission-form input,
+.community-submission-form select,
+.community-submission-form textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 13px 14px;
+    border: 1px solid #cfd4da;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #222;
+    font: inherit;
+}
+
+.community-submission-form textarea {
+    resize: vertical;
+    min-height: 110px;
+}
+
+.community-submission-form input:focus,
+.community-submission-form select:focus,
+.community-submission-form textarea:focus {
+    outline: 2px solid #F57C00;
+    outline-offset: 2px;
+}
+
+.community-form-full {
+    grid-column: 1 / -1;
+}
+
+.community-submit-button {
+    border: 0;
+    cursor: pointer;
+}
+
+.community-submit-button:disabled {
+    opacity: .65;
+    cursor: wait;
+}
+
+.community-submit-status {
+    min-height: 24px;
+    margin: 14px 0 0;
+    color: #153A5B;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.community-honeypot {
+    position: absolute !important;
+    left: -10000px !important;
+    width: 1px !important;
+    height: 1px !important;
+    overflow: hidden !important;
+}
+
+@media (max-width: 700px) {
+    .community-submission-form {
+        grid-template-columns: 1fr;
+    }
+
+    .community-form-full {
+        grid-column: auto;
+    }
+
+    .community-submit-card {
+        padding: 22px 18px;
+    }
+
+    .community-submit-button {
+        width: 100%;
+    }
+}
