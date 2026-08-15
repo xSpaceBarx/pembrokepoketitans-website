@@ -142,6 +142,62 @@ function requestNotificationDraft(
     );
 }
 
+const MEETUP_DEFAULTS = {
+    "Raid Hour": {
+        startTime:
+            "18:00",
+        endTime:
+            "19:00",
+        attendance:
+            "8-12 Trainers"
+    },
+    "Raid Day": {
+        startTime:
+            "14:00",
+        endTime:
+            "17:00",
+        attendance:
+            "15-20 Trainers"
+    },
+    "Max Battle": {
+        startTime:
+            "14:00",
+        endTime:
+            "17:00",
+        attendance:
+            "15-20 Trainers"
+    }
+};
+
+function applyMeetupTypeDefaults(
+    eventType
+) {
+
+    const defaults =
+        MEETUP_DEFAULTS[
+            eventType
+        ] ||
+        null;
+
+    getElement(
+        "meetup-start-time"
+    ).value =
+        defaults?.startTime ||
+        "";
+
+    getElement(
+        "meetup-end-time"
+    ).value =
+        defaults?.endTime ||
+        "";
+
+    getElement(
+        "meetup-attendance"
+    ).value =
+        defaults?.attendance ||
+        "";
+}
+
 /* ============================
    CLEAR EDITOR
 ============================ */
@@ -165,22 +221,19 @@ function clearMeetupEditor() {
         "meetup-date"
     ).value = "";
 
-    getElement(
-        "meetup-start-time"
-    ).value = "";
-
-    getElement(
-        "meetup-end-time"
-    ).value = "";
+    applyMeetupTypeDefaults(
+        "Raid Hour"
+    );
 
     getElement(
         "meetup-location"
     ).value =
         "Pembroke Historical Society Museum";
 
-    getElement(
-        "meetup-attendance"
-    ).value = "";
+    /*
+     * Attendance is populated by
+     * applyMeetupTypeDefaults above.
+     */
 
     getElement(
         "meetup-description"
@@ -914,6 +967,49 @@ export async function initMeetupManager() {
         "click",
         clearMeetupEditor
     );
+
+    getElement(
+        "meetup-type"
+    ).addEventListener(
+        "change",
+        event => {
+
+            /*
+             * Preserve stored values while editing an
+             * existing meetup. Defaults are intended
+             * for new meetup creation.
+             */
+            if (
+                getElement(
+                    "meetup-id"
+                ).value
+            ) {
+                return;
+            }
+
+            applyMeetupTypeDefaults(
+                event.target.value
+            );
+        }
+    );
+
+    const maxBattleOption =
+        Array.from(
+            getElement(
+                "meetup-type"
+            ).options
+        ).find(
+            option =>
+                option.value ===
+                "Max Battle"
+        );
+
+    if (maxBattleOption) {
+        maxBattleOption.textContent =
+            "💎 Max Battle Day";
+    }
+
+    clearMeetupEditor();
 
     await loadMeetups();
 }
