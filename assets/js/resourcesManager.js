@@ -745,6 +745,7 @@ async function loadResources() {
     }));
 
     renderResourceList();
+    renderPublishedCommunityLinks();
 }
 
 function createButton(text, className, handler) {
@@ -888,6 +889,169 @@ function renderResourceList() {
         );
         down.disabled = index === items.length - 1;
         buttons.appendChild(down);
+
+        buttons.appendChild(
+            createButton(
+                "✏ Edit",
+                "btn-orange",
+                () => editResource(resource)
+            )
+        );
+
+        buttons.appendChild(
+            createButton(
+                resource.active === false
+                    ? "👁 Show"
+                    : "🙈 Hide",
+                "btn-orange",
+                () => toggleResource(resource)
+            )
+        );
+
+        buttons.appendChild(
+            createButton(
+                "🗑 Delete",
+                "btn-orange resource-delete-button",
+                () => removeResource(resource)
+            )
+        );
+
+        card.appendChild(buttons);
+        container.appendChild(card);
+    });
+}
+
+function renderPublishedCommunityLinks() {
+    const container =
+        getElement("community-links-admin-list");
+    const count =
+        getElement("community-links-admin-count");
+
+    if (!container || !count) return;
+
+    const items =
+        resourcesForSection("communities");
+
+    const liveCount =
+        items.filter(
+            item => item.active !== false
+        ).length;
+
+    const hiddenCount =
+        items.length - liveCount;
+
+    count.textContent =
+        `${liveCount} live` +
+        (hiddenCount
+            ? ` • ${hiddenCount} hidden`
+            : "");
+
+    container.innerHTML = "";
+
+    if (!items.length) {
+        const empty =
+            document.createElement("p");
+        empty.className = "empty-section";
+        empty.textContent =
+            "No approved community links yet.";
+        container.appendChild(empty);
+        return;
+    }
+
+    items.forEach(resource => {
+        const card =
+            document.createElement("div");
+        card.className =
+            "resource-admin-card";
+
+        const body =
+            document.createElement("div");
+        body.className =
+            "resource-admin-card-body";
+
+        const textWrap =
+            document.createElement("div");
+        textWrap.className =
+            "resource-admin-card-text";
+
+        const title =
+            document.createElement("h3");
+        title.textContent =
+            resource.title ||
+            "Untitled Community";
+        textWrap.appendChild(title);
+
+        const status =
+            document.createElement("p");
+        status.className =
+            resource.active === false
+                ? "resource-admin-hidden"
+                : "resource-admin-visible";
+        status.textContent =
+            resource.active === false
+                ? "⚪ Hidden"
+                : "🟢 Live";
+        textWrap.appendChild(status);
+
+        const meta =
+            document.createElement("p");
+        meta.textContent =
+            [
+                resource.platform ||
+                    inferCommunityPlatform(
+                        resource.url
+                    ) ||
+                    "Community",
+                resource.area || ""
+            ]
+                .filter(Boolean)
+                .join(" • ");
+        textWrap.appendChild(meta);
+
+        if (resource.description) {
+            const description =
+                document.createElement("p");
+            description.textContent =
+                resource.description;
+            textWrap.appendChild(
+                description
+            );
+        }
+
+        const url =
+            safeHttpUrl(resource.url);
+        if (url) {
+            const urlText =
+                document.createElement("p");
+            urlText.textContent = url;
+            urlText.style.wordBreak =
+                "break-word";
+            textWrap.appendChild(
+                urlText
+            );
+        }
+
+        body.appendChild(textWrap);
+        card.appendChild(body);
+
+        const buttons =
+            document.createElement("div");
+        buttons.className =
+            "resource-admin-buttons";
+
+        if (url) {
+            buttons.appendChild(
+                createButton(
+                    "↗ Open Link",
+                    "btn-orange",
+                    () => window.open(
+                        url,
+                        "_blank",
+                        "noopener,noreferrer"
+                    )
+                )
+            );
+        }
 
         buttons.appendChild(
             createButton(
