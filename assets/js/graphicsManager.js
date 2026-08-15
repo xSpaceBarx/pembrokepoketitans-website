@@ -154,6 +154,64 @@ const SLOT_CONFIG = {
 
 };
 
+const GRAPHIC_DEFAULTS = {
+    goweekly: {
+        weekday:
+            1,
+        goLiveTime:
+            "00:00",
+        hideDaysAfter:
+            6,
+        hideTime:
+            "23:59"
+    },
+    legendary: {
+        weekday:
+            3,
+        goLiveTime:
+            "00:00",
+        hideDaysAfter:
+            6,
+        hideTime:
+            "23:59"
+    },
+    mega: {
+        weekday:
+            3,
+        goLiveTime:
+            "00:00",
+        hideDaysAfter:
+            6,
+        hideTime:
+            "23:59"
+    },
+    /*
+     * The user's second "GO Weekly" request
+     * (Monday through Thursday) is treated as
+     * Spotlight Hour, the remaining weekly slot.
+     */
+    spotlighthour: {
+        weekday:
+            1,
+        goLiveTime:
+            "00:00",
+        hideDaysAfter:
+            3,
+        hideTime:
+            "23:59"
+    },
+    maxmonday: {
+        weekday:
+            1,
+        goLiveTime:
+            "00:00",
+        hideDaysAfter:
+            6,
+        hideTime:
+            "23:59"
+    }
+};
+
 let graphicAssets = [];
 let featuredEvents = [];
 let editingGraphic = null;
@@ -493,6 +551,214 @@ function easternDateTimeToDate(dateString, timeString) {
 
     return candidate;
 
+}
+
+function easternCalendarNow() {
+
+    const parts =
+        new Intl.DateTimeFormat(
+            "en-US",
+            {
+                timeZone:
+                    TIME_ZONE,
+                year:
+                    "numeric",
+                month:
+                    "2-digit",
+                day:
+                    "2-digit",
+                hour:
+                    "2-digit",
+                minute:
+                    "2-digit",
+                hourCycle:
+                    "h23"
+            }
+        )
+            .formatToParts(
+                new Date()
+            );
+
+    const values = {};
+
+    parts.forEach(
+        part => {
+
+            if (
+                part.type !==
+                "literal"
+            ) {
+                values[
+                    part.type
+                ] =
+                    Number(
+                        part.value
+                    );
+            }
+        }
+    );
+
+    const date =
+        new Date(
+            Date.UTC(
+                values.year,
+                values.month - 1,
+                values.day
+            )
+        );
+
+    return {
+        year:
+            values.year,
+        month:
+            values.month,
+        day:
+            values.day,
+        weekday:
+            date.getUTCDay(),
+        minutes:
+            values.hour *
+                60 +
+            values.minute
+    };
+}
+
+function formatCalendarDate(
+    date
+) {
+
+    return [
+        date.getUTCFullYear(),
+        String(
+            date.getUTCMonth() +
+            1
+        ).padStart(
+            2,
+            "0"
+        ),
+        String(
+            date.getUTCDate()
+        ).padStart(
+            2,
+            "0"
+        )
+    ].join("-");
+}
+
+function upcomingWeekdayDate(
+    targetWeekday,
+    timeValue
+) {
+
+    const now =
+        easternCalendarNow();
+
+    const [
+        hour,
+        minute
+    ] =
+        String(
+            timeValue
+        )
+            .split(":")
+            .map(Number);
+
+    const targetMinutes =
+        hour * 60 +
+        minute;
+
+    let daysAhead =
+        (
+            targetWeekday -
+            now.weekday +
+            7
+        ) % 7;
+
+    if (
+        daysAhead === 0 &&
+        now.minutes >=
+            targetMinutes
+    ) {
+        daysAhead =
+            7;
+    }
+
+    return new Date(
+        Date.UTC(
+            now.year,
+            now.month - 1,
+            now.day +
+                daysAhead
+        )
+    );
+}
+
+function addCalendarDays(
+    date,
+    days
+) {
+
+    const result =
+        new Date(
+            date.getTime()
+        );
+
+    result.setUTCDate(
+        result.getUTCDate() +
+        days
+    );
+
+    return result;
+}
+
+function applyGraphicDefaults(
+    type
+) {
+
+    const defaults =
+        GRAPHIC_DEFAULTS[
+            type
+        ];
+
+    if (!defaults) {
+        return;
+    }
+
+    const goLiveDate =
+        upcomingWeekdayDate(
+            defaults.weekday,
+            defaults.goLiveTime
+        );
+
+    const hideDate =
+        addCalendarDays(
+            goLiveDate,
+            defaults.hideDaysAfter
+        );
+
+    getElement(
+        "graphic-go-live-date"
+    ).value =
+        formatCalendarDate(
+            goLiveDate
+        );
+
+    getElement(
+        "graphic-go-live-time"
+    ).value =
+        defaults.goLiveTime;
+
+    getElement(
+        "graphic-hide-date"
+    ).value =
+        formatCalendarDate(
+            hideDate
+        );
+
+    getElement(
+        "graphic-hide-time"
+    ).value =
+        defaults.hideTime;
 }
 
 function scrollToElement(selector) {
@@ -1090,6 +1356,12 @@ function openGraphicEditor(type, asset = null) {
     getElement("graphic-hide-time").value =
         hideAfter.time;
 
+    if (!asset) {
+        applyGraphicDefaults(
+            type
+        );
+    }
+
     getElement("graphic-link").value =
         asset?.link || "";
 
@@ -1521,9 +1793,9 @@ function clearFeaturedEventEditor() {
     getElement("featured-event-name").value = "";
     getElement("featured-event-image").value = "";
     getElement("featured-event-start-date").value = "";
-    getElement("featured-event-start-time").value = "";
+    getElement("featured-event-start-time").value = "10:00";
     getElement("featured-event-end-date").value = "";
-    getElement("featured-event-end-time").value = "";
+    getElement("featured-event-end-time").value = "20:00";
     getElement("featured-event-link").value = "";
 
     getElement("featured-event-editor-title").textContent =
