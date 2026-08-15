@@ -430,22 +430,36 @@ function installCommunitySection() {
     const section =
         createCommunitySection();
 
-    const footer =
-        document.querySelector(
-            "footer"
+    const socialsSection =
+        getSectionElement(
+            "socials"
         );
 
     if (
-        footer?.parentNode
+        socialsSection?.parentNode
     ) {
-        footer.parentNode.insertBefore(
+        socialsSection.parentNode.insertBefore(
             section,
-            footer
+            socialsSection.nextSibling
         );
     } else {
-        document.body.appendChild(
-            section
-        );
+        const footer =
+            document.querySelector(
+                "footer"
+            );
+
+        if (
+            footer?.parentNode
+        ) {
+            footer.parentNode.insertBefore(
+                section,
+                footer
+            );
+        } else {
+            document.body.appendChild(
+                section
+            );
+        }
     }
 
     getElementByIdSafe(
