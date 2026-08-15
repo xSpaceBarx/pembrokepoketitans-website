@@ -711,6 +711,41 @@ function addCalendarDays(
     return result;
 }
 
+function latestGraphicBoundaryDate(type) {
+
+    let latest = null;
+
+    graphicAssets
+        .filter(asset =>
+            asset.type === type
+        )
+        .forEach(asset => {
+
+            const goLive =
+                timestampToDate(
+                    asset.goLiveAt
+                );
+
+            const hideAfter =
+                timestampToDate(
+                    asset.hideAfterAt
+                );
+
+            [goLive, hideAfter]
+                .filter(Boolean)
+                .forEach(date => {
+                    if (
+                        !latest ||
+                        date > latest
+                    ) {
+                        latest = date;
+                    }
+                });
+        });
+
+    return latest;
+}
+
 function applyGraphicDefaults(
     type
 ) {
@@ -724,11 +759,38 @@ function applyGraphicDefaults(
         return;
     }
 
-    const goLiveDate =
+    let goLiveDate =
         upcomingWeekdayDate(
             defaults.weekday,
             defaults.goLiveTime
         );
+
+    /*
+     * If this recurring graphic already has a live or
+     * scheduled cycle, move the default forward until it
+     * lands after the latest saved cycle. This lets the
+     * planner card always prepare the NEXT graphic without
+     * editing or replacing the one currently live.
+     */
+    const latestBoundary =
+        latestGraphicBoundaryDate(
+            type
+        );
+
+    let safety = 0;
+
+    while (
+        latestBoundary &&
+        goLiveDate <= latestBoundary &&
+        safety < 60
+    ) {
+        goLiveDate =
+            addCalendarDays(
+                goLiveDate,
+                7
+            );
+        safety += 1;
+    }
 
     const hideDate =
         addCalendarDays(
@@ -1305,12 +1367,12 @@ function openGraphicEditor(type, asset = null) {
     getElement("graphic-editor-title").textContent =
         asset
             ? `✏ Edit ${config.label}`
-            : config.label;
+            : `➕ Schedule ${config.label}`;
 
     getElement("saveGraphic").textContent =
         asset
             ? "💾 Save Changes"
-            : "💾 Save Schedule";
+            : "💾 Save New Schedule";
 
     getElement("graphic-placement").value =
         config.placement;
@@ -2373,6 +2435,11 @@ function renderGraphicPipelineCard(
         }
         <p>${escapeHtml(asset.placement || "")}</p>
         <button class="btn-orange graphic-edit">✏ Edit</button>
+        ${
+            GRAPHIC_DEFAULTS[asset.type]
+                ? `<button class="btn-orange graphic-schedule-next">➕ Schedule Next</button>`
+                : ""
+        }
         <button class="btn-orange graphic-delete">${actionText}</button>
     `;
 
@@ -2386,6 +2453,19 @@ function renderGraphicPipelineCard(
                 openGraphicEditor(
                     asset.type,
                     asset
+                );
+            }
+        );
+
+    card
+        .querySelector(
+            ".graphic-schedule-next"
+        )
+        ?.addEventListener(
+            "click",
+            () => {
+                openGraphicEditor(
+                    asset.type
                 );
             }
         );
