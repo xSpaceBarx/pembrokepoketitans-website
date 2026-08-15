@@ -34,13 +34,24 @@ const SECTION_CONFIG = {
     socials: {
         label: "📱 Socials",
         type: "link"
+    },
+    communities: {
+        label: "🤝 Community Links",
+        type: "link"
     }
 };
 
 const resourcesCollection =
     collection(db, "resources");
 
+const communitySubmissionsCollection =
+    collection(
+        db,
+        "communitySubmissions"
+    );
+
 let allResources = [];
+let communitySubmissions = [];
 let editingResource = null;
 
 function getElement(id) {
@@ -235,6 +246,245 @@ async function deleteManagedImage(imagePath) {
     return result;
 }
 
+function inferCommunityPlatform(
+    value
+) {
+
+    try {
+
+        const host =
+            new URL(
+                value
+            ).hostname
+                .toLowerCase();
+
+        if (
+            host ===
+                "discord.gg" ||
+            host ===
+                "discord.com" ||
+            host.endsWith(
+                ".discord.com"
+            )
+        ) {
+            return "Discord";
+        }
+
+        if (
+            host ===
+                "cmpf.re" ||
+            host ===
+                "campfire.onelink.me" ||
+            host.includes(
+                "campfire"
+            )
+        ) {
+            return "Campfire";
+        }
+
+    } catch {
+        // Invalid URL handled elsewhere.
+    }
+
+    return "";
+}
+
+function ensureCommunityAdminUi() {
+
+    const sectionSelect =
+        getElement(
+            "resource-admin-section"
+        );
+
+    if (
+        sectionSelect &&
+        !Array.from(
+            sectionSelect.options
+        ).some(
+            option =>
+                option.value ===
+                "communities"
+        )
+    ) {
+        const option =
+            document.createElement(
+                "option"
+            );
+
+        option.value =
+            "communities";
+
+        option.textContent =
+            "🤝 Community Links";
+
+        sectionSelect.appendChild(
+            option
+        );
+    }
+
+    const linkFields =
+        getElement(
+            "resource-link-fields"
+        );
+
+    if (
+        linkFields &&
+        !getElement(
+            "resource-community-fields"
+        )
+    ) {
+
+        const wrap =
+            document.createElement(
+                "div"
+            );
+
+        wrap.id =
+            "resource-community-fields";
+
+        wrap.style.display =
+            "none";
+
+        const platformLabel =
+            document.createElement(
+                "label"
+            );
+
+        platformLabel.htmlFor =
+            "resource-community-platform";
+
+        platformLabel.textContent =
+            "Community Platform";
+
+        const platform =
+            document.createElement(
+                "select"
+            );
+
+        platform.id =
+            "resource-community-platform";
+
+        [
+            [
+                "",
+                "Select Discord or Campfire"
+            ],
+            [
+                "Discord",
+                "Discord"
+            ],
+            [
+                "Campfire",
+                "Campfire"
+            ]
+        ].forEach(
+            (
+                [
+                    value,
+                    label
+                ]
+            ) => {
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+                option.value =
+                    value;
+
+                option.textContent =
+                    label;
+
+                platform.appendChild(
+                    option
+                );
+            }
+        );
+
+        const areaLabel =
+            document.createElement(
+                "label"
+            );
+
+        areaLabel.htmlFor =
+            "resource-community-area";
+
+        areaLabel.textContent =
+            "Community Area / Town";
+
+        const area =
+            document.createElement(
+                "input"
+            );
+
+        area.type =
+            "text";
+
+        area.id =
+            "resource-community-area";
+
+        area.maxLength =
+            80;
+
+        area.placeholder =
+            "South Shore, Plymouth, Quincy, etc.";
+
+        wrap.append(
+            platformLabel,
+            platform,
+            areaLabel,
+            area
+        );
+
+        linkFields.appendChild(
+            wrap
+        );
+    }
+
+    const manager =
+        getElement(
+            "resources-manager"
+        );
+
+    if (
+        manager &&
+        !getElement(
+            "community-submissions-admin"
+        )
+    ) {
+
+        const section =
+            document.createElement(
+                "div"
+            );
+
+        section.id =
+            "community-submissions-admin";
+
+        section.innerHTML = `
+            <br>
+            <hr>
+            <h3>📨 Community Link Submissions</h3>
+            <p class="section-description" style="text-align:left;margin:0 0 12px;">
+                Links submitted from the public Resources page stay hidden until you approve them here.
+            </p>
+            <p
+                id="community-submission-count"
+                class="draft-counts">
+                Loading submissions...
+            </p>
+            <div id="community-submission-list">
+                Loading submissions...
+            </div>
+        `;
+
+        manager.appendChild(
+            section
+        );
+    }
+}
+
 function currentSection() {
     const value =
         getElement("resource-admin-section")?.value ||
@@ -294,6 +544,8 @@ function updateEditorMode() {
         getElement("resource-quickguide-fields");
     const linkFields =
         getElement("resource-link-fields");
+    const communityFields =
+        getElement("resource-community-fields");
 
     if (quickFields) {
         quickFields.style.display =
@@ -305,6 +557,13 @@ function updateEditorMode() {
     if (linkFields) {
         linkFields.style.display =
             config.type === "link"
+                ? "block"
+                : "none";
+    }
+
+    if (communityFields) {
+        communityFields.style.display =
+            section === "communities"
                 ? "block"
                 : "none";
     }
@@ -372,6 +631,27 @@ function clearEditor({ keepSection = true } = {}) {
     getElement("resource-title").value = "";
     getElement("resource-description").value = "";
     getElement("resource-url").value = "";
+
+    if (
+        getElement(
+            "resource-community-platform"
+        )
+    ) {
+        getElement(
+            "resource-community-platform"
+        ).value = "";
+    }
+
+    if (
+        getElement(
+            "resource-community-area"
+        )
+    ) {
+        getElement(
+            "resource-community-area"
+        ).value = "";
+    }
+
     getElement("resource-active").checked = true;
 
     if (!keepSection) {
@@ -406,6 +686,34 @@ function editResource(resource) {
         resource.description || "";
     getElement("resource-url").value =
         resource.url || "";
+
+    if (
+        getElement(
+            "resource-community-platform"
+        )
+    ) {
+        getElement(
+            "resource-community-platform"
+        ).value =
+            resource.platform ||
+            inferCommunityPlatform(
+                resource.url
+            ) ||
+            "";
+    }
+
+    if (
+        getElement(
+            "resource-community-area"
+        )
+    ) {
+        getElement(
+            "resource-community-area"
+        ).value =
+            resource.area ||
+            "";
+    }
+
     getElement("resource-active").checked =
         resource.active !== false;
 
@@ -519,6 +827,36 @@ function renderResourceList() {
                 ? "⚪ Hidden"
                 : "🟢 Visible";
         textWrap.appendChild(status);
+
+        if (
+            section ===
+                "communities"
+        ) {
+            const meta =
+                document.createElement(
+                    "p"
+                );
+
+            meta.textContent =
+                [
+                    resource.platform ||
+                        inferCommunityPlatform(
+                            resource.url
+                        ) ||
+                        "Community",
+                    resource.area || ""
+                ]
+                    .filter(
+                        Boolean
+                    )
+                    .join(
+                        " • "
+                    );
+
+            textWrap.appendChild(
+                meta
+            );
+        }
 
         if (
             section !== "quickguides" &&
@@ -657,6 +995,8 @@ async function saveResource() {
                 uploadedImage?.originalFileName ||
                 existing?.originalFileName ||
                 "";
+            payload.platform = "";
+            payload.area = "";
 
         } else {
             const title =
@@ -688,6 +1028,55 @@ async function saveResource() {
             payload.imageUrl = "";
             payload.githubSha = "";
             payload.originalFileName = "";
+
+            if (
+                section ===
+                    "communities"
+            ) {
+                const platform =
+                    getElement(
+                        "resource-community-platform"
+                    )?.value ||
+                    inferCommunityPlatform(
+                        url
+                    );
+
+                const area =
+                    getElement(
+                        "resource-community-area"
+                    )?.value
+                        .trim() ||
+                    "";
+
+                if (
+                    ![
+                        "Discord",
+                        "Campfire"
+                    ].includes(
+                        platform
+                    )
+                ) {
+                    throw new Error(
+                        "Please select Discord or Campfire."
+                    );
+                }
+
+                if (!area) {
+                    throw new Error(
+                        "Please enter the Community Area / Town."
+                    );
+                }
+
+                payload.platform =
+                    platform;
+
+                payload.area =
+                    area;
+
+            } else {
+                payload.platform = "";
+                payload.area = "";
+            }
         }
 
         if (id) {
@@ -849,9 +1238,392 @@ async function removeResource(resource) {
     }
 }
 
+async function loadCommunitySubmissions() {
+
+    const snapshot =
+        await getDocs(
+            communitySubmissionsCollection
+        );
+
+    communitySubmissions =
+        snapshot.docs
+            .map(
+                item => ({
+                    id:
+                        item.id,
+                    ...item.data()
+                })
+            )
+            .filter(
+                item =>
+                    item.status ===
+                    "pending"
+            )
+            .sort(
+                (
+                    a,
+                    b
+                ) => {
+
+                    const aTime =
+                        a.createdAt
+                            ?.toMillis?.() ||
+                        0;
+
+                    const bTime =
+                        b.createdAt
+                            ?.toMillis?.() ||
+                        0;
+
+                    return (
+                        aTime -
+                        bTime
+                    );
+                }
+            );
+
+    renderCommunitySubmissions();
+}
+
+function renderCommunitySubmissions() {
+
+    const container =
+        getElement(
+            "community-submission-list"
+        );
+
+    const count =
+        getElement(
+            "community-submission-count"
+        );
+
+    if (
+        !container ||
+        !count
+    ) {
+        return;
+    }
+
+    count.textContent =
+        communitySubmissions.length
+            ? `${communitySubmissions.length} pending approval${communitySubmissions.length === 1 ? "" : "s"}`
+            : "No community links are waiting for approval.";
+
+    container.innerHTML =
+        "";
+
+    if (
+        !communitySubmissions.length
+    ) {
+        return;
+    }
+
+    communitySubmissions.forEach(
+        submission => {
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+            card.className =
+                "resource-admin-card";
+
+            const body =
+                document.createElement(
+                    "div"
+                );
+
+            body.className =
+                "resource-admin-card-text";
+
+            const title =
+                document.createElement(
+                    "h3"
+                );
+
+            title.textContent =
+                submission.communityName ||
+                "Untitled Community";
+
+            const meta =
+                document.createElement(
+                    "p"
+                );
+
+            meta.textContent =
+                [
+                    submission.platform ||
+                        "Community",
+                    submission.area ||
+                        ""
+                ]
+                    .filter(
+                        Boolean
+                    )
+                    .join(
+                        " • "
+                    );
+
+            body.append(
+                title,
+                meta
+            );
+
+            if (
+                submission.description
+            ) {
+                const description =
+                    document.createElement(
+                        "p"
+                    );
+
+                description.textContent =
+                    submission.description;
+
+                body.appendChild(
+                    description
+                );
+            }
+
+            const url =
+                safeHttpUrl(
+                    submission.url
+                );
+
+            if (url) {
+                const link =
+                    document.createElement(
+                        "a"
+                    );
+
+                link.href =
+                    url;
+
+                link.target =
+                    "_blank";
+
+                link.rel =
+                    "noopener noreferrer";
+
+                link.className =
+                    "hero-button";
+
+                link.textContent =
+                    "Open Submitted Link";
+
+                body.appendChild(
+                    link
+                );
+            }
+
+            card.appendChild(
+                body
+            );
+
+            const buttons =
+                document.createElement(
+                    "div"
+                );
+
+            buttons.className =
+                "resource-admin-buttons";
+
+            buttons.append(
+                createButton(
+                    "✅ Approve",
+                    "btn-orange",
+                    () =>
+                        approveCommunitySubmission(
+                            submission
+                        )
+                ),
+                createButton(
+                    "🗑 Reject",
+                    "btn-orange resource-delete-button",
+                    () =>
+                        rejectCommunitySubmission(
+                            submission
+                        )
+                )
+            );
+
+            card.appendChild(
+                buttons
+            );
+
+            container.appendChild(
+                card
+            );
+        }
+    );
+}
+
+async function approveCommunitySubmission(
+    submission
+) {
+
+    const url =
+        safeHttpUrl(
+            submission.url
+        );
+
+    if (!url) {
+        alert(
+            "This submission does not contain a valid URL."
+        );
+        return;
+    }
+
+    const confirmed =
+        confirm(
+            `Approve “${submission.communityName || "this community"}” and publish it on Resources?`
+        );
+
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+
+        const resourceRef =
+            doc(
+                resourcesCollection
+            );
+
+        const submissionRef =
+            doc(
+                db,
+                "communitySubmissions",
+                submission.id
+            );
+
+        const batch =
+            writeBatch(
+                db
+            );
+
+        batch.set(
+            resourceRef,
+            {
+                section:
+                    "communities",
+                active:
+                    true,
+                order:
+                    nextOrder(
+                        "communities"
+                    ),
+                title:
+                    String(
+                        submission.communityName ||
+                        ""
+                    ).trim(),
+                description:
+                    String(
+                        submission.description ||
+                        ""
+                    ).trim() ||
+                    `Pokémon GO community serving ${String(submission.area || "the local area").trim()}.`,
+                url,
+                platform:
+                    submission.platform ||
+                    inferCommunityPlatform(
+                        url
+                    ) ||
+                    "Community",
+                area:
+                    String(
+                        submission.area ||
+                        ""
+                    ).trim(),
+                internalName:
+                    "",
+                altText:
+                    "",
+                imagePath:
+                    "",
+                imageUrl:
+                    "",
+                githubSha:
+                    "",
+                originalFileName:
+                    "",
+                createdAt:
+                    serverTimestamp(),
+                updatedAt:
+                    serverTimestamp()
+            }
+        );
+
+        batch.delete(
+            submissionRef
+        );
+
+        await batch.commit();
+
+        await Promise.all([
+            loadResources(),
+            loadCommunitySubmissions()
+        ]);
+
+    } catch (error) {
+
+        console.error(
+            "Unable to approve community submission:",
+            error
+        );
+
+        alert(
+            error.message ||
+            "Unable to approve the community link."
+        );
+    }
+}
+
+async function rejectCommunitySubmission(
+    submission
+) {
+
+    const confirmed =
+        confirm(
+            `Reject “${submission.communityName || "this community"}”?`
+        );
+
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+
+        await deleteDoc(
+            doc(
+                db,
+                "communitySubmissions",
+                submission.id
+            )
+        );
+
+        await loadCommunitySubmissions();
+
+    } catch (error) {
+
+        console.error(
+            "Unable to reject community submission:",
+            error
+        );
+
+        alert(
+            "Unable to reject the community link."
+        );
+    }
+}
+
 export async function initResourcesManager() {
     const manager = getElement("resources-manager");
     if (!manager) return;
+
+    ensureCommunityAdminUi();
 
     getElement("resource-admin-section")
         ?.addEventListener("change", () => {
@@ -869,7 +1641,10 @@ export async function initResourcesManager() {
     clearEditor({ keepSection: true });
 
     try {
-        await loadResources();
+        await Promise.all([
+            loadResources(),
+            loadCommunitySubmissions()
+        ]);
     } catch (error) {
         console.error("Unable to load resources:", error);
         const list = getElement("resource-admin-list");
