@@ -1870,7 +1870,7 @@
     <h2>📚 Resources Manager</h2>
 
     <p class="section-description">
-        Manage Quick Guides, Useful Websites, Podcasts and Socials independently. The automatic GOHub news feed is not managed here.
+        Manage Quick Guides, Useful Websites, Podcasts, Socials and Community Links independently. The automatic GOHub news feed is not managed here.
     </p>
 
     <div class="editor-grid">
@@ -1885,6 +1885,7 @@
                 <option value="websites">🌐 Useful Websites</option>
                 <option value="podcasts">🎙️ Podcasts</option>
                 <option value="socials">📱 Socials</option>
+                <option value="communities">🤝 Community Links</option>
             </select>
         </div>
 
@@ -2009,6 +2010,31 @@
             type="url"
             id="resource-url"
             placeholder="https://...">
+<div
+    id="resource-community-fields"
+    style="display:none;">
+
+    <label for="resource-community-platform">
+        Community Platform
+    </label>
+
+    <select id="resource-community-platform">
+        <option value="">Select Discord or Campfire</option>
+        <option value="Discord">Discord</option>
+        <option value="Campfire">Campfire</option>
+    </select>
+
+    <label for="resource-community-area">
+        Community Area / Town
+    </label>
+
+    <input
+        type="text"
+        id="resource-community-area"
+        maxlength="80"
+        placeholder="South Shore, Plymouth, Quincy, etc.">
+
+</div>
 
     </div>
 
@@ -2044,7 +2070,30 @@
     <div id="resource-admin-list">
         Loading resources...
     </div>
+<br>
+<hr>
 
+<div id="community-submissions-admin">
+
+    <h3>📨 Community Link Submissions</h3>
+
+    <p
+        class="section-description"
+        style="text-align:left;margin:0 0 12px;">
+        Links submitted from the public Resources page stay hidden until you approve them here.
+    </p>
+
+    <p
+        id="community-submission-count"
+        class="draft-counts">
+        Loading submissions...
+    </p>
+
+    <div id="community-submission-list">
+        Loading submissions...
+    </div>
+
+</div>
 </div>
 
 <br><br>
