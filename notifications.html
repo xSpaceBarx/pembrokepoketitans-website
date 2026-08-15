@@ -1,5 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PokéTitans Alerts</title>
+
+    <link rel="stylesheet" href="assets/css/style.css">
+
+    <!-- Web App / Home Screen -->
+    <link rel="manifest" href="/site.webmanifest">
+    <meta name="theme-color" content="#153A5B">
+    <link
+        rel="apple-touch-icon"
+        sizes="180x180"
+        href="/assets/images/permanent/apple-touch-icon.png">
+
+</head>
+
+<body>
+
 <div class="container">
 
     <div class="alerts-page-nav">
@@ -23,18 +44,7 @@
     </div>
 
 </div>
-<head>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>PokéTitans Alerts</title>
-
-    <link rel="stylesheet" href="assets/css/style.css">
-
-</head>
-
-<body>
 
 <section class="page-hero">
 
@@ -51,11 +61,6 @@
     </div>
 
 </section>
-<div class="notification-setup-card">
-
-    <p id="notification-setup-status"></p>
-
-</div>
 <section class="section">
     <div class="notification-setup-card">
 
@@ -84,16 +89,40 @@
             <h3>Android</h3>
 
             <p>
-                Enable PokéTitans push notifications directly on your Android device.
+                Enable PokéTitans push notifications on your Android device.
+                You can also install PokéTitans to your Home Screen for quick,
+                app-style access.
             </p>
 
             <button
+                type="button"
                 id="enable-android"
                 class="device-setup-button">
 
                 Enable on Android
 
             </button>
+
+            <div
+                id="android-install-area"
+                hidden
+                style="margin-top:14px;">
+
+                <button
+                    type="button"
+                    id="install-poketitans"
+                    class="device-setup-button">
+
+                    📲 Install PokéTitans
+
+                </button>
+
+                <p
+                    id="install-poketitans-status"
+                    style="margin:10px 0 0; font-size:0.9rem;">
+                </p>
+
+            </div>
 
         </div>
 
@@ -130,18 +159,51 @@
             <h3>iPhone / iPad</h3>
 
             <p>
-                Add PokéTitans to your Home Screen to use it like an app
-                and receive push notifications.  
-
-                Once added to the home screen through the instructions, scroll down to select notifications and save preferences to activate.
+                <strong>
+                    PokéTitans must be added to your Home Screen as a web app
+                    before iPhone/iPad alerts can be enabled.
+                </strong>
             </p>
 
-        <a
-    href="assets/images/permanent/iphone-notifications-howto.png"
-    class="hero-button site-image-lightbox-link"
-    data-lightbox-alt="Get PokéTitans Alerts on iPhone / iPad setup instructions">
-    View iPhone Setup Instructions
-</a>
+            <ol
+                style="text-align:left; margin:12px 0 18px; padding-left:22px;">
+
+                <li>
+                    Open PokéTitans in <strong>Safari</strong>.
+                </li>
+
+                <li>
+                    Tap <strong>Share</strong>
+                    (or <strong>More → Share</strong>),
+                    then <strong>Add to Home Screen</strong>.
+                </li>
+
+                <li>
+                    Make sure <strong>Open as Web App</strong> is turned on,
+                    then tap <strong>Add</strong>.
+                </li>
+
+                <li>
+                    Open PokéTitans from the
+                    <strong>new Home Screen icon</strong>.
+                </li>
+
+                <li>
+                    Return to this Alerts page, choose your preferences below,
+                    tap <strong>Save My Preferences</strong>, and allow notifications
+                    when prompted.
+                </li>
+
+            </ol>
+
+            <a
+                href="assets/images/permanent/iphone-notifications-howto.png"
+                class="hero-button site-image-lightbox-link"
+                data-lightbox-alt="Get PokéTitans Alerts on iPhone / iPad setup instructions">
+
+                📱 View Visual Setup Guide
+
+            </a>
 
         </div>
 
@@ -420,6 +482,8 @@
 
 </div>
 
+</section>
+
 <script
     src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js"
     defer>
@@ -439,6 +503,11 @@ OneSignalDeferred.push(async function(OneSignal) {
     type="module"
     src="assets/js/notifications.js">
 </script>
+<script
+    src="assets/js/androidInstall.js?v=1"
+    defer>
+</script>
+
 <script src="assets/js/siteBasics.js?v=5" defer></script>
 </body>
 </html>
