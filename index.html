@@ -34,6 +34,15 @@
 
     <!-- Homepage tools experiment — kept here so this test only changes index.html -->
     <style>
+        .hero {
+            height: 30vh;
+            min-height: 260px;
+        }
+
+        .hero h1 {
+            margin-bottom: 24px;
+        }
+
         .home-hero-actions {
             display: flex;
             flex-wrap: wrap;
@@ -133,6 +142,16 @@
         }
 
         @media (max-width: 600px) {
+            .hero {
+                height: auto;
+                min-height: 230px;
+                padding: 36px 20px;
+            }
+
+            .hero h1 {
+                margin-bottom: 20px;
+            }
+
             .home-tools-section {
                 padding: 40px 0 46px;
             }
@@ -247,12 +266,6 @@ OneSignalDeferred.push(async function(OneSignal) {
 
 <h1>Catch. Raid.<br>Explore. Together.</h1>
 
-<p>
-
-Pembroke's Pokémon GO community — with events, guides and resources for Trainers everywhere.
-
-</p>
-
 <div class="home-hero-actions">
 
     <a
@@ -366,38 +379,7 @@ Pembroke's Pokémon GO community — with events, guides and resources for Train
     </div>
 
 </section>
-    <div class="container">
-
-    <div class="alerts-home-card">
-
-        <div class="alerts-home-icon">
-            🔔
-        </div>
-
-        <div class="alerts-home-content">
-
-            <h2>
-                Stay Connected with PokéTitans
-            </h2>
-
-            <p>
-                Choose which PokéTitans reminders and Pokémon GO alerts you'd like to receive from Campfire reminders, go pass rewards expirations, breaking news alerts and more.  Opt in/out to only receive specfic desired alerts.
-            </p>
-
-            <a
-                href="notifications.html"
-                class="hero-button">
-
-                Manage PokéTitans Alerts
-
-            </a>
-
-        </div>
-
-    </div>
-
-</div>
-    <section class="section">
+<section class="section">
 
     <div class="container">
 
