@@ -521,6 +521,565 @@ document.addEventListener(
                 );
             }
 
+            function meetupDateObject(
+                value
+            ) {
+
+                if (!value) {
+                    return null;
+                }
+
+                if (
+                    typeof value.toDate ===
+                    "function"
+                ) {
+                    return value.toDate();
+                }
+
+                const date =
+                    new Date(value);
+
+                return Number.isNaN(
+                    date.getTime()
+                )
+                    ? null
+                    : date;
+            }
+
+            function formatMeetupShareDate(
+                event
+            ) {
+
+                const start =
+                    meetupDateObject(
+                        event.startDateTime
+                    );
+
+                if (!start) {
+                    return "";
+                }
+
+                return start.toLocaleDateString(
+                    "en-US",
+                    {
+                        weekday:
+                            "long",
+                        month:
+                            "long",
+                        day:
+                            "numeric",
+                        year:
+                            "numeric"
+                    }
+                );
+            }
+
+            function formatMeetupShareTime(
+                event
+            ) {
+
+                const start =
+                    meetupDateObject(
+                        event.startDateTime
+                    );
+
+                if (!start) {
+                    return "";
+                }
+
+                const startText =
+                    start.toLocaleTimeString(
+                        "en-US",
+                        {
+                            hour:
+                                "numeric",
+                            minute:
+                                "2-digit"
+                        }
+                    );
+
+                const end =
+                    meetupDateObject(
+                        event.endDateTime
+                    );
+
+                if (!end) {
+                    return startText;
+                }
+
+                const endText =
+                    end.toLocaleTimeString(
+                        "en-US",
+                        {
+                            hour:
+                                "numeric",
+                            minute:
+                                "2-digit"
+                        }
+                    );
+
+                return `${startText}–${endText}`;
+            }
+
+            function buildMeetupShareText(
+                event
+            ) {
+
+                const lines = [
+                    event.title ||
+                        "Pembroke PokéTitans Meetup"
+                ];
+
+                const dateText =
+                    formatMeetupShareDate(
+                        event
+                    );
+
+                const timeText =
+                    formatMeetupShareTime(
+                        event
+                    );
+
+                if (
+                    dateText ||
+                    timeText
+                ) {
+                    lines.push(
+                        [
+                            dateText,
+                            timeText
+                        ]
+                            .filter(Boolean)
+                            .join(" • ")
+                    );
+                }
+
+                if (event.location) {
+                    lines.push(
+                        event.location
+                    );
+                }
+
+                if (event.description) {
+                    lines.push(
+                        "",
+                        event.description
+                    );
+                }
+
+                if (event.link) {
+                    lines.push(
+                        "",
+                        "Join the meetup:",
+                        event.link
+                    );
+                }
+
+                lines.push(
+                    "",
+                    "Pembroke PokéTitans",
+                    "https://pembrokepoketitans.com"
+                );
+
+                return lines.join("\n");
+            }
+
+            async function shareMeetup(
+                event
+            ) {
+
+                const title =
+                    event.title ||
+                    "Pembroke PokéTitans Meetup";
+
+                const text =
+                    buildMeetupShareText(
+                        event
+                    );
+
+                const pageUrl =
+                    new URL(
+                        "#events",
+                        window.location.href
+                    ).href;
+
+                if (navigator.share) {
+
+                    try {
+
+                        await navigator.share({
+                            title,
+                            text,
+                            url:
+                                pageUrl
+                        });
+
+                        return;
+
+                    } catch (error) {
+
+                        if (
+                            error?.name ===
+                            "AbortError"
+                        ) {
+                            return;
+                        }
+
+                        console.warn(
+                            "Native meetup sharing failed:",
+                            error
+                        );
+                    }
+                }
+
+                const fallbackText =
+                    `${text}\n\n${pageUrl}`;
+
+                try {
+
+                    if (
+                        navigator.clipboard &&
+                        window.isSecureContext
+                    ) {
+
+                        await navigator.clipboard.writeText(
+                            fallbackText
+                        );
+
+                        alert(
+                            "✅ Meetup details copied to your clipboard."
+                        );
+
+                        return;
+                    }
+
+                } catch (error) {
+
+                    console.warn(
+                        "Clipboard meetup sharing failed:",
+                        error
+                    );
+                }
+
+                window.prompt(
+                    "Copy these meetup details:",
+                    fallbackText
+                );
+            }
+
+            function escapeIcsText(
+                value
+            ) {
+
+                return String(
+                    value || ""
+                )
+                    .replace(
+                        /\\/g,
+                        "\\\\"
+                    )
+                    .replace(
+                        /\r?\n/g,
+                        "\\n"
+                    )
+                    .replace(
+                        /,/g,
+                        "\\,"
+                    )
+                    .replace(
+                        /;/g,
+                        "\\;"
+                    );
+            }
+
+            function formatIcsUtc(
+                date
+            ) {
+
+                const pad =
+                    value =>
+                        String(value)
+                            .padStart(
+                                2,
+                                "0"
+                            );
+
+                return (
+                    date.getUTCFullYear() +
+                    pad(
+                        date.getUTCMonth() +
+                        1
+                    ) +
+                    pad(
+                        date.getUTCDate()
+                    ) +
+                    "T" +
+                    pad(
+                        date.getUTCHours()
+                    ) +
+                    pad(
+                        date.getUTCMinutes()
+                    ) +
+                    pad(
+                        date.getUTCSeconds()
+                    ) +
+                    "Z"
+                );
+            }
+
+            function buildMeetupCalendarDescription(
+                event
+            ) {
+
+                const lines = [];
+
+                if (event.description) {
+                    lines.push(
+                        event.description
+                    );
+                }
+
+                if (event.link) {
+
+                    if (lines.length) {
+                        lines.push("");
+                    }
+
+                    lines.push(
+                        "Campfire Meetup:",
+                        event.link
+                    );
+                }
+
+                if (lines.length) {
+                    lines.push("");
+                }
+
+                lines.push(
+                    "Pembroke PokéTitans",
+                    "https://pembrokepoketitans.com"
+                );
+
+                return lines.join("\n");
+            }
+
+            function addMeetupToCalendar(
+                event
+            ) {
+
+                const start =
+                    meetupDateObject(
+                        event.startDateTime
+                    );
+
+                if (!start) {
+
+                    alert(
+                        "Unable to add this meetup to your calendar because the start time is unavailable."
+                    );
+
+                    return;
+                }
+
+                const suppliedEnd =
+                    meetupDateObject(
+                        event.endDateTime
+                    );
+
+                const end =
+                    suppliedEnd &&
+                    suppliedEnd > start
+                        ? suppliedEnd
+                        : new Date(
+                            start.getTime() +
+                            60 * 60 * 1000
+                        );
+
+                const title =
+                    event.title ||
+                    "Pembroke PokéTitans Meetup";
+
+                const description =
+                    buildMeetupCalendarDescription(
+                        event
+                    );
+
+                const location =
+                    event.location || "";
+
+                const uid =
+                    [
+                        event.id ||
+                            "meetup",
+                        start.getTime(),
+                        "pembrokepoketitans.com"
+                    ].join("-");
+
+                const icsLines = [
+                    "BEGIN:VCALENDAR",
+                    "VERSION:2.0",
+                    "PRODID:-//Pembroke PokeTitans//Meetup Calendar//EN",
+                    "CALSCALE:GREGORIAN",
+                    "METHOD:PUBLISH",
+                    "BEGIN:VEVENT",
+                    `UID:${escapeIcsText(uid)}`,
+                    `DTSTAMP:${formatIcsUtc(new Date())}`,
+                    `DTSTART:${formatIcsUtc(start)}`,
+                    `DTEND:${formatIcsUtc(end)}`,
+                    `SUMMARY:${escapeIcsText(title)}`,
+                    `LOCATION:${escapeIcsText(location)}`,
+                    `DESCRIPTION:${escapeIcsText(description)}`,
+                    "END:VEVENT",
+                    "END:VCALENDAR"
+                ];
+
+                const blob =
+                    new Blob(
+                        [
+                            icsLines.join(
+                                "\r\n"
+                            )
+                        ],
+                        {
+                            type:
+                                "text/calendar;charset=utf-8"
+                        }
+                    );
+
+                const objectUrl =
+                    URL.createObjectURL(
+                        blob
+                    );
+
+                const link =
+                    document.createElement(
+                        "a"
+                    );
+
+                const fileName =
+                    String(title)
+                        .toLowerCase()
+                        .replace(
+                            /[^a-z0-9]+/g,
+                            "-"
+                        )
+                        .replace(
+                            /^-+|-+$/g,
+                            ""
+                        ) ||
+                    "poketitans-meetup";
+
+                link.href =
+                    objectUrl;
+
+                link.download =
+                    `${fileName}.ics`;
+
+                link.style.display =
+                    "none";
+
+                document.body.appendChild(
+                    link
+                );
+
+                link.click();
+                link.remove();
+
+                setTimeout(
+                    () => {
+                        URL.revokeObjectURL(
+                            objectUrl
+                        );
+                    },
+                    1000
+                );
+            }
+
+            function createMeetupActionButton(
+                label,
+                onClick
+            ) {
+
+                const button =
+                    document.createElement(
+                        "button"
+                    );
+
+                button.type =
+                    "button";
+
+                button.className =
+                    "hero-button";
+
+                button.textContent =
+                    label;
+
+                button.style.border =
+                    "0";
+
+                button.style.cursor =
+                    "pointer";
+
+                button.addEventListener(
+                    "click",
+                    onClick
+                );
+
+                return button;
+            }
+
+            function createMeetupActions(
+                event
+            ) {
+
+                const actions =
+                    document.createElement(
+                        "div"
+                    );
+
+                actions.className =
+                    "meetup-actions";
+
+                actions.style.display =
+                    "flex";
+
+                actions.style.flexWrap =
+                    "wrap";
+
+                actions.style.gap =
+                    "10px";
+
+                actions.style.marginTop =
+                    "18px";
+
+                const shareButton =
+                    createMeetupActionButton(
+                        "📤 Share Meetup",
+                        () => {
+                            shareMeetup(
+                                event
+                            );
+                        }
+                    );
+
+                const calendarButton =
+                    createMeetupActionButton(
+                        "📅 Add to Calendar",
+                        () => {
+                            addMeetupToCalendar(
+                                event
+                            );
+                        }
+                    );
+
+                actions.append(
+                    shareButton,
+                    calendarButton
+                );
+
+                return actions;
+            }
+
             function createMeetupCard(
                 event,
                 includeTodayGraphic = false
@@ -651,6 +1210,12 @@ document.addEventListener(
                         );
                     }
                 }
+
+                card.appendChild(
+                    createMeetupActions(
+                        event
+                    )
+                );
 
                 const eventLink =
                     safeHttpUrl(
