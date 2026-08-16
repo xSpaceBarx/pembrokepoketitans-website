@@ -1,46 +1,46 @@
 {
   "news": [
     {
+      "title": "Nickit Community Day (August 2026)",
+      "link": "https://pokemongohub.net/post/event/nickit-community-day-august-2026/",
+      "date": "2026-08-15 21:38:34",
+      "description": "The August 2026 Community Day features the cunning little Nickit, the Fox Pokémon and winner of the Community Choice poll! Join the event on...",
+      "image": "assets/images/resources/gohub-placeholder.png"
+    },
+    {
       "title": "A PvP Analysis on Icy Wind Thievul (August 2026 Community Day)",
       "link": "https://pokemongohub.net/post/pvp/icy-wind-thievul-august-2026/",
-      "date": "2026-08-15 08:00:09",
+      "date": "2026-08-15 21:35:09",
       "description": "This month’s Community Day is quietly a really good one for PvPers, and even better than I think most are giving it credit for! Come see why...",
-      "image": "https://db.pokemongohub.net/images/official/detail/828.png"
+      "image": "assets/images/resources/gohub-placeholder.png"
+    },
+    {
+      "title": "Pachirisu and Beldum Wonder Pick Event (Pokémon TCG Pocket)",
+      "link": "https://pokemongohub.net/post/tcg-pocket/pachirisu-and-beldum-wonder-pick-event-pokemon-tcg-pocket/",
+      "date": "2026-08-15 15:38:38",
+      "description": "The new Pokémon TCG Pocket Wonder Pick event for Ruler of the Skies features Pachirisu and Beldum, a couple of adorable Promos that are repr...",
+      "image": "assets/images/resources/gohub-placeholder.png"
     },
     {
       "title": "Nifty or Thrifty: Evolution Cup PvP Guide (August 2026)",
       "link": "https://pokemongohub.net/post/pvp/nifty-or-thrifty-evolution-cup/",
       "date": "2026-08-15 07:36:26",
       "description": "So uh… hey there, Pokéfriends. Remember me? Your friendly neighborhood PvP writer/analyst. Believe it or not, it’s been over a month since m...",
-      "image": "https://s.w.org/images/core/emoji/17.0.2/72x72/1f3de.png"
-    },
-    {
-      "title": "Nickit Community Day (August 2026)",
-      "link": "https://pokemongohub.net/post/event/nickit-community-day-august-2026/",
-      "date": "2026-08-15 07:00:34",
-      "description": "The August 2026 Community Day features the cunning little Nickit, the Fox Pokémon and winner of the Community Choice poll! Join the event on...",
-      "image": "https://db.pokemongohub.net/images/flat-icons/TodayView_Icon_Candy.png"
+      "image": "assets/images/resources/gohub-placeholder.png"
     },
     {
       "title": "PokéXciting! Kuala Lumpur 2026",
       "link": "https://pokemongohub.net/post/event/pokexciting-kuala-lumpur-2026/",
       "date": "2026-08-14 06:50:04",
       "description": "PokéXciting! is coming to Kuala Lumpur for the first stop of Pokémon’s 30th anniversary tour. The free event takes place at KLCC Park from S...",
-      "image": "https://db.pokemongohub.net/images/flat-icons/TodayView_Icon_PokemonEncounter.png"
+      "image": "assets/images/resources/gohub-placeholder.png"
     },
     {
       "title": "Dancing in The Moonlight (2026)",
       "link": "https://pokemongohub.net/post/event/dancing-in-the-moonlight-2026/",
       "date": "2026-08-14 06:20:33",
       "description": "Dancing in the Moonlight returns in 2026, bringing Special Background Clefairy, four daily wild encounter bursts, two consecutive Timed Rese...",
-      "image": "https://db.pokemongohub.net/images/items/AppraisalStar.png"
-    },
-    {
-      "title": "Explorer Gadget Officially Debuts in Pokémon GO",
-      "link": "https://pokemongohub.net/post/article/explorer-gadget-officially-debuts/",
-      "date": "2026-08-13 19:55:11",
-      "description": "The Explorer Gadget is officially coming to Pokémon GO, giving eligible Trainers a built-in way to catch Pokémon and spin PokéStops while th...",
-      "image": "https://db.pokemongohub.net/images/items/AppraisalStar.png"
+      "image": "assets/images/resources/gohub-placeholder.png"
     }
   ]
 }
