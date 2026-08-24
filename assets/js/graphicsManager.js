@@ -711,6 +711,65 @@ function addCalendarDays(
     return result;
 }
 
+function easternCalendarDateForInstant(
+    value
+) {
+
+    const date =
+        timestampToDate(
+            value
+        );
+
+    if (!date) {
+        return null;
+    }
+
+    const parts =
+        new Intl.DateTimeFormat(
+            "en-US",
+            {
+                timeZone:
+                    TIME_ZONE,
+                year:
+                    "numeric",
+                month:
+                    "2-digit",
+                day:
+                    "2-digit"
+            }
+        )
+            .formatToParts(
+                date
+            );
+
+    const values = {};
+
+    parts.forEach(
+        part => {
+
+            if (
+                part.type !==
+                "literal"
+            ) {
+                values[
+                    part.type
+                ] =
+                    Number(
+                        part.value
+                    );
+            }
+        }
+    );
+
+    return new Date(
+        Date.UTC(
+            values.year,
+            values.month - 1,
+            values.day
+        )
+    );
+}
+
 function latestGraphicBoundaryDate(type) {
 
     let latest = null;
@@ -721,13 +780,22 @@ function latestGraphicBoundaryDate(type) {
         )
         .forEach(asset => {
 
+            /*
+             * Compare recurring cycles by EASTERN CALENDAR DATE,
+             * not by their absolute UTC timestamps.
+             *
+             * Sunday 11:59 PM Eastern is technically Monday in UTC.
+             * The old comparison therefore made a Sunday-ending
+             * graphic look like it overlapped the very next Monday
+             * and incorrectly skipped ahead one full week.
+             */
             const goLive =
-                timestampToDate(
+                easternCalendarDateForInstant(
                     asset.goLiveAt
                 );
 
             const hideAfter =
-                timestampToDate(
+                easternCalendarDateForInstant(
                     asset.hideAfterAt
                 );
 
