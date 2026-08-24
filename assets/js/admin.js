@@ -3,11 +3,11 @@ import { saveNotification } from "./notifications-admin.js";
 import { updatePlannerStatus } from "./plannerStatus.js";
 import { publishNotification } from "./publishNotification.js?v=3";
 import { initMeetupManager } from "./meetupManager.js?v=3";
-import { initGraphicsManager } from "./graphicsManager.js?v=7";
+import { initGraphicsManager } from "./graphicsManager.js?v=8";
 import { initTrainerManager } from "./trainerManager.js?v=1";
 import { initAnnouncementManager } from "./announcementManager.js?v=1";
 import { initSiteStatusDashboard } from "./siteStatusDashboard.js?v=4";
-import { initResourcesManager } from "./resourcesManager.js?v=4";
+import { initResourcesManager } from "./resourcesManager.js?v=3";
 
 const templates = {
 
