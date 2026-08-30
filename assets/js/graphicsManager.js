@@ -212,6 +212,12 @@ const GRAPHIC_DEFAULTS = {
     }
 };
 
+const MULTI_RAID_SAME_CYCLE_TYPES =
+    new Set([
+        "legendary",
+        "mega"
+    ]);
+
 let graphicAssets = [];
 let featuredEvents = [];
 let editingGraphic = null;
@@ -1504,6 +1510,110 @@ function openGraphicEditor(type, asset = null) {
 
 }
 
+
+function openGraphicEditorForSameCycle(
+    sourceAsset
+) {
+
+    if (
+        !sourceAsset ||
+        !MULTI_RAID_SAME_CYCLE_TYPES.has(
+            sourceAsset.type
+        )
+    ) {
+        return;
+    }
+
+    const type =
+        sourceAsset.type;
+
+    const config =
+        SLOT_CONFIG[type];
+
+    if (!config) {
+        return;
+    }
+
+    /*
+     * Open the normal NEW schedule editor first, then
+     * replace the auto-advanced dates with this card's
+     * exact cycle. The hidden ID stays blank, so saving
+     * creates a second Firestore record instead of
+     * replacing the first one.
+     */
+    openGraphicEditor(
+        type
+    );
+
+    editingGraphic =
+        null;
+
+    getElement(
+        "graphic-id"
+    ).value =
+        "";
+
+    getElement(
+        "graphic-editor-title"
+    ).textContent =
+        `➕ Add Another ${config.label} — Same Cycle`;
+
+    getElement(
+        "saveGraphic"
+    ).textContent =
+        "💾 Save Additional Graphic";
+
+    getElement(
+        "graphic-event-date"
+    ).value =
+        sourceAsset.eventDate ||
+        "";
+
+    const goLive =
+        splitEasternDateTime(
+            sourceAsset.goLiveAt
+        );
+
+    getElement(
+        "graphic-go-live-date"
+    ).value =
+        goLive.date;
+
+    getElement(
+        "graphic-go-live-time"
+    ).value =
+        goLive.time;
+
+    const hideAfter =
+        splitEasternDateTime(
+            sourceAsset.hideAfterAt
+        );
+
+    getElement(
+        "graphic-hide-date"
+    ).value =
+        hideAfter.date;
+
+    getElement(
+        "graphic-hide-time"
+    ).value =
+        hideAfter.time;
+
+    /*
+     * The additional boss gets its own uploaded image.
+     * Do not inherit the source graphic's link or image.
+     */
+    getElement(
+        "graphic-link"
+    ).value =
+        "";
+
+    getElement(
+        "graphic-image"
+    ).value =
+        "";
+}
+
 async function saveGraphic({ publishNow = false } = {}) {
 
     const type =
@@ -2504,6 +2614,13 @@ function renderGraphicPipelineCard(
         <p>${escapeHtml(asset.placement || "")}</p>
         <button class="btn-orange graphic-edit">✏ Edit</button>
         ${
+            MULTI_RAID_SAME_CYCLE_TYPES.has(
+                asset.type
+            )
+                ? `<button class="btn-orange graphic-add-same-cycle">➕ Add Another This Cycle</button>`
+                : ""
+        }
+        ${
             GRAPHIC_DEFAULTS[asset.type]
                 ? `<button class="btn-orange graphic-schedule-next">➕ Schedule Next</button>`
                 : ""
@@ -2520,6 +2637,19 @@ function renderGraphicPipelineCard(
             () => {
                 openGraphicEditor(
                     asset.type,
+                    asset
+                );
+            }
+        );
+
+    card
+        .querySelector(
+            ".graphic-add-same-cycle"
+        )
+        ?.addEventListener(
+            "click",
+            () => {
+                openGraphicEditorForSameCycle(
                     asset
                 );
             }
