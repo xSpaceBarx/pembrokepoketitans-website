@@ -133,7 +133,7 @@ function getActiveTodayGraphic(
 }
 
 
-function getActiveGraphicByType(
+function getActiveGraphicsByType(
     type,
     now = new Date()
 ) {
@@ -178,7 +178,7 @@ function getActiveGraphicByType(
                 )?.getTime() || 0;
 
             return bTime - aTime;
-        })[0] || null;
+        });
 }
 
 function formatGraphicEventDate(
@@ -1386,12 +1386,11 @@ document.addEventListener(
 
                 const activeRaids =
                     raidTypes
-                        .map(type =>
-                            getActiveGraphicByType(
+                        .flatMap(type =>
+                            getActiveGraphicsByType(
                                 type
                             )
-                        )
-                        .filter(Boolean);
+                        );
 
                 if (
                     activeRaids.length ===
