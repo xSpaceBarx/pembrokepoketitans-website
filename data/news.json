@@ -1,6 +1,27 @@
 {
   "news": [
     {
+      "title": "Armored Mewtwo Returns to Pokémon GO After Six Years",
+      "link": "https://pokemongohub.net/post/news/armored-mewtwo-returns-to-pokemon-go-after-six-years/",
+      "date": "2026-08-31 11:00:21",
+      "description": "Armored Mewtwo is finally returning to Pokémon GO after a six-year absence. The news was announced during the 2026 Pokémon World Championshi...",
+      "image": "assets/images/resources/gohub-placeholder.png"
+    },
+    {
+      "title": "GO Battle League: Twilight Trails Schedule, Cups &amp; Rewards",
+      "link": "https://pokemongohub.net/post/pvp/go-battle-league-twilight-trails-schedule-cups-events/",
+      "date": "2026-08-31 10:47:17",
+      "description": "The GO Battle League: Twilight Trails Season runs from September 8 to December 1, 2026, bringing Mega-Evolved Pokémon into more leagues and ...",
+      "image": "assets/images/resources/gohub-placeholder.png"
+    },
+    {
+      "title": "Mega Mewtwo X and Y Adventure Effects Revealed, Plus New Additional Mega Charged Attacks",
+      "link": "https://pokemongohub.net/post/news/mega-mewtwo-x-and-y-adventure-effects-revealed-plus-new-additional-mega-charged-attacks/",
+      "date": "2026-08-31 07:00:40",
+      "description": "The Pokémon GO Fest 2026: Mega Finale introduces a major update to Mega Evolution. Eligible Mega-Evolved Pokémon can now use an additional C...",
+      "image": "assets/images/resources/gohub-placeholder.png"
+    },
+    {
       "title": "Mega Ascension Event: Mega Raid Schedule, Bonuses and More",
       "link": "https://pokemongohub.net/post/event/mega-ascension/",
       "date": "2026-08-30 20:25:09",
@@ -19,27 +40,6 @@
       "link": "https://pokemongohub.net/post/tcg-pocket/pokemon-tcg-pocket-team-rockets-ambition-ex-card-review-meta-analysis/",
       "date": "2026-08-30 15:42:38",
       "description": "The quirky Team Rocket’s Ambition set has taken over Pokémon TCG Pocket, bringing a bunch of fun cards revolving around the villainous yet b...",
-      "image": "assets/images/resources/gohub-placeholder.png"
-    },
-    {
-      "title": "Pokémon TCG Pocket Team Rocket’s Ambition Trainer Card Review &amp; Meta Analysis",
-      "link": "https://pokemongohub.net/post/tcg-pocket/pokemon-tcg-pocket-team-rockets-ambition-trainer-card-review-meta-analysis/",
-      "date": "2026-08-30 15:42:32",
-      "description": "The epic Ruler of the Skies set starring Mega Rayquaza has hit the shores of Pokémon TCG Pocket with a fleet of EX and Trainer cards up for ...",
-      "image": "assets/images/resources/gohub-placeholder.png"
-    },
-    {
-      "title": "Pokémon TCG Pocket September 2026 Premium Pass Lineup &amp; Emblem Event",
-      "link": "https://pokemongohub.net/post/tcg-pocket/pokemon-tcg-pocket-september-2026-premium-pass-lineup-emblem-event/",
-      "date": "2026-08-30 15:42:16",
-      "description": "Team Rocket has invaded Pokémon TCG Pocket in the month of September, bringing a Promo of one of the strongest Mega Evolutions in the game, ...",
-      "image": "assets/images/resources/gohub-placeholder.png"
-    },
-    {
-      "title": "GO Battle League Twilight Trails: Attack Changes and New Moves",
-      "link": "https://pokemongohub.net/post/pvp/go-battle-league-twilight-trails-attack-changes-and-new-moves/",
-      "date": "2026-08-30 05:16:25",
-      "description": "The next major Pokémon GO move update was revealed at the end of the 2026 Pokémon World Championships stream. The changes will arrive with t...",
       "image": "assets/images/resources/gohub-placeholder.png"
     }
   ]
