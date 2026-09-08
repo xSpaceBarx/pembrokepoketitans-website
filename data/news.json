@@ -1,18 +1,25 @@
 {
   "news": [
     {
+      "title": "Is Shadow Thundurus Incarnate any good for Pokémon GO Raids?",
+      "link": "https://pokemongohub.net/post/meta/is-shadow-thundurus-incarnate-any-good-for-pokemon-go-raids/",
+      "date": "2026-09-08 13:55:46",
+      "description": "The debut of a new Shadow in Pokémon GO, especially that of a Legendary/Mythical, immediately sparks curiosity among players regarding its v...",
+      "image": "https://db.pokemongohub.net/images/flat-icons/TodayView_Icon_General.png"
+    },
+    {
+      "title": "Shadow Thundurus (Incarnate) Raid Counters Guide",
+      "link": "https://pokemongohub.net/post/guide/shadow-thundurus-incarnate-raid-counters-guide/",
+      "date": "2026-09-08 12:59:19",
+      "description": "Shadow Thundurus Incarnate is a Tier 5 Shadow Raid Boss with max Raid CP of 46044. It’s an and Pokémon, making it weak to and type attacks. ...",
+      "image": "https://db.pokemongohub.net/images/ingame/normal/pm642.fINCARNATE.icon.png"
+    },
+    {
       "title": "Ticket Update: Pokémon GO Wild Area: Sendai • Tohoku",
       "link": "https://pokemongohub.net/post/news/ticket-update-pokemon-go-wild-area-sendai-tohoku/",
       "date": "2026-09-08 08:01:32",
       "description": "Pokémon GO have issued an update regarding how the ticket purchasing process with work for the Pokémon GO Wild Area: Sendai Tohoku. This yea...",
       "image": "assets/images/resources/gohub-placeholder.png"
-    },
-    {
-      "title": "Mega Squads Event Guide: Maschiff, Shiny Flamigo, and New Super Megas",
-      "link": "https://pokemongohub.net/post/event/pokemon-go-mega-squads-event-guide/",
-      "date": "2026-09-08 07:00:21",
-      "description": "Following Pokémon GO Fest 2026: Mega Finale, the Mega Squads event kicks off the new Twilight Trails Season from Tuesday, September 8 at 10:...",
-      "image": "https://db.pokemongohub.net/images/items/AppraisalStar.png"
     },
     {
       "title": "Harvest Festival: Taken Over – Shadow Zekrom Debut",
@@ -34,13 +41,6 @@
       "date": "2026-09-07 12:07:52",
       "description": "The GO Fest Mega Finale may have just wrapped up, but there’s no time to rest, because the Mega Squads Event is right around the corner. Thi...",
       "image": "https://db.pokemongohub.net/images/flat-icons/TodayView_Icon_General.png"
-    },
-    {
-      "title": "A PvP Analysis on the GBL Season 28 Move Rebalance – Part 1: Fast Moves",
-      "link": "https://pokemongohub.net/post/meta/a-pvp-analysis-on-the-gbl-season-28-move-rebalance-part-1-fast-moves/",
-      "date": "2026-09-07 08:59:50",
-      "description": "Here we go again, Pokéfriends… another new season, another new move rebalance, for the 28th time now! And as with the last several seasons, ...",
-      "image": "https://s.w.org/images/core/emoji/17.0.2/72x72/1f635.png"
     }
   ]
 }
