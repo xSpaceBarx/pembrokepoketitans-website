@@ -1,6 +1,20 @@
 {
   "news": [
     {
+      "title": "Ticket Update: Pokémon GO Wild Area: Sendai • Tohoku",
+      "link": "https://pokemongohub.net/post/news/ticket-update-pokemon-go-wild-area-sendai-tohoku/",
+      "date": "2026-09-08 08:01:32",
+      "description": "Pokémon GO have issued an update regarding how the ticket purchasing process with work for the Pokémon GO Wild Area: Sendai Tohoku. This yea...",
+      "image": "assets/images/resources/gohub-placeholder.png"
+    },
+    {
+      "title": "Mega Squads Event Guide: Maschiff, Shiny Flamigo, and New Super Megas",
+      "link": "https://pokemongohub.net/post/event/pokemon-go-mega-squads-event-guide/",
+      "date": "2026-09-08 07:00:21",
+      "description": "Following Pokémon GO Fest 2026: Mega Finale, the Mega Squads event kicks off the new Twilight Trails Season from Tuesday, September 8 at 10:...",
+      "image": "https://db.pokemongohub.net/images/items/AppraisalStar.png"
+    },
+    {
       "title": "Harvest Festival: Taken Over – Shadow Zekrom Debut",
       "link": "https://pokemongohub.net/post/event/harvest-festival-taken-over-shadow-zekrom-debut/",
       "date": "2026-09-07 19:55:43",
@@ -27,20 +41,6 @@
       "date": "2026-09-07 08:59:50",
       "description": "Here we go again, Pokéfriends… another new season, another new move rebalance, for the 28th time now! And as with the last several seasons, ...",
       "image": "https://s.w.org/images/core/emoji/17.0.2/72x72/1f635.png"
-    },
-    {
-      "title": "Dynamax Ralts Max Monday: Event Guide",
-      "link": "https://pokemongohub.net/post/guide/dynamax-ralts-max-monday-event-guide/",
-      "date": "2026-09-07 07:09:12",
-      "description": "Ralts Max Monday takes place on September 7th, 2026 when Ralts will be appearing in power spots all day. This Max Monday is the first Septem...",
-      "image": "https://db.pokemongohub.net/images/ingame/normal/pm280.icon.png"
-    },
-    {
-      "title": "This Week in Pokémon GO: September 7-13, 2026",
-      "link": "https://pokemongohub.net/post/event/this-week-in-pokemon-go-september-7-13-2026/",
-      "date": "2026-09-06 15:37:04",
-      "description": "Pokémon GO’s September 7-13 2026 week has us enter the season of Twilight Trails! We welcome the new season with the Mega Squads event, and ...",
-      "image": "https://db.pokemongohub.net/images/items/AppraisalStar.png"
     }
   ]
 }
