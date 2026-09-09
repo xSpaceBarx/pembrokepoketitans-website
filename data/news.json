@@ -1,8 +1,15 @@
 {
   "news": [
     {
+      "title": "Gigantamax Cinderace Max Battle Day",
+      "link": "https://pokemongohub.net/post/event/gigantamax-cinderace-max-battle-day/",
+      "date": "2026-09-09 16:55:05",
+      "description": "Gigantamax Cinderace returns to Pokémon GO during a special Max Battle Day event on Saturday, October 3, 2026. For the first time, it can be...",
+      "image": "https://db.pokemongohub.net/images/ingame/normal/pm815.fGIGANTAMAX.icon.png"
+    },
+    {
       "title": "Weedle, Kakuna and Beedrill Spotlight Hour (September 2026): Last Minute Guide",
-      "link": "https://pokemongohub.net/post/tips-and-tricks/weedle-kakuna-and-beedrill-spotlight-hour-september-2026-last-minute-guide/",
+      "link": "https://pokemongohub.net/post/guide/weedle-kakuna-and-beedrill-spotlight-hour-september-2026-last-minute-guide/",
       "date": "2026-09-09 13:33:00",
       "description": "Weedle, Kakuna and Beedrill Spotlight Hour takes place on September 10th, 2026, from 6:00 to 7:00 pm local time, with 2× Transfer Candy bonu...",
       "image": "https://db.pokemongohub.net/images/official/detail/013.png"
@@ -34,13 +41,6 @@
       "date": "2026-09-08 08:01:32",
       "description": "Pokémon GO have issued an update regarding how the ticket purchasing process with work for the Pokémon GO Wild Area: Sendai Tohoku. This yea...",
       "image": "assets/images/resources/gohub-placeholder.png"
-    },
-    {
-      "title": "Shadow Alolan Sandslash Raid Guide",
-      "link": "https://pokemongohub.net/post/guide/shadow-alolan-sandslash-raid-guide/",
-      "date": "2026-09-08 05:51:57",
-      "description": "Shadow Alolan Sandslash is a Tier 3 Shadow Raid Boss. As an and Pokémon, it is weak to -, -, and -type attacks, with both and being double w...",
-      "image": "https://db.pokemongohub.net/images/ingame/normal/pm28.fALOLA.icon.png"
     }
   ]
 }
