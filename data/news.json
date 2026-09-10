@@ -1,6 +1,13 @@
 {
   "news": [
     {
+      "title": "Team Rocket’s Lapras Drop Event (Pokémon TCG Pocket)",
+      "link": "https://pokemongohub.net/post/tcg-pocket/team-rockets-lapras-drop-event-pokemon-tcg-pocket/",
+      "date": "2026-09-09 20:29:17",
+      "description": "The Drop event for Team Rocket’s Ambition in Pokémon TCG Pocket features a jaw-dropping Team Rocket’s Lapras Full Art Promo and a bunch of o...",
+      "image": "https://pokemongohub.net/wp-content/uploads/2026/09/team-rockets-lapras-promo-215x300.jpg"
+    },
+    {
       "title": "Gigantamax Cinderace Max Battle Day",
       "link": "https://pokemongohub.net/post/event/gigantamax-cinderace-max-battle-day/",
       "date": "2026-09-09 16:55:05",
@@ -34,13 +41,6 @@
       "date": "2026-09-08 12:59:19",
       "description": "Shadow Thundurus Incarnate is a Tier 5 Shadow Raid Boss with max Raid CP of 46044. It’s an and Pokémon, making it weak to and type attacks. ...",
       "image": "https://db.pokemongohub.net/images/ingame/normal/pm642.fINCARNATE.icon.png"
-    },
-    {
-      "title": "Ticket Update: Pokémon GO Wild Area: Sendai • Tohoku",
-      "link": "https://pokemongohub.net/post/news/ticket-update-pokemon-go-wild-area-sendai-tohoku/",
-      "date": "2026-09-08 08:01:32",
-      "description": "Pokémon GO have issued an update regarding how the ticket purchasing process with work for the Pokémon GO Wild Area: Sendai Tohoku. This yea...",
-      "image": "assets/images/resources/gohub-placeholder.png"
     }
   ]
 }
