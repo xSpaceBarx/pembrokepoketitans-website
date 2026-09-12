@@ -1,6 +1,34 @@
 {
   "news": [
     {
+      "title": "Gible Community Day Classic",
+      "link": "https://pokemongohub.net/post/event/gible-community-day-classic-september-2026/",
+      "date": "2026-09-11 16:40:14",
+      "description": "Pokémon GO September Community Day Classic features Gible, the Land Shark Pokémon. It returns with its exclusive move, Earth Power, for Garc...",
+      "image": "https://db.pokemongohub.net/images/ingame/normal/pm443.icon.png"
+    },
+    {
+      "title": "Garchomp PvE Analysis: Is It Still Worth Building?",
+      "link": "https://pokemongohub.net/post/meta/garchomp-pve-analysis/",
+      "date": "2026-09-11 12:22:54",
+      "description": "Greetings Trainers! We are here with another PvE meta guide, and this one is a total banger! Gible Community Day Classic is happening on Sep...",
+      "image": "https://db.pokemongohub.net/images/flat-icons/TodayView_Icon_General.png"
+    },
+    {
+      "title": "Patterns of the Wild Event: Indonesia Exclusive Event",
+      "link": "https://pokemongohub.net/post/event/patterns-of-the-wild-event-indonesia-exclusive-event/",
+      "date": "2026-09-11 12:21:17",
+      "description": "Pokémon GO’s Patterns of the Wild Event takes place on Friday, October 2, 2026, from 10:00 a.m. to 8:00 p.m. local time in Indonesia. The ev...",
+      "image": "https://db.pokemongohub.net/images/items/AppraisalStar.png"
+    },
+    {
+      "title": "Pokémon News This Week: Pokémon Night Out, New Animated Movie, Pokopia Expansion Part 2 Trailer, New Merchandise and More",
+      "link": "https://pokemongohub.net/post/news/pokemon-news-this-week-pokemon-night-out-new-animated-movie-pokopia-expansion-part-2-trailer-new-merchandise-and-more/",
+      "date": "2026-09-11 10:47:23",
+      "description": "After the excitement of Pokémon XP and Worlds last week, we have a slightly quieter week this week! More news about the Pokémon Night Out ev...",
+      "image": "https://db.pokemongohub.net/images/flat-icons/TodayView_Icon_Event.png"
+    },
+    {
       "title": "2027 Pokémon GO Worlds Team Format Raises Questions",
       "link": "https://pokemongohub.net/post/news/2027-pokemon-go-worlds-team-format-raises-questions/",
       "date": "2026-09-10 14:37:46",
@@ -13,34 +41,6 @@
       "date": "2026-09-10 09:36:08",
       "description": "Yesterday Scopely quietly made a dramatic change in Pokémon GO, and reduced the appearance of Team GO Rocket balloons from four times per da...",
       "image": "https://pokemongohub.net/wp-content/uploads/2026/09/scopely-support-team-go-rocket.jpg"
-    },
-    {
-      "title": "Halloween Has Arrived at the Pokémon Center!",
-      "link": "https://pokemongohub.net/post/news/halloween-has-arrived-at-the-pokemon-center/",
-      "date": "2026-09-10 05:44:46",
-      "description": "It’s the most haunting time of the year, and Halloween is almost in full swing at the Pokémon Center! The full spooky season line-up has bee...",
-      "image": "https://db.pokemongohub.net/images/flat-icons/TodayView_Icon_Shop.png"
-    },
-    {
-      "title": "GO Wild Area 2026: Global",
-      "link": "https://pokemongohub.net/post/event/wild-area-2026-global/",
-      "date": "2026-09-09 22:58:00",
-      "description": "GO Wild Area 2026: Global brings a weekend of Steel- and Dragon-type Pokémon to Trainers around the world. Dynamax Dialga and Dynamax Palkia...",
-      "image": "https://db.pokemongohub.net/images/flat-icons/TodayView_Icon_Event.png"
-    },
-    {
-      "title": "GO Wild Area 2026: Mexico City, Mexico",
-      "link": "https://pokemongohub.net/post/event/wild-area-2026-mexico-city/",
-      "date": "2026-09-09 22:55:53",
-      "description": "GO Wild Area 2026: Mexico City takes place on November 6, 7 and 8, from 10:00 a.m. to 6:00 p.m. local time each day, with gameplay throughou...",
-      "image": "https://db.pokemongohub.net/images/flat-icons/TodayView_Icon_Event.png"
-    },
-    {
-      "title": "GO Wild Area 2026: Sendai • Tohoku",
-      "link": "https://pokemongohub.net/post/event/wild-area-2026-sendai/",
-      "date": "2026-09-09 22:55:52",
-      "description": "GO Wild Area 2026: Sendai • Tohoku brings up to three days of Steel- and Dragon-type Pokémon to Trainers in Sendai Tohoku, Japan. Dynamax Di...",
-      "image": "https://db.pokemongohub.net/images/flat-icons/TodayView_Icon_Event.png"
     }
   ]
 }
