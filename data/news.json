@@ -1,6 +1,20 @@
 {
   "news": [
     {
+      "title": "Fall Marathon: Buddy Trek",
+      "link": "https://pokemongohub.net/post/event/fall-marathon-buddy-trek/",
+      "date": "2026-09-23 19:55:40",
+      "description": "Fall Marathon: Buddy Trek runs from October 13, 2026, at 10:00 a.m. to October 19, 2026, at 8:00 p.m. local time. The event introduces Bramb...",
+      "image": "https://db.pokemongohub.net/images/flat-icons/TodayView_Icon_General.png"
+    },
+    {
+      "title": "Rattata Spotlight Hour (September 2026): Last Minute Guide",
+      "link": "https://pokemongohub.net/post/tips-and-tricks/rattata-spotlight-hour-september-2026-last-minute-guide/",
+      "date": "2026-09-23 09:36:32",
+      "description": "Pokémon Spotlight Hour will feature a different Pokémon and a special bonus for one hour at 6:00 p.m. local time on Thursday during the mont...",
+      "image": "https://db.pokemongohub.net/images/ingame/normal/pm19.icon.png"
+    },
+    {
       "title": "October 2026 GO Pass: Tasks, Rewards &amp; Bonuses",
       "link": "https://pokemongohub.net/post/news/october-2026-go-pass-tasks-rewards-bonuses/",
       "date": "2026-09-22 17:15:12",
@@ -27,20 +41,6 @@
       "date": "2026-09-20 09:04:46",
       "description": "Pokémon GO’s September 21 to September 27 2026 week has us enter the third week of the season of Twilight Trails! We are firmly into the new...",
       "image": "https://db.pokemongohub.net/images/items/AppraisalStar.png"
-    },
-    {
-      "title": "European Space Agency Event: Astronaut Pikachu, Raids and Research",
-      "link": "https://pokemongohub.net/post/event/european-space-agency-event/",
-      "date": "2026-09-20 05:58:54",
-      "description": "Pokémon GO is partnering with the European Space Agency (ESA) for an event featuring Astronaut Pikachu, research, and space-themed Pokémon. ...",
-      "image": "https://db.pokemongohub.net/images/items/ActivityLogRaidLogo.png"
-    },
-    {
-      "title": "Pokémon Sleep: Guardian Approval and Research Community Unlocked",
-      "link": "https://pokemongohub.net/post/sleep/pokemon-sleep-guardian-approval-and-research-community-unlocked/",
-      "date": "2026-09-19 12:20:45",
-      "description": "After an update planned for October 22nd 2026, at 10:00 a.m. UTC, a new guardian approval system will be implemented to provide a safer and ...",
-      "image": "assets/images/resources/gohub-placeholder.png"
     }
   ]
 }
