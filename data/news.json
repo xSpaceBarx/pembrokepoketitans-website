@@ -1,6 +1,27 @@
 {
   "news": [
     {
+      "title": "Sandile Hatch Day (October 2026)",
+      "link": "https://pokemongohub.net/post/event/sandile-hatch-day/",
+      "date": "2026-09-24 16:55:45",
+      "description": "Sandile Hatch Day takes place in Pokémon GO on Saturday, October 17, 2026, from 11:00 a.m. to 5:00 p.m. local time. Sandile will hatch more ...",
+      "image": "https://db.pokemongohub.net/images/icons/QuestIconProfessor.png"
+    },
+    {
+      "title": "Pokémon GO City Safari Boston Postponed Due to Incoming Storm",
+      "link": "https://pokemongohub.net/post/news/pokemon-go-city-safari-boston-postponed-due-to-incoming-storm/",
+      "date": "2026-09-24 14:26:09",
+      "description": "Trainers, Pokémon GO City Safari: Boston has been postponed due to the incoming storm. The Pokémon GO team confirmed the decision in an offi...",
+      "image": "assets/images/resources/gohub-placeholder.png"
+    },
+    {
+      "title": "This Week in Pokémon News: Ditto Plushies, Sean Wotherspoon Collab, Pokémon UNITE tournament and more!",
+      "link": "https://pokemongohub.net/post/news/this-week-in-pokemon-news-ditto-plushies-sean-wotherspoon-collab-pokemon-unite-tournament-and-more/",
+      "date": "2026-09-24 10:59:41",
+      "description": "This week in general Pokémon news we have an update on the competitive future of Pokémon UNITE after it was announced it would no longer fea...",
+      "image": "https://db.pokemongohub.net/images/flat-icons/TodayView_Icon_Event.png"
+    },
+    {
       "title": "Avatar Items from the adidas x Pokémon Collection are Coming to Pokémon GO!",
       "link": "https://pokemongohub.net/post/news/avatar-items-from-the-adidas-x-pokemon-collection-are-coming-to-pokemon-go/",
       "date": "2026-09-24 08:28:20",
@@ -20,27 +41,6 @@
       "date": "2026-09-23 19:55:40",
       "description": "Fall Marathon: Buddy Trek runs from October 13, 2026, at 10:00 a.m. to October 19, 2026, at 8:00 p.m. local time. The event introduces Bramb...",
       "image": "https://db.pokemongohub.net/images/flat-icons/TodayView_Icon_General.png"
-    },
-    {
-      "title": "Rattata Spotlight Hour (September 2026): Last Minute Guide",
-      "link": "https://pokemongohub.net/post/tips-and-tricks/rattata-spotlight-hour-september-2026-last-minute-guide/",
-      "date": "2026-09-23 09:36:32",
-      "description": "Pokémon Spotlight Hour will feature a different Pokémon and a special bonus for one hour at 6:00 p.m. local time on Thursday during the mont...",
-      "image": "https://db.pokemongohub.net/images/ingame/normal/pm19.icon.png"
-    },
-    {
-      "title": "October 2026 GO Pass: Tasks, Rewards &amp; Bonuses",
-      "link": "https://pokemongohub.net/post/news/october-2026-go-pass-tasks-rewards-bonuses/",
-      "date": "2026-09-22 17:15:12",
-      "description": "Pokémon GO’s October 2026 GO Pass and GO Pass Deluxe feature exclusive rewards, including an encounter with Kyogre, XP and Stardust bonuses,...",
-      "image": "https://db.pokemongohub.net/images/icons/green-event.png"
-    },
-    {
-      "title": "IIT-Delhi x Pokémon GO: Rendezvous 2026",
-      "link": "https://pokemongohub.net/post/event/iit-delhi-x-pokemon-go-rendezvous-2026/",
-      "date": "2026-09-22 10:45:37",
-      "description": "Pokémon GO will be coming to IIT-Delhi for Rendezvous 2026 from September 28 to October 1, 2026. Trainers can look forward to in-game bonuse...",
-      "image": "https://db.pokemongohub.net/images/flat-icons/TodayView_Icon_PokemonEncounter.png"
     }
   ]
 }
