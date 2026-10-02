@@ -1,6 +1,13 @@
 {
   "news": [
     {
+      "title": "Pokémon Night Out Twitch Drop: Free Timed Research and Avatar Jersey",
+      "link": "https://pokemongohub.net/post/news/pokemon-night-out-twitch-drop-timed-research/",
+      "date": "2026-10-02 14:03:18",
+      "description": "Pokémon GO Trainers around the world can earn an exclusive Pokémon Night Out Twitch Drop during the upcoming Pokémon Night Out livestream on...",
+      "image": "https://db.pokemongohub.net/images/flat-icons/TodayView_Icon_Research.png"
+    },
+    {
       "title": "A PvP Analysis of the New Shadow Pokémon from Harvest Festival: Taken Over",
       "link": "https://pokemongohub.net/post/pvp/harvest-festival-taken-over-shadow-pokemon-pvp/",
       "date": "2026-10-02 09:32:16",
@@ -34,13 +41,6 @@
       "date": "2026-10-01 14:18:26",
       "description": "Trainers, this is not a drill! The Additional Charged Attacks that have changed the face of the Pokémon GO meta are all set to be expanded t...",
       "image": "https://db.pokemongohub.net/images/flat-icons/TodayView_Icon_AttackMove.png"
-    },
-    {
-      "title": "Dynamax Zapdos in 2026: The (Second) Best Electric Attacker",
-      "link": "https://pokemongohub.net/post/meta/dynamax-zapdos-in-2026-the-second-best-electric-attacker/",
-      "date": "2026-10-01 09:18:29",
-      "description": "Of the three Legendary Kanto birds, Dynamax Zapdos is probably the most straightforward Pokémon to analyse in the current Max Battle meta. I...",
-      "image": "https://db.pokemongohub.net/images/ingame/normal/pm145.icon.png"
     }
   ]
 }
