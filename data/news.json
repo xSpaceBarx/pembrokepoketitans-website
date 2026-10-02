@@ -1,6 +1,20 @@
 {
   "news": [
     {
+      "title": "A PvP Analysis of the New Shadow Pokémon from Harvest Festival: Taken Over",
+      "link": "https://pokemongohub.net/post/pvp/harvest-festival-taken-over-shadow-pokemon-pvp/",
+      "date": "2026-10-02 09:32:16",
+      "description": "Hello again, Pokéfriends! It’s that time again… Team GO Rocket has taken over another event, this time the ongoing Harvest Festival. By way ...",
+      "image": "https://s.w.org/images/core/emoji/17.0.2/72x72/26a1.png"
+    },
+    {
+      "title": "Pokémon GO City Safari: Boston Rescheduled as a Global Event for Ticket Holders",
+      "link": "https://pokemongohub.net/post/news/pokemon-go-city-safari-boston-rescheduled-as-a-global-event-for-ticket-holders/",
+      "date": "2026-10-02 07:15:19",
+      "description": "Originally scheduled to happen on 26th and 27th September 2026, Pokémon GO City Safari: Boston was unfortunately postponed due to severe wea...",
+      "image": "https://db.pokemongohub.net/images/flat-icons/TodayView_Icon_Event.png"
+    },
+    {
       "title": "Dynamax Uxie, Mesprit, and Azelf Max Battle Day",
       "link": "https://pokemongohub.net/post/event/dynamax-uxie-mesprit-and-azelf-max-battle-day/",
       "date": "2026-10-01 19:58:22",
@@ -27,20 +41,6 @@
       "date": "2026-10-01 09:18:29",
       "description": "Of the three Legendary Kanto birds, Dynamax Zapdos is probably the most straightforward Pokémon to analyse in the current Max Battle meta. I...",
       "image": "https://db.pokemongohub.net/images/ingame/normal/pm145.icon.png"
-    },
-    {
-      "title": "Dynamax Moltres in 2026: Still Surprisingly Worth Farming",
-      "link": "https://pokemongohub.net/post/meta/dynamax-moltres-in-2026-still-surprisingly-worth-farming/",
-      "date": "2026-10-01 08:59:57",
-      "description": "The Max Battle meta constantly changes, and being a Legendary Pokémon like the Kanto birds does not guarantee a lasting spot. When a newly r...",
-      "image": "https://db.pokemongohub.net/images/ingame/normal/pm146.icon.png"
-    },
-    {
-      "title": "Pokémon GO October 2026 Events",
-      "link": "https://pokemongohub.net/post/event/october-2026-events/",
-      "date": "2026-10-01 01:00:35",
-      "description": "The Pokémon GO October 2026 events schedule is here! In October, featured Pokémon are Mega Sableye, Gigantamax Cinderace, Shadow Zekrom and ...",
-      "image": "https://db.pokemongohub.net/images/flat-icons/TodayView_Icon_Event.png"
     }
   ]
 }
