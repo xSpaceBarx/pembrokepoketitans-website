@@ -1,6 +1,13 @@
 {
   "news": [
     {
+      "title": "A PvE Analysis of Harvest Festival: Taken Over",
+      "link": "https://pokemongohub.net/post/meta/a-pve-analysis-of-harvest-festival-taken-over/",
+      "date": "2026-10-05 07:07:51",
+      "description": "Hello Trainers! Another Team GO Rocket event has arrived with Harvest Festival: Taken Over. Team GO Rocket has rolled out a fresh lineup of ...",
+      "image": "https://db.pokemongohub.net/images/flat-icons/TodayView_Icon_PokemonEncounter.png"
+    },
+    {
       "title": "This Week in Pokémon GO: October 5–11, 2026",
       "link": "https://pokemongohub.net/post/news/this-week-in-pokemon-go-october-5-11-2026/",
       "date": "2026-10-04 07:13:59",
@@ -34,13 +41,6 @@
       "date": "2026-10-03 03:35:10",
       "description": "The Emblem Event for the Deluxe Pack: Mega set in Pokémon TCG Pocket lets you earn several Emblems to flex like always, and this time you ca...",
       "image": "https://pokemongohub.net/wp-content/uploads/2026/10/emblem-white-deluxe-pack-mega-150x150.png"
-    },
-    {
-      "title": "Pokémon Night Out Twitch Drop: Free Timed Research and Avatar Jersey",
-      "link": "https://pokemongohub.net/post/news/pokemon-night-out-twitch-drop-timed-research/",
-      "date": "2026-10-02 14:03:18",
-      "description": "Pokémon GO Trainers around the world can earn an exclusive Pokémon Night Out Twitch Drop during the upcoming Pokémon Night Out livestream on...",
-      "image": "https://db.pokemongohub.net/images/flat-icons/TodayView_Icon_Research.png"
     }
   ]
 }
