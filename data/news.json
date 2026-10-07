@@ -1,11 +1,32 @@
 {
   "news": [
     {
+      "title": "Gigantamax Duraludon Debuts at Pokémon GO Wild Area",
+      "link": "https://pokemongohub.net/post/news/gigantamax-duraludon-debuts-at-pokemon-go-wild-area/",
+      "date": "2026-10-07 16:55:29",
+      "description": "Gigantamax Duraludon will makes its Pokémon GO debut at the 2026 in-person Pokémon GO Wild Area events, followed by the global event! Plus L...",
+      "image": "https://db.pokemongohub.net/images/flat-icons/TodayView_Icon_PokemonEncounter.png"
+    },
+    {
+      "title": "PokéXciting! Singapore 2026",
+      "link": "https://pokemongohub.net/post/event/pokexciting-singapore-2026/",
+      "date": "2026-10-07 13:58:26",
+      "description": "PokéXciting! is coming to Singapore for the next stop of Pokémon’s 30th anniversary tour. The free event takes place at Changi Airport and J...",
+      "image": "https://db.pokemongohub.net/images/flat-icons/TodayView_Icon_PokemonEncounter.png"
+    },
+    {
       "title": "Elgyem Spotlight Hour (October 2026): Last Minute Guide",
       "link": "https://pokemongohub.net/post/tips-and-tricks/elgyem-spotlight-hour-october-2026-last-minute-guide/",
-      "date": "2026-10-07 07:23:50",
+      "date": "2026-10-07 13:33:50",
       "description": "Pokémon Spotlight Hour will feature a different Pokémon and a special bonus for one hour at 6:00 p.m. local time on Thursday during the mont...",
       "image": "https://db.pokemongohub.net/images/items/candy.png"
+    },
+    {
+      "title": "2026 Brisbane Regional Championships &amp; City Safari: My Experience",
+      "link": "https://pokemongohub.net/post/story/2026-brisbane-regional-championships-city-safari-my-experience/",
+      "date": "2026-10-07 12:33:22",
+      "description": "The Brisbane Regional Championship &amp; the Brisbane City Safari event have come and gone, and boy, what a weekend it was. I arrived from P...",
+      "image": "https://db.pokemongohub.net/images/flat-icons/TodayView_Icon_Event.png"
     },
     {
       "title": "GO Pass October 2026: Tasks, Rewards &amp; Bonuses",
@@ -20,27 +41,6 @@
       "date": "2026-10-06 08:06:02",
       "description": "Shadow Landorus Incarnate is a Tier 5 Shadow Raid Boss. It’s a / Pokémon, making it double-weak to and also weak to type attacks. It can be ...",
       "image": "https://db.pokemongohub.net/images/ingame/normal/pm645.fINCARNATE.icon.png"
-    },
-    {
-      "title": "Shadow Drapion Raid Guide",
-      "link": "https://pokemongohub.net/post/guide/shadow-drapion-raid-guide/",
-      "date": "2026-10-05 18:44:29",
-      "description": "Shadow Drapion is available from Tier 3 Shadow Raids, and its shiny form ✨ is also up for grabs. It can be caught with the following CP valu...",
-      "image": "https://db.pokemongohub.net/images/ingame/normal/pm452.icon.png"
-    },
-    {
-      "title": "Pokémon GO Halloween 2026: Part One",
-      "link": "https://pokemongohub.net/post/event/halloween-2026-part-one/",
-      "date": "2026-10-05 16:55:52",
-      "description": "Pokémon GO’s Halloween 2026 Part One event runs from October 27 at 10:00 a.m. to November 1 at 10:00 a.m. local time, bringing three new cos...",
-      "image": "https://db.pokemongohub.net/images/flat-icons/TodayView_Icon_Event.png"
-    },
-    {
-      "title": "Pokémon News This Week: McDonalds TCG Returns, Pokopia Halloween Event, New Plushies, Prizes and More!",
-      "link": "https://pokemongohub.net/post/news/pokemon-news-this-week-mcdonalds-tcg-returns-pokopia-halloween-event-new-plushies-prizes-and-more/",
-      "date": "2026-10-05 10:42:12",
-      "description": "This week in Pokémon news, Pokémon TCG returns to Happy Meals, Halloween comes to Pokopia for the first time, new Mega Evolution plushies, n...",
-      "image": "https://db.pokemongohub.net/images/flat-icons/TodayView_Icon_Shop.png"
     }
   ]
 }
