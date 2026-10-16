@@ -1,6 +1,27 @@
 {
   "news": [
     {
+      "title": "Holiday Season Arrives at the Pokémon Center!",
+      "link": "https://pokemongohub.net/post/news/holiday-season-arrives-at-the-pokemon-center/",
+      "date": "2026-10-16 09:19:58",
+      "description": "Today the Holiday collection released at the Pokémon Center in the USA, Canada, Australia and New Zealand, and will be arriving at the UK an...",
+      "image": "https://pokemongohub.net/wp-content/uploads/2026/10/snow-globe.jpg"
+    },
+    {
+      "title": "Pokémon TCG Pocket Announces Slower Pack Releases, New Cards, and Battle Features",
+      "link": "https://pokemongohub.net/post/news/pokemon-tcg-pocket-announces-slower-pack-releases-new-cards-and-battle-features/",
+      "date": "2026-10-16 05:13:40",
+      "description": "The Pokémon Trading Card Game Pocket team has revealed its plans for the game’s next series, launching at the end of October 2026. The updat...",
+      "image": "https://pokemongohub.net/wp-content/uploads/2026/10/HUtrQzBXsAAG4cf.jpeg"
+    },
+    {
+      "title": "Let’s Talk About the Massive Updates Coming to Pokémon TCG Pocket!",
+      "link": "https://pokemongohub.net/post/tcg-pocket/massive-updates-coming-to-pokemon-tcg-pocket/",
+      "date": "2026-10-16 02:29:43",
+      "description": "Brace yourselves, Pokémon TCG Pocket players! Arguably the biggest set of updates in the history of the game will make landfall at the end o...",
+      "image": "https://pokemongohub.net/wp-content/uploads/2026/10/pikachu-fur.jpg"
+    },
+    {
       "title": "Pokémon LAIC 2027 Twitch Reward Drops",
       "link": "https://pokemongohub.net/post/news/pokemon-laic-2027-twitch-reward-drops/",
       "date": "2026-10-15 18:57:07",
@@ -20,27 +41,6 @@
       "date": "2026-10-15 07:27:40",
       "description": "Stufful Spotlight Hour takes place on October 15th, 2026, from 6:00 to 7:00 pm local time, with 2× Transfer Candy bonus. Pokémon Spotlight H...",
       "image": "https://db.pokemongohub.net/images/official/detail/759.png"
-    },
-    {
-      "title": "Into the Wild (2026) Event",
-      "link": "https://pokemongohub.net/post/event/into-the-wild-2026-event/",
-      "date": "2026-10-14 16:56:51",
-      "description": "Pokémon GO’s Into the Wild event runs from November 9 at 10:00 a.m. to November 13 at 8:00 p.m. local time, bringing two new Dynamax Pokémon...",
-      "image": "https://db.pokemongohub.net/images/flat-icons/TodayView_Icon_Event.png"
-    },
-    {
-      "title": "Wayfarer Suspensions and Bans Will No Longer Lead to Pokémon GO Bans",
-      "link": "https://pokemongohub.net/post/news/wayfarer-suspensions-and-bans-will-no-longer-lead-to-pokemon-go-bans/",
-      "date": "2026-10-14 10:38:49",
-      "description": "In September 2023 Wayfarer announced the Wayfarer Abuse Enforcement Ladder. Since that time they have enforced suspensions across both Wayfa...",
-      "image": "https://db.pokemongohub.net/images/flat-icons/TodayView_Icon_General.png"
-    },
-    {
-      "title": "Pokémon Sleep: Halloween 2026 Double Candy Research",
-      "link": "https://pokemongohub.net/post/sleep/pokemon-sleep-halloween-2026-double-candy-research/",
-      "date": "2026-10-14 08:26:52",
-      "description": "Get ready for spooky season in Pokémon Sleep, with a double candy research event! Plus, Misdreavus will make their Pokémon Sleep debut. Even...",
-      "image": "https://db.pokemongohub.net/images/flat-icons/TodayView_Icon_Event.png"
     }
   ]
 }
