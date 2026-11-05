@@ -1,6 +1,20 @@
 {
   "news": [
     {
+      "title": "Pokémon TCG Pocket Dual Fusion Emblem Event",
+      "link": "https://pokemongohub.net/post/tcg-pocket/pokemon-tcg-pocket-dual-fusion-emblem-event/",
+      "date": "2026-11-04 21:06:43",
+      "description": "With a revolutionary bunch of ex and Trainer cards, the Dual Fusion set has taken the Pokémon TCG Pocket meta by storm. And what better way ...",
+      "image": "assets/images/resources/gohub-placeholder.png"
+    },
+    {
+      "title": "Max Meta: Dynamax Uxie – The Tankier One of the Lake Trio, But What For?",
+      "link": "https://pokemongohub.net/post/meta/max-meta-dynamax-uxie-the-tankier-one-of-the-lake-trio-but-what-for/",
+      "date": "2026-11-04 14:05:21",
+      "description": "Dynamax Uxie is one of the Lake Trio Legendary Pokémon that debuted recently, alongside Azelf and Mesprit. It also marked the first time eve...",
+      "image": "assets/images/resources/gohub-placeholder.png"
+    },
+    {
       "title": "Halloween Teddiursa Spotlight Hour (November 2026): Last Minute Guide",
       "link": "https://pokemongohub.net/post/tips-and-tricks/halloween-teddiursa-spotlight-hour-november-2026-last-minute-guide/",
       "date": "2026-11-04 11:19:17",
@@ -26,20 +40,6 @@
       "link": "https://pokemongohub.net/post/guide/shadow-tornadus-incarnate-raid-counters-guide/",
       "date": "2026-11-03 10:07:44",
       "description": "Shadow Tornadus Incarnate is a Tier 5 Shadow Raid Boss. It’s a pure type Pokémon, making it weak to and type attacks. It can be shiny! Shado...",
-      "image": "assets/images/resources/gohub-placeholder.png"
-    },
-    {
-      "title": "GO Pass November 2026: Tasks, Rewards &amp; Bonuses",
-      "link": "https://pokemongohub.net/post/guide/go-pass-november-2026/",
-      "date": "2026-11-03 06:00:05",
-      "description": "Pokémon GO’s November 2026 GO Pass and GO Pass Deluxe feature an encounter with Groudon, up to 1,400 PokéCoins with the Deluxe upgrade, and ...",
-      "image": "assets/images/resources/gohub-placeholder.png"
-    },
-    {
-      "title": "GO Wild Area 2026 Brings Trainer Backgrounds, Private Dynamax Battles, and More",
-      "link": "https://pokemongohub.net/post/news/pokemon-go-wild-area-2026-brings-trainer-backgrounds-private-dynamax-battles-and-more/",
-      "date": "2026-11-02 23:55:08",
-      "description": "Pokémon GO has revealed a fresh batch of details for GO Wild Area 2026, including the ability to show Pokémon backgrounds on Trainer profile...",
       "image": "assets/images/resources/gohub-placeholder.png"
     }
   ]
