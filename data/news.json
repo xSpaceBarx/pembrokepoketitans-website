@@ -1,6 +1,13 @@
 {
   "news": [
     {
+      "title": "Super Mega Clefable Raid Day",
+      "link": "https://pokemongohub.net/post/event/super-mega-clefable-raid-day/",
+      "date": "2026-11-05 18:14:11",
+      "description": "Mega Clefable debuts during Clefable Super Mega Raid Day on Saturday, November 28, 2026, from 2:00 p.m. to 5:00 p.m. local time. Mega Clefab...",
+      "image": "assets/images/resources/gohub-placeholder.png"
+    },
+    {
       "title": "Pokémon GO Wild Area: Mexico City – Additional Details, Maps, In-Person Activities, Notable Trainers etc",
       "link": "https://pokemongohub.net/post/event/pokemon-go-wild-area-mexico-city-additional-details-maps-in-person-activities-notable-trainers-etc/",
       "date": "2026-11-05 13:36:30",
@@ -12,13 +19,6 @@
       "link": "https://pokemongohub.net/post/news/pokemon-go-wild-area-2026-global-community-meetups-in-the-asia-pacific-region/",
       "date": "2026-11-05 11:58:27",
       "description": "Pokémon GO Wild Area 2026: Global is coming soon, and community meetups have been announced for a slew of cities in the Asia-Pacific region!...",
-      "image": "assets/images/resources/gohub-placeholder.png"
-    },
-    {
-      "title": "Max Meta: Dynamax Azelf – The Lake Guardian That Is Most Worth It",
-      "link": "https://pokemongohub.net/post/meta/max-meta-dynamax-azelf-the-lake-guardian-that-is-most-worth-it/",
-      "date": "2026-11-05 10:48:26",
-      "description": "Dynamax Azelf is one of the Lake Trio Legendary Pokémon that debuted recently, alongside Mesprit and Uxie. It also marked the first time eve...",
       "image": "assets/images/resources/gohub-placeholder.png"
     },
     {
@@ -36,10 +36,10 @@
       "image": "assets/images/resources/gohub-placeholder.png"
     },
     {
-      "title": "Pokémon TCG Pocket Dual Fusion Emblem Event",
-      "link": "https://pokemongohub.net/post/tcg-pocket/pokemon-tcg-pocket-dual-fusion-emblem-event/",
-      "date": "2026-11-04 21:06:43",
-      "description": "With a revolutionary bunch of ex and Trainer cards, the Dual Fusion set has taken the Pokémon TCG Pocket meta by storm. And what better way ...",
+      "title": "Max Meta: Dynamax Azelf – The Lake Guardian That Is Most Worth It",
+      "link": "https://pokemongohub.net/post/meta/max-meta-dynamax-azelf-the-lake-guardian-that-is-most-worth-it/",
+      "date": "2026-11-05 07:48:26",
+      "description": "Dynamax Azelf is one of the Lake Trio Legendary Pokémon that debuted recently, alongside Mesprit and Uxie. It also marked the first time eve...",
       "image": "assets/images/resources/gohub-placeholder.png"
     }
   ]
