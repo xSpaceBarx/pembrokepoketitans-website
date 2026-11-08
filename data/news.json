@@ -1,6 +1,20 @@
 {
   "news": [
     {
+      "title": "Minior Showers: Leonid (November 2026)",
+      "link": "https://pokemongohub.net/post/event/minior-showers-leonid-november-2026/",
+      "date": "2026-11-07 17:21:16",
+      "description": "Minior Showers brings with it the different core forms of Minior, and is a series of events timed to coincide with real-world meteor showers...",
+      "image": "assets/images/resources/gohub-placeholder.png"
+    },
+    {
+      "title": "Hisuian Goodra Meta Guide: Is It Worth Building?",
+      "link": "https://pokemongohub.net/post/meta/hisuian-goodra-meta-guide-is-it-worth-building/",
+      "date": "2026-11-07 16:57:12",
+      "description": "Hello Trainers! Welcome to another meta-analysis, where we take a close look at Hisuian Goodra, the final evolution of Hisuian Sliggoo from ...",
+      "image": "assets/images/resources/gohub-placeholder.png"
+    },
+    {
       "title": "Free Gigantamax Machamp Timed Research Available This Weekend Only!",
       "link": "https://pokemongohub.net/post/news/free-gigantamax-machamp-timed-research-available-this-weekend-only/",
       "date": "2026-11-06 05:09:29",
@@ -26,20 +40,6 @@
       "link": "https://pokemongohub.net/post/news/pokemon-go-wild-area-2026-global-community-meetups-in-the-asia-pacific-region/",
       "date": "2026-11-05 11:58:27",
       "description": "Pokémon GO Wild Area 2026: Global is coming soon, and community meetups have been announced for a slew of cities in the Asia-Pacific region!...",
-      "image": "assets/images/resources/gohub-placeholder.png"
-    },
-    {
-      "title": "How to beat Dynamax Dialga: Complete Guide",
-      "link": "https://pokemongohub.net/post/news/how-to-beat-dynamax-dialga-complete-guide/",
-      "date": "2026-11-05 08:26:14",
-      "description": "Dynamax Dialga is a Legendary and type Pokémon appearing in Tier 5 Max Battles, costing 800 Max Particles (MP) per successful battle. It is ...",
-      "image": "assets/images/resources/gohub-placeholder.png"
-    },
-    {
-      "title": "How to beat Dynamax Palkia: Complete Guide",
-      "link": "https://pokemongohub.net/post/news/how-to-beat-dynamax-palkia-complete-guide/",
-      "date": "2026-11-05 08:26:11",
-      "description": "Dynamax Palkia is a Legendary and type Pokémon appearing in Tier 5 Max Battles, costing 800 Max Particles (MP) per successful battle. It is ...",
       "image": "assets/images/resources/gohub-placeholder.png"
     }
   ]
