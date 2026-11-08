@@ -1,6 +1,34 @@
 {
   "news": [
     {
+      "title": "This Week in Pokémon GO (November 9–15): GO Wild Area Global, Into the Wild and Minior Showers",
+      "link": "https://pokemongohub.net/post/event/this-week-in-pokemon-go-november-9-15-go-wild-area-global-into-the-wild-and-minior-showers/",
+      "date": "2026-11-08 11:23:51",
+      "description": "The week of November 9–15, 2026 brings Into the Wild, the Leonid Minior Shower, and GO Wild Area: Global. Crowned Sword Zacian and Crowned S...",
+      "image": "assets/images/resources/gohub-placeholder.png"
+    },
+    {
+      "title": "Gigantamax Duraludon: How Good Is It in Max Battles?",
+      "link": "https://pokemongohub.net/post/meta/gigantamax-duraludon-how-good-is-it-in-max-battles/",
+      "date": "2026-11-08 07:22:02",
+      "description": "How is a skyscraper a Dragon? Well, how would I know? It’s Pokémon logic. What I do know is that Gigantamax Duraludon is making its global d...",
+      "image": "assets/images/resources/gohub-placeholder.png"
+    },
+    {
+      "title": "Dynamax Palkia: How Good Is It in Max Battles?",
+      "link": "https://pokemongohub.net/post/meta/dynamax-palkia-how-good-is-it-in-max-battles/",
+      "date": "2026-11-08 07:14:30",
+      "description": "Dynamax Palkia takes the spotlight on Sunday, November 15, during GO Wild Area 2026: Global. The Space Dragon brings a massive 280 ATK, a so...",
+      "image": "assets/images/resources/gohub-placeholder.png"
+    },
+    {
+      "title": "Dynamax Dialga: How Good Is It in Max Battles?",
+      "link": "https://pokemongohub.net/post/meta/dynamax-dialga-meta-analysis-how-good-is-it-in-max-battles/",
+      "date": "2026-11-08 07:05:17",
+      "description": "Dynamax Dialga takes the spotlight on Saturday, November 14, during GO Wild Area 2026: Global. With other powerful Max Battle Pokémon compet...",
+      "image": "assets/images/resources/gohub-placeholder.png"
+    },
+    {
       "title": "Minior Showers: Leonid (November 2026)",
       "link": "https://pokemongohub.net/post/event/minior-showers-leonid-november-2026/",
       "date": "2026-11-07 17:21:16",
@@ -12,34 +40,6 @@
       "link": "https://pokemongohub.net/post/meta/hisuian-goodra-meta-guide-is-it-worth-building/",
       "date": "2026-11-07 16:57:12",
       "description": "Hello Trainers! Welcome to another meta-analysis, where we take a close look at Hisuian Goodra, the final evolution of Hisuian Sliggoo from ...",
-      "image": "assets/images/resources/gohub-placeholder.png"
-    },
-    {
-      "title": "Free Gigantamax Machamp Timed Research Available This Weekend Only!",
-      "link": "https://pokemongohub.net/post/news/free-gigantamax-machamp-timed-research-available-this-weekend-only/",
-      "date": "2026-11-06 05:09:29",
-      "description": "A free GO Wild Area: Gigantamax Machamp Power Up Timed Research is available globally from November 6–8, 2026. Trainers must log in during t...",
-      "image": "assets/images/resources/gohub-placeholder.png"
-    },
-    {
-      "title": "Super Mega Clefable Raid Day",
-      "link": "https://pokemongohub.net/post/event/super-mega-clefable-raid-day/",
-      "date": "2026-11-05 18:14:11",
-      "description": "Mega Clefable debuts during Clefable Super Mega Raid Day on Saturday, November 28, 2026, from 2:00 p.m. to 5:00 p.m. local time. Mega Clefab...",
-      "image": "assets/images/resources/gohub-placeholder.png"
-    },
-    {
-      "title": "Pokémon GO Wild Area: Mexico City – Additional Details, Maps, In-Person Activities, Notable Trainers etc",
-      "link": "https://pokemongohub.net/post/event/pokemon-go-wild-area-mexico-city-additional-details-maps-in-person-activities-notable-trainers-etc/",
-      "date": "2026-11-05 13:36:30",
-      "description": "GO Wild Area 2026: Mexico City takes place on November 6, 7 and 8, from 10:00 a.m. to 6:00 p.m. local time each day, with gameplay throughou...",
-      "image": "assets/images/resources/gohub-placeholder.png"
-    },
-    {
-      "title": "Pokémon GO Wild Area 2026: Global Community Meetups in the Asia-Pacific region",
-      "link": "https://pokemongohub.net/post/news/pokemon-go-wild-area-2026-global-community-meetups-in-the-asia-pacific-region/",
-      "date": "2026-11-05 11:58:27",
-      "description": "Pokémon GO Wild Area 2026: Global is coming soon, and community meetups have been announced for a slew of cities in the Asia-Pacific region!...",
       "image": "assets/images/resources/gohub-placeholder.png"
     }
   ]
