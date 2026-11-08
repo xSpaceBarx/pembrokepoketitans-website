@@ -4,18 +4,101 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Join Pembroke PokéTitans</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+        rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: #f5f7fa;
+      color: #1f2937;
+      font-family: "Poppins", sans-serif;
+      line-height: 1.6;
+      border-top: 8px solid #153a5b;
+    }
+
+    main {
+      width: 100%;
+      max-width: 520px;
+      padding: 40px 28px;
+      background: #fff;
+      border-top: 5px solid #f57c00;
+      border-radius: 12px;
+      box-shadow: 0 8px 28px rgba(21, 58, 91, 0.08);
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0 0 16px;
+      color: #153a5b;
+      font-size: clamp(1.5rem, 5vw, 2rem);
+      line-height: 1.25;
+    }
+
+    p {
+      margin: 0 0 24px;
+    }
+
+    .campfire-link {
+      display: block;
+      padding: 14px 18px;
+      border-radius: 8px;
+      background: #153a5b;
+      color: #fff;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .campfire-link:hover {
+      background: #214f77;
+    }
+
+    .website-link {
+      color: #153a5b;
+      text-underline-offset: 4px;
+    }
+
+    a:focus-visible {
+      outline: 3px solid #f57c00;
+      outline-offset: 4px;
+    }
+
+    .website {
+      margin-bottom: 0;
+      font-size: 0.9rem;
+    }
+  </style>
 </head>
+
 <body>
-  <h1>Join Pembroke PokéTitans</h1>
-  <p>Opening our Campfire group...</p>
+  <main>
+    <h1>Join Pembroke PokéTitans</h1>
+    <p>Opening our Campfire group...</p>
 
-  <p>
-    <a id="campfire" href="https://campfire.onelink.me/eBr8?af_dp=campfire://&amp;af_force_deeplink=true&amp;deep_link_sub1=cj1jbHVicyZjPWE5N2RkZmQwLWFjNDItNDQzYy1hN2Y4LTYwNTAyMzQxZTAyMyZpPXRydWU=">
-      Tap here if Campfire doesn't open automatically
-    </a>
-  </p>
+    <p>
+      <a class="campfire-link" id="campfire"
+         href="https://campfire.onelink.me/eBr8?af_dp=campfire://&amp;af_force_deeplink=true&amp;deep_link_sub1=cj1jbHVicyZjPWE5N2RkZmQwLWFjNDItNDQzYy1hN2Y4LTYwNTAyMzQxZTAyMyZpPXRydWU=">
+        Tap here if Campfire doesn't open automatically
+      </a>
+    </p>
 
-  <p><a href="/">Visit the PokéTitans website</a></p>
+    <p class="website">
+      <a class="website-link" href="/">
+        Visit the PokéTitans website
+      </a>
+    </p>
+  </main>
 
   <script>
     window.location.replace(document.getElementById("campfire").href);
