@@ -1,6 +1,27 @@
 {
   "news": [
     {
+      "title": "Pokémon News This Week: Pokopia Expansion Pass, Fender Guitars Collaboration, Vivillon Challenge and More!",
+      "link": "https://pokemongohub.net/post/news/pokemon-news-this-week-pokopia-expansion-pass-fender-guitars-collaboration-vivillon-challenge-and-more/",
+      "date": "2026-11-10 11:02:31",
+      "description": "It has been a quieter week in Pokémon news, but the excitements are still exciting! Dazzling Decorations, part 2 of the Pokopia Expansion Pa...",
+      "image": "assets/images/resources/gohub-placeholder.png"
+    },
+    {
+      "title": "Silver Bottle Cap Guide",
+      "link": "https://pokemongohub.net/post/guide/silver-bottle-cap/",
+      "date": "2026-11-10 08:37:19",
+      "description": "Trainers, Silver Bottle Caps finally arrived in Pokémon GO during the Into the Wild event in November 2025, giving us a way to improve one o...",
+      "image": "assets/images/resources/gohub-placeholder.png"
+    },
+    {
+      "title": "Pokémon GO Web Store: Black Friday Sale PokéCoin Bonus",
+      "link": "https://pokemongohub.net/post/news/pokemon-go-web-store-black-friday-sale-pokecoin-bonus/",
+      "date": "2026-11-10 08:22:09",
+      "description": "Black Friday deals are arriving early on the Pokémon GO Web Store ready for the global GO Wild Area this weekend. The sale sees the return o...",
+      "image": "assets/images/resources/gohub-placeholder.png"
+    },
+    {
       "title": "Save the Dates for Next Season’s Community Days and Events!",
       "link": "https://pokemongohub.net/post/news/save-the-dates-for-next-seasons-community-days-and-events-2/",
       "date": "2026-11-09 19:12:22",
@@ -19,27 +40,6 @@
       "link": "https://pokemongohub.net/post/meta/into-the-wild-2026-your-go-to-pve-guide/",
       "date": "2026-11-09 09:55:31",
       "description": "Hello Trainers! Into the Wild 2026 is here, and it’s a great warm-up for the upcoming GO Wild Area 2026: Global. The event brings plenty of ...",
-      "image": "assets/images/resources/gohub-placeholder.png"
-    },
-    {
-      "title": "GO Pass: Into the Wild",
-      "link": "https://pokemongohub.net/post/guide/go-pass-into-the-wild/",
-      "date": "2026-11-09 06:36:25",
-      "description": "Pokémon GO’s GO Pass: Into the Wild runs from November 9, 2026, to November 15 2025, and features the debut of Dynamax Meltan. This reward t...",
-      "image": "assets/images/resources/gohub-placeholder.png"
-    },
-    {
-      "title": "Into the Wild (2026) Event",
-      "link": "https://pokemongohub.net/post/event/into-the-wild-2026-event/",
-      "date": "2026-11-09 05:00:51",
-      "description": "Pokémon GO’s Into the Wild event runs from November 9 at 10:00 a.m. to November 13 at 8:00 p.m. local time, bringing two new Dynamax Pokémon...",
-      "image": "assets/images/resources/gohub-placeholder.png"
-    },
-    {
-      "title": "This Week in Pokémon GO (November 9–15): GO Wild Area Global, Into the Wild and Minior Showers",
-      "link": "https://pokemongohub.net/post/event/this-week-in-pokemon-go-november-9-15-go-wild-area-global-into-the-wild-and-minior-showers/",
-      "date": "2026-11-08 11:23:51",
-      "description": "The week of November 9–15, 2026 brings Into the Wild, the Leonid Minior Shower, and GO Wild Area: Global. Crowned Sword Zacian and Crowned S...",
       "image": "assets/images/resources/gohub-placeholder.png"
     }
   ]
