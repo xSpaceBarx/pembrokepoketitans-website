@@ -49,6 +49,9 @@ const TIME_ZONE =
 let scheduledFinalizeTimer =
     null;
 
+let plannerDateRefreshTimer =
+    null;
+
 function easternDateTimeToDate(
     dateValue,
     timeValue
@@ -204,6 +207,271 @@ function scheduledTimeFor(
         notification.date,
         notification.time
     );
+}
+
+
+function timestampToDate(
+    value
+) {
+
+    if (!value) {
+        return null;
+    }
+
+    if (
+        typeof value.toDate ===
+        "function"
+    ) {
+        return value.toDate();
+    }
+
+    if (
+        typeof value.seconds ===
+        "number"
+    ) {
+        return new Date(
+            value.seconds *
+            1000
+        );
+    }
+
+    const converted =
+        new Date(
+            value
+        );
+
+    return Number.isNaN(
+        converted.getTime()
+    )
+        ? null
+        : converted;
+}
+
+function easternDateKey(
+    value = new Date()
+) {
+
+    const date =
+        timestampToDate(
+            value
+        ) ||
+        new Date();
+
+    const parts =
+        new Intl.DateTimeFormat(
+            "en-US",
+            {
+                timeZone:
+                    TIME_ZONE,
+                year:
+                    "numeric",
+                month:
+                    "2-digit",
+                day:
+                    "2-digit"
+            }
+        )
+            .formatToParts(
+                date
+            );
+
+    const values = {};
+
+    parts.forEach(
+        part => {
+
+            if (
+                part.type !==
+                "literal"
+            ) {
+                values[
+                    part.type
+                ] =
+                    part.value;
+            }
+        }
+    );
+
+    return (
+        `${values.year}-` +
+        `${values.month}-` +
+        `${values.day}`
+    );
+}
+
+function plannerDateKey(
+    notification
+) {
+
+    if (
+        typeof notification.date ===
+            "string" &&
+        /^\d{4}-\d{2}-\d{2}$/
+            .test(
+                notification.date
+            )
+    ) {
+        return notification.date;
+    }
+
+    const timestamp =
+        notification.publishedAt ||
+        notification.updated ||
+        notification.created ||
+        null;
+
+    return timestamp
+        ? easternDateKey(
+            timestamp
+        )
+        : "";
+}
+
+function shouldCountInPlanner(
+    notification,
+    now = new Date()
+) {
+
+    if (
+        notification.status !==
+        "published"
+    ) {
+        return true;
+    }
+
+    const dateKey =
+        plannerDateKey(
+            notification
+        );
+
+    if (!dateKey) {
+        return false;
+    }
+
+    /*
+     * Published notification history stays in the pipeline,
+     * but an old Published record stops controlling the
+     * Weekly Checklist after its relevant calendar date.
+     */
+    return (
+        dateKey >=
+        easternDateKey(
+            now
+        )
+    );
+}
+
+function nextEasternMidnight(
+    now = new Date()
+) {
+
+    const todayKey =
+        easternDateKey(
+            now
+        );
+
+    const [
+        year,
+        month,
+        day
+    ] =
+        todayKey
+            .split("-")
+            .map(Number);
+
+    const nextCalendarDate =
+        new Date(
+            Date.UTC(
+                year,
+                month - 1,
+                day + 1,
+                12
+            )
+        );
+
+    const nextDateKey =
+        [
+            nextCalendarDate
+                .getUTCFullYear(),
+            String(
+                nextCalendarDate
+                    .getUTCMonth() +
+                    1
+            ).padStart(
+                2,
+                "0"
+            ),
+            String(
+                nextCalendarDate
+                    .getUTCDate()
+            ).padStart(
+                2,
+                "0"
+            )
+        ].join("-");
+
+    return easternDateTimeToDate(
+        nextDateKey,
+        "00:00"
+    );
+}
+
+function schedulePlannerDateRefresh() {
+
+    if (
+        plannerDateRefreshTimer
+    ) {
+        clearTimeout(
+            plannerDateRefreshTimer
+        );
+
+        plannerDateRefreshTimer =
+            null;
+    }
+
+    const now =
+        new Date();
+
+    const midnight =
+        nextEasternMidnight(
+            now
+        );
+
+    if (!midnight) {
+        return;
+    }
+
+    const delay =
+        Math.max(
+            1000,
+            midnight.getTime() -
+            now.getTime() +
+            1500
+        );
+
+    const MAX_TIMEOUT =
+        2147483647;
+
+    plannerDateRefreshTimer =
+        setTimeout(
+            async () => {
+
+                try {
+                    await loadDrafts();
+                    await updatePlannerStatus();
+                } catch (error) {
+                    console.error(
+                        "Unable to refresh Weekly Checklist after date rollover:",
+                        error
+                    );
+                }
+
+            },
+            Math.min(
+                delay,
+                MAX_TIMEOUT
+            )
+        );
 }
 
 async function finalizeDueScheduledNotifications(
@@ -385,21 +653,34 @@ export async function loadDrafts() {
         notifications.forEach(
             notification => {
 
-            const existing = plannerLookup[notification.audience];
+            const existing =
+                plannerLookup[
+                    notification.audience
+                ];
 
             if (
-
-                !existing ||
-
-                statusPriority[notification.status] >
-                statusPriority[existing.status]
-
+                shouldCountInPlanner(
+                    notification
+                ) &&
+                (
+                    !existing ||
+                    statusPriority[
+                        notification.status
+                    ] >
+                    statusPriority[
+                        existing.status
+                    ]
+                )
             ) {
 
-                plannerLookup[notification.audience] = {
+                plannerLookup[
+                    notification.audience
+                ] = {
 
-                    id: notification.id,
-                    status: notification.status
+                    id:
+                        notification.id,
+                    status:
+                        notification.status
 
                 };
 
@@ -426,6 +707,8 @@ export async function loadDrafts() {
         scheduleNextPipelineRefresh(
             notifications
         );
+
+        schedulePlannerDateRefresh();
 
         // Drafts -> newest updated first
         drafts.sort((a, b) => {
