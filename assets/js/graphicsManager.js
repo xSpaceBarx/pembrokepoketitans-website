@@ -49,6 +49,12 @@ const SLOT_CONFIG = {
         mode: "recurring"
     },
 
+    maxbattles: {
+        label: "💎 Max Battles",
+        placement: "Homepage — Current Raid Bosses, below Mega Raids",
+        mode: "optional"
+    },
+
     maxmonday: {
         label: "💎 Max Monday",
         placement: "Events page",
@@ -81,7 +87,7 @@ const SLOT_CONFIG = {
 
     shadowraids: {
         label: "🌑 Shadow Raids",
-        placement: "Homepage — Current Raid Bosses, below Mega Raids",
+        placement: "Homepage — Current Raid Bosses, below Max Battles",
         mode: "recurring"
     },
 
@@ -215,7 +221,8 @@ const GRAPHIC_DEFAULTS = {
 const MULTI_RAID_SAME_CYCLE_TYPES =
     new Set([
         "legendary",
-        "mega"
+        "mega",
+        "maxbattles"
     ]);
 
 let graphicAssets = [];
@@ -717,6 +724,110 @@ function addCalendarDays(
     return result;
 }
 
+
+function addCalendarMonths(
+    date,
+    months
+) {
+
+    return new Date(
+        Date.UTC(
+            date.getUTCFullYear(),
+            date.getUTCMonth() +
+                months,
+            1
+        )
+    );
+}
+
+function endOfCalendarMonth(
+    date
+) {
+
+    return new Date(
+        Date.UTC(
+            date.getUTCFullYear(),
+            date.getUTCMonth() + 1,
+            0
+        )
+    );
+}
+
+function upcomingMonthStartDate() {
+
+    const now =
+        easternCalendarNow();
+
+    /*
+     * now.month is 1-12 while Date.UTC uses 0-11.
+     * Passing now.month therefore selects the first
+     * day of the NEXT calendar month.
+     */
+    return new Date(
+        Date.UTC(
+            now.year,
+            now.month,
+            1
+        )
+    );
+}
+
+function applyMonthlyCalendarDefaults() {
+
+    let goLiveDate =
+        upcomingMonthStartDate();
+
+    const latestBoundary =
+        latestGraphicBoundaryDate(
+            "monthly"
+        );
+
+    let safety = 0;
+
+    while (
+        latestBoundary &&
+        goLiveDate <= latestBoundary &&
+        safety < 36
+    ) {
+        goLiveDate =
+            addCalendarMonths(
+                goLiveDate,
+                1
+            );
+
+        safety += 1;
+    }
+
+    const hideDate =
+        endOfCalendarMonth(
+            goLiveDate
+        );
+
+    getElement(
+        "graphic-go-live-date"
+    ).value =
+        formatCalendarDate(
+            goLiveDate
+        );
+
+    getElement(
+        "graphic-go-live-time"
+    ).value =
+        "00:00";
+
+    getElement(
+        "graphic-hide-date"
+    ).value =
+        formatCalendarDate(
+            hideDate
+        );
+
+    getElement(
+        "graphic-hide-time"
+    ).value =
+        "23:59";
+}
+
 function easternCalendarDateForInstant(
     value
 ) {
@@ -824,12 +935,36 @@ function applyGraphicDefaults(
     type
 ) {
 
+    if (
+        type ===
+        "monthly"
+    ) {
+        applyMonthlyCalendarDefaults();
+        return;
+    }
+
     const defaults =
         GRAPHIC_DEFAULTS[
             type
         ];
 
+    /*
+     * Graphic types without a recurring calendar rule keep
+     * their dates blank, but every new graphic now receives
+     * consistent full-day default times.
+     */
     if (!defaults) {
+
+        getElement(
+            "graphic-go-live-time"
+        ).value =
+            "00:00";
+
+        getElement(
+            "graphic-hide-time"
+        ).value =
+            "23:59";
+
         return;
     }
 
@@ -1612,6 +1747,19 @@ function openGraphicEditorForSameCycle(
         "graphic-image"
     ).value =
         "";
+
+    /*
+     * Re-run the scroll on the next frame after the copied
+     * dates/times are populated so mobile browsers reliably
+     * land back at the Graphic Editor.
+     */
+    requestAnimationFrame(
+        () => {
+            scrollToElement(
+                "#graphics-editor"
+            );
+        }
+    );
 }
 
 async function saveGraphic({ publishNow = false } = {}) {
