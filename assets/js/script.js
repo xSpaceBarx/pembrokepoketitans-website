@@ -1381,6 +1381,7 @@ document.addEventListener(
                 const raidTypes = [
                     "legendary",
                     "mega",
+                    "maxbattles",
                     "shadowraids"
                 ];
 
