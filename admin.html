@@ -1,4 +1,4 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -10,6 +10,46 @@
 
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/admin.css?v=4">
+
+
+    <style id="admin-mobile-quick-nav-v2">
+        @media (max-width: 768px) {
+            .admin-section-nav {
+                padding: 18px 14px;
+            }
+
+            .admin-section-nav h2 {
+                font-size: 1.35rem;
+                margin-bottom: 12px;
+            }
+
+            .admin-section-nav-grid {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 8px;
+            }
+
+            .admin-jump-link {
+                min-height: 48px;
+                padding: 9px 7px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                line-height: 1.2;
+                font-size: .78rem;
+                border-radius: 8px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .admin-jump-link {
+                font-size: .72rem;
+                padding-left: 5px;
+                padding-right: 5px;
+            }
+        }
+    </style>
 
 </head>
 
@@ -1214,6 +1254,13 @@
             </div>
         </div>
 
+        <div class="planner-item graphic-planner-item" data-graphic-type="maxbattles">
+            <h3>💎 Max Battles</h3>
+            <div class="planner-status" id="graphic-status-maxbattles">
+                ⚪ Optional
+            </div>
+        </div>
+
         <div class="planner-item graphic-planner-item" data-graphic-type="maxmonday">
             <h3>💎 Max Monday</h3>
             <div class="planner-status" id="graphic-status-maxmonday">
@@ -2162,7 +2209,7 @@
 
 <script
     type="module"
-    src="assets/js/admin-auth.js?v=12">
+    src="assets/js/admin-auth.js?v=13">
 </script>
 
 </body>
