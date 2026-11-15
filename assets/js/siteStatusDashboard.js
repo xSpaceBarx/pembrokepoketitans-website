@@ -1465,65 +1465,11 @@ function renderDashboard(
             );
         }
 
-        if (
-            notificationCounts.draft > 0
-        ) {
-
-            attentionCount += 1;
-
-            appendAttentionItem(
-                attentionContainer,
-                {
-                    tone: "warning",
-                    icon: "🟡",
-                    text:
-                        `${notificationCounts.draft} notification draft${notificationCounts.draft === 1 ? "" : "s"} waiting in the pipeline.`,
-                    href:
-                        "#notification-pipeline"
-                }
-            );
-        }
-
-
         /*
-         * Required weekly notification checks.
-         * GO Pass / Daily Bonuses is intentionally optional and excluded.
+         * Notification preparation is intentionally excluded from
+         * Needs Attention. Notifications are optional; this panel
+         * continues to focus on website/graphic maintenance.
          */
-        const weeklyNotifications =
-            notificationCountsForWeek(
-                data.notifications,
-                now
-            );
-
-        Object.values(
-            weeklyNotifications.result
-        ).forEach(
-            item => {
-
-                if (
-                    item.records.length >
-                    0
-                ) {
-                    return;
-                }
-
-                attentionCount += 1;
-
-                appendAttentionItem(
-                    attentionContainer,
-                    {
-                        tone:
-                            "warning",
-                        icon:
-                            "🟡",
-                        text:
-                            `${item.label} notification has not been prepared this week.`,
-                        href:
-                            "#weekly-checklist"
-                    }
-                );
-            }
-        );
 
         /*
          * Advance warning: a live recurring graphic expires within
