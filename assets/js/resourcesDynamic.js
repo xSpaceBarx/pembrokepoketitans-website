@@ -859,7 +859,7 @@ function installToolsSection() {
     ) {
         newsSection.parentNode.insertBefore(
             toolsSection,
-            newsSection.nextSibling
+            newsSection
         );
 
         return;
@@ -1341,7 +1341,7 @@ function renderManagedSection(
     setSectionVisible(
         sectionKey,
         sectionKey ===
-            "communities"
+                    "communities"
             ? true
             : container.children.length >
                 0
@@ -1419,6 +1419,247 @@ function watchManagedSection(
     );
 }
 
+
+/* ============================
+   MOBILE RESOURCES UI
+============================ */
+
+function enhanceResourceNavigation() {
+
+    const nav =
+        document.querySelector(
+            ".resource-nav"
+        );
+
+    if (!nav) {
+        return;
+    }
+
+    const mobileLabels = {
+        "#poketitans-tools":
+            "Tools",
+        "#news":
+            "News",
+        "#quick-guides":
+            "Quick Guides",
+        "#websites":
+            "Websites",
+        "#podcasts":
+            "Podcasts",
+        "#socials":
+            "Socials",
+        "#communities":
+            "Communities"
+    };
+
+    nav
+        .querySelectorAll(
+            "a"
+        )
+        .forEach(
+            link => {
+
+                const href =
+                    link.getAttribute(
+                        "href"
+                    ) || "";
+
+                const fallbackText =
+                    String(
+                        link.textContent ||
+                        ""
+                    )
+                        .trim()
+                        .replace(
+                            /^PokéTitans\s+/i,
+                            ""
+                        )
+                        .replace(
+                            /^Useful\s+/i,
+                            ""
+                        )
+                        .replace(
+                            /^Community\s+/i,
+                            ""
+                        )
+                        .replace(
+                            /^Local\s+/i,
+                            ""
+                        );
+
+                link.dataset.mobileLabel =
+                    mobileLabels[href] ||
+                    fallbackText ||
+                    "Open";
+            }
+        );
+}
+
+function enhanceNewsCards() {
+
+    const grid =
+        document.getElementById(
+            "news-grid"
+        );
+
+    if (!grid) {
+        return;
+    }
+
+    const section =
+        grid.closest(
+            "section"
+        );
+
+    if (section) {
+        section.classList.add(
+            "resources-news-section"
+        );
+    }
+
+    function markCards() {
+
+        Array.from(
+            grid.children
+        ).forEach(
+            card => {
+
+                card.classList.add(
+                    "resource-news-card"
+                );
+
+                card
+                    .querySelectorAll(
+                        "img"
+                    )
+                    .forEach(
+                        image => {
+                            image.classList.add(
+                                "resource-news-card-image"
+                            );
+                        }
+                    );
+            }
+        );
+    }
+
+    markCards();
+
+    const observer =
+        new MutationObserver(
+            markCards
+        );
+
+    observer.observe(
+        grid,
+        {
+            childList:
+                true
+        }
+    );
+}
+
+function enhanceCommunitySubmission() {
+
+    const card =
+        document.querySelector(
+            ".community-submit-card"
+        );
+
+    const form =
+        document.getElementById(
+            "community-submission-form"
+        );
+
+    if (
+        !card ||
+        !form ||
+        card.querySelector(
+            ".community-submit-toggle"
+        )
+    ) {
+        return;
+    }
+
+    const button =
+        document.createElement(
+            "button"
+        );
+
+    button.type =
+        "button";
+
+    button.className =
+        "community-submit-toggle";
+
+    button.setAttribute(
+        "aria-expanded",
+        "false"
+    );
+
+    button.setAttribute(
+        "aria-controls",
+        "community-submission-form"
+    );
+
+    button.textContent =
+        "Submit a Community";
+
+    form.before(
+        button
+    );
+
+    button.addEventListener(
+        "click",
+        () => {
+
+            const expanded =
+                card.classList.toggle(
+                    "is-open"
+                );
+
+            button.setAttribute(
+                "aria-expanded",
+                expanded
+                    ? "true"
+                    : "false"
+            );
+
+            button.textContent =
+                expanded
+                    ? "Hide Submission Form"
+                    : "Submit a Community";
+
+            if (
+                expanded &&
+                window.innerWidth <=
+                    700
+            ) {
+                setTimeout(
+                    () => {
+                        form
+                            .querySelector(
+                                "input, select, textarea"
+                            )
+                            ?.focus({
+                                preventScroll:
+                                    true
+                            });
+                    },
+                    50
+                );
+            }
+        }
+    );
+}
+
+function initializeResourcesMobileUi() {
+
+    enhanceResourceNavigation();
+    enhanceNewsCards();
+    enhanceCommunitySubmission();
+}
+
 async function loadManagedResources() {
     const snapshot =
         await getDocs(
@@ -1457,6 +1698,7 @@ async function loadManagedResources() {
 async function initializeManagedResources() {
     installCommunitySection();
     installToolsSection();
+    initializeResourcesMobileUi();
 
     try {
 
@@ -1502,4 +1744,4 @@ if (
 } else {
 
     initializeManagedResources();
-}
+}  
