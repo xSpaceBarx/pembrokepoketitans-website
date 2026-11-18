@@ -1,4 +1,4 @@
-/* ==========================================
+* ==========================================
    PokéTitans Managed Resources
 ========================================== */
 
@@ -294,5 +294,304 @@
 
     .community-submit-button {
         width: 100%;
+    }
+}
+/* ==========================================
+   Resources Mobile Readability v3
+========================================== */
+
+@media (max-width: 700px) {
+
+    .section {
+        padding-top: 34px;
+        padding-bottom: 34px;
+    }
+
+    .section-title {
+        margin-bottom: 14px;
+        font-size: 1.55rem;
+        line-height: 1.2;
+    }
+
+    .section-description {
+        margin-bottom: 18px;
+        font-size: .92rem;
+        line-height: 1.5;
+    }
+
+    /* ---------- Jump to resource ---------- */
+
+    .resource-nav {
+        display: grid !important;
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+        gap: 10px !important;
+        align-items: stretch;
+        margin-top: 18px;
+        margin-bottom: 8px;
+    }
+
+    .resource-nav a {
+        width: auto !important;
+        min-width: 0 !important;
+        min-height: 48px;
+        margin: 0 !important;
+        padding: 10px 8px !important;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        font-size: 0 !important;
+        line-height: 1.15;
+        border-radius: 10px;
+    }
+
+    .resource-nav a::after {
+        content:
+            attr(
+                data-mobile-label
+            );
+        font-size: .82rem;
+        font-weight: 700;
+    }
+
+    .resource-nav a:last-child:nth-child(odd) {
+        grid-column: 1 / -1;
+    }
+
+    /* ---------- PokéTitans Tools ---------- */
+
+    .poketitans-tools-grid {
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            ) !important;
+        gap: 10px !important;
+        margin-top: 18px !important;
+    }
+
+    .poketitans-tool-card {
+        min-height: 132px;
+        padding: 14px 10px !important;
+        border-radius: 12px !important;
+        text-align: center;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    .poketitans-tool-icon {
+        margin-bottom: 6px !important;
+        font-size: 1.55rem !important;
+    }
+
+    .poketitans-tool-card h3 {
+        margin: 0 0 5px !important;
+        font-size: .92rem;
+        line-height: 1.2;
+    }
+
+    .poketitans-tool-card p {
+        margin: 0 !important;
+        font-size: .74rem;
+        line-height: 1.35 !important;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+    }
+
+    .poketitans-tool-action {
+        display: none;
+    }
+
+    .poketitans-tool-card:last-child:nth-child(odd) {
+        grid-column: 1 / -1;
+        min-height: 104px;
+    }
+
+    /* ---------- GO Hub News ---------- */
+
+    .resources-news-section #news-grid {
+        gap: 12px !important;
+    }
+
+    .resource-news-card {
+        padding: 15px !important;
+        margin: 0 !important;
+        border-radius: 12px !important;
+    }
+
+    .resource-news-card-image,
+    #news-grid img {
+        display: none !important;
+    }
+
+    .resource-news-card h3,
+    .resource-news-card h2 {
+        margin-top: 0 !important;
+        margin-bottom: 7px !important;
+        font-size: 1rem !important;
+        line-height: 1.3 !important;
+    }
+
+    .resource-news-card p {
+        margin-top: 5px !important;
+        margin-bottom: 9px !important;
+        font-size: .84rem !important;
+        line-height: 1.45 !important;
+    }
+
+    .resource-news-card .hero-button,
+    .resource-news-card a[class*="button"] {
+        width: auto !important;
+        min-height: 0 !important;
+        padding: 8px 11px !important;
+        font-size: .8rem !important;
+    }
+
+    /* ---------- Quick Guides ---------- */
+
+    .managed-guide-grid {
+        grid-template-columns: 1fr !important;
+        gap: 18px !important;
+        margin-top: 20px !important;
+    }
+
+    .managed-guide-card {
+        border-radius: 12px !important;
+    }
+
+    .managed-guide-image {
+        width: 100% !important;
+        height: auto !important;
+    }
+
+    /* ---------- Websites / Podcasts / Socials / Communities ---------- */
+
+    .managed-resource-grid {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+        margin-top: 18px !important;
+    }
+
+    .managed-resource-card,
+    #websites-container > *,
+    #podcasts-container > *,
+    #socials-container > *,
+    #communities-container > * {
+        padding: 15px 16px !important;
+        border-radius: 12px !important;
+    }
+
+    .managed-resource-card h3,
+    #websites-container > * h3,
+    #podcasts-container > * h3,
+    #socials-container > * h3,
+    #communities-container > * h3 {
+        margin: 0 0 5px !important;
+        font-size: 1rem !important;
+        line-height: 1.25 !important;
+    }
+
+    .managed-resource-card p,
+    #websites-container > * p,
+    #podcasts-container > * p,
+    #socials-container > * p,
+    #communities-container > * p {
+        margin: 4px 0 9px !important;
+        font-size: .82rem !important;
+        line-height: 1.45 !important;
+    }
+
+    .managed-resource-button,
+    #websites-container > * .hero-button,
+    #podcasts-container > * .hero-button,
+    #socials-container > * .hero-button,
+    #communities-container > * .hero-button {
+        width: auto !important;
+        align-self: flex-start !important;
+        padding: 8px 11px !important;
+        font-size: .8rem !important;
+    }
+
+    .community-resource-meta {
+        margin-bottom: 5px !important;
+        font-size: .78rem !important;
+    }
+
+    /* ---------- Community submission ---------- */
+
+    .community-submit-card {
+        margin-top: 24px !important;
+        padding: 16px !important;
+        border-radius: 12px !important;
+    }
+
+    .community-submit-card > h3 {
+        margin-bottom: 5px !important;
+        font-size: 1.05rem !important;
+    }
+
+    .community-submit-card > p {
+        margin-bottom: 12px !important;
+        font-size: .82rem;
+        line-height: 1.45;
+    }
+
+    .community-submit-toggle {
+        width: 100%;
+        min-height: 46px;
+        border: 0;
+        border-radius: 9px;
+        padding: 10px 12px;
+        background: #153A5B;
+        color: #ffffff;
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .community-submission-form {
+        display: none !important;
+        grid-template-columns: 1fr !important;
+        gap: 14px !important;
+        margin-top: 16px;
+    }
+
+    .community-submit-card.is-open
+        .community-submission-form {
+        display: grid !important;
+    }
+
+    .community-form-full {
+        grid-column: auto !important;
+    }
+
+    .community-submission-form input,
+    .community-submission-form select,
+    .community-submission-form textarea {
+        padding: 11px 12px !important;
+    }
+
+    .community-submission-form textarea {
+        min-height: 96px !important;
+    }
+
+    .community-submit-button {
+        width: 100% !important;
+    }
+
+    .resource-guide-lightbox {
+        padding: 64px 12px 18px;
+    }
+}
+
+@media (min-width: 701px) {
+    .community-submit-toggle {
+        display: none;
     }
 }
