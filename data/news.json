@@ -1,6 +1,34 @@
 {
   "news": [
     {
+      "title": "ANA Launches Blue Pokémon Jet for Pokémon’s 30th Anniversary",
+      "link": "https://pokemongohub.net/post/event/ana-launches-blue-pokemon-jet-for-pokemons-30th-anniversary/",
+      "date": "2026-11-20 13:24:46",
+      "description": "Pokémon GO and Japanese airline ANA (All Nippon Airways Co., Ltd) are teaming up for a new series of airport events celebrating the launch o...",
+      "image": "assets/images/resources/gohub-placeholder.png"
+    },
+    {
+      "title": "Eternatus Eternamax Battle Day (November 2026)",
+      "link": "https://pokemongohub.net/post/event/eternatus-eternamax-battle-day-november-2026/",
+      "date": "2026-11-20 08:55:10",
+      "description": "During Pokémon GO’s Dynamax Trails event Eternatus Eternamax makes their return to Max Battles in Pokémon GO on Saturday 21st November 2026,...",
+      "image": "assets/images/resources/gohub-placeholder.png"
+    },
+    {
+      "title": "Pawniard Community Day (November 2026)",
+      "link": "https://pokemongohub.net/post/event/pawniard-community-day-november-2026/",
+      "date": "2026-11-20 08:00:07",
+      "description": "The November 2026 Community Day features Pawniard, the Sharp Blade Pokémon! Join the event on Saturday, November 21, 2026, from 2:00 p.m. to...",
+      "image": "assets/images/resources/gohub-placeholder.png"
+    },
+    {
+      "title": "How to Beat Eternamax Eternatus: Best Counters and Guide",
+      "link": "https://pokemongohub.net/post/guide/how-to-beat-eternamax-eternatus-best-counters-guide/",
+      "date": "2026-11-20 08:00:05",
+      "description": "Eternamax Eternatus is a Tier 6 Max Battle in Pokémon GO. It will cost 800 Max Particles to participate in this Max Battle, which will only ...",
+      "image": "assets/images/resources/gohub-placeholder.png"
+    },
+    {
       "title": "Pawniard Community Day: Is Kowtow Cleave Kingambit Worth It?",
       "link": "https://pokemongohub.net/post/meta/pawniard-community-day-is-kowtow-cleave-kingambit-worth-it/",
       "date": "2026-11-19 11:38:26",
@@ -8,38 +36,10 @@
       "image": "assets/images/resources/gohub-placeholder.png"
     },
     {
-      "title": "Pokémon News This Week: Pokémon Happy Meals, Shiny Xerneas, Play! Prizes and More",
-      "link": "https://pokemongohub.net/post/news/pokemon-news-this-week-pokemon-happy-meals-shiny-xerneas-play-prizes-and-more/",
-      "date": "2026-11-19 08:23:07",
-      "description": "Pokémon Happy Meals are back, Pokopia and Pokémon Legends: Z-A both have free gifts to claim, Play! Pokémon has Mega Rayquaza themed prizes ...",
-      "image": "assets/images/resources/gohub-placeholder.png"
-    },
-    {
-      "title": "Hisuian Goodra and Magnet Bomb Magnezone… Any Use in PvP?",
-      "link": "https://pokemongohub.net/post/pvp/hisuian-goodra-and-magnet-bomb-magnezone-any-use-in-pvp/",
-      "date": "2026-11-18 14:56:47",
-      "description": "With this year’s GO Wild Area events wrapped up, you may find yourself with some shiny, Steely new toys that you’re itching to try out in Pv...",
-      "image": "assets/images/resources/gohub-placeholder.png"
-    },
-    {
-      "title": "Grookey, Scorbunny and Sobble Spotlight Hour: Last Minute Guide",
-      "link": "https://pokemongohub.net/post/event/gen-8-starters-spotlight-hour/",
-      "date": "2026-11-18 12:24:00",
-      "description": "Pokémon Spotlight Hour will feature a different Pokémon and a special bonus for one hour at 6:00 p.m. local time on Thursday during the mont...",
-      "image": "assets/images/resources/gohub-placeholder.png"
-    },
-    {
-      "title": "Eternatus in Pokémon GO: Still a Game Changer for Raids and Max Battles?",
-      "link": "https://pokemongohub.net/post/meta/eternatus-pve/",
-      "date": "2026-11-18 06:00:57",
-      "description": "Eternatus is one of the most feared and revered creatures in the Pokémon universe and the mainline games. It’s not surprising that this / be...",
-      "image": "assets/images/resources/gohub-placeholder.png"
-    },
-    {
-      "title": "TCG Pocket Promo Pack C Series Vol.1: Mega Mewtwo Y ex, Exclusive Cards &amp; Missions",
-      "link": "https://pokemongohub.net/post/tcg-pocket/tcg-pocket-promo-pack-c-series-vol-1-mega-mewtwo-y-ex-exclusive-cards-missions/",
-      "date": "2026-11-17 19:19:43",
-      "description": "Mega Mewtwo Y ex debuts in Pokémon TCG Pocket through the Promo Pack C Series Vol. 1 event, which revamps the Daily Missions by adding Promo...",
+      "title": "A PvP Analysis on Kowtwo Cleave Kingambit (November Community Day)",
+      "link": "https://pokemongohub.net/post/pvp/a-pvp-analysis-on-kowtwo-cleave-kingambit-november-community-day/",
+      "date": "2026-11-19 10:46:08",
+      "description": "It’s time for the last regular Community Day of 2026, and spoiler alert: this one is a pretty clear upgrade for KINGAMBIT! If you want to us...",
       "image": "assets/images/resources/gohub-placeholder.png"
     }
   ]
