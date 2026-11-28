@@ -1,5 +1,5 @@
 import { db } from "./firebase.js";
-import { loadTrainers } from "./trainers.js?v=2";
+import { loadTrainers } from "./trainers.js?v=3";
 
 import {
     collection,
@@ -240,6 +240,12 @@ if (form) {
                     false;
 
                 await loadTrainers();
+
+                window.dispatchEvent(
+                    new CustomEvent(
+                        "poketitans:trainer-submitted"
+                    )
+                );
 
             } catch (error) {
 
